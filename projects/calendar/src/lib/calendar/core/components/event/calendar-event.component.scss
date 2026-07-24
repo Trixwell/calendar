@@ -1,0 +1,173 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.event-block {
+    position: absolute;
+    left: 9px;
+    right: 4px;
+    padding: tokens.$space-4 tokens.$space-8;
+    border-radius: tokens.$radius-4;
+    border-left-style: solid;
+    border-left-width: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+    min-height: 3em;
+    overflow: hidden;
+
+    &.time-off {
+        background-color: tokens.$default-100;
+        border-left-width: 0;
+    }
+}
+
+.event-month{
+    padding: tokens.$space-4 tokens.$space-4;
+    border-radius: tokens.$radius-4;
+    cursor: pointer;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-height: 28px;
+
+    &-attributes{
+        display: flex;
+        gap: tokens.$space-8;
+
+        .title{
+            span{
+                font: tokens.$font-button-m;
+            }
+        }
+
+        .time{
+            span{
+                font: tokens.$font-body-s;
+            }
+        }
+    }
+}
+
+.event-block {
+    z-index: 99;
+
+    .time, .title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: tokens.$default-800;
+    }
+
+    .title{
+        span{
+            font: tokens.$font-button-m;
+        }
+    }
+
+    .time{
+        span{
+            font: tokens.$font-body-s;
+        }
+    }
+
+    .client-info {
+        margin-top: tokens.$space-4;
+        display: flex;
+        gap: tokens.$space-8;
+
+        a {
+            color: tokens.$violet-700;
+            font: tokens.$font-caption-l;
+        }
+
+        p {
+            margin: tokens.$space-0;
+            color: tokens.$default-800;
+            font: tokens.$font-caption-m;
+        }
+    }
+}
+
+.past {
+    opacity: 0.6;
+}
+
+@media (max-width: 800px) {
+    .event-block {
+        left: 4px;
+        right: 2px;
+        padding: tokens.$space-8 tokens.$space-12;
+        border-radius: tokens.$radius-8;
+        border-left-width: tokens.$border-3;
+        min-height: 2em;
+
+        .title span {
+            font: tokens.$font-caption-l;
+            color: tokens.$default-900;
+        }
+
+        .time span {
+            font: tokens.$font-caption-s;
+            color: tokens.$default-500;
+        }
+
+        .event-block-attributes {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: tokens.$space-8;
+
+            .time {
+                order: 2;
+            }
+
+            .title {
+                order: 1;
+            }
+        }
+
+        .client-info {
+            display: none;
+        }
+    }
+
+    .event-month {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: tokens.$space-0;
+        max-height: none;
+        padding: tokens.$space-0 tokens.$space-0;
+        border-radius: 0;
+        background-color: transparent !important;
+
+        &-attributes {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+            gap: tokens.$space-2;
+
+            .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: tokens.$radius-1000;
+                background-color: tokens.$default-500;
+                flex-shrink: 0;
+            }
+
+            .time {
+                flex: 1 0 0;
+                min-width: 0;
+            }
+
+            .time span,
+            .title span {
+                font: tokens.$font-caption-s;
+                color: tokens.$default-800;
+            }
+
+            .title {
+                display: none;
+            }
+        }
+    }
+}

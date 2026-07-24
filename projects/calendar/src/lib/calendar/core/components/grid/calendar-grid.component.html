@@ -1,0 +1,126 @@
+<div #container [ngClass]="'calendar-grid calendar-grid-' + mode()">
+
+    <div class="grid-header" #dayHeaderContainer>
+        <div class="time-label">
+            @if(!isMobile()){
+                <p>Час</p>
+            }
+        </div>
+        @for(date of dates(); track $index) {
+            <div
+                class="day-label"
+                [class.is-past]="isPastDate(date)"
+                [attr.data-date]="date.toISOString().slice(0,10)"
+                [class.today]="isToday(date)"
+                [class.time-off]="isFullDayOff(date, events())"
+                [class.weekend]="isWeekend(date)"
+                [class.selected]="isSelected(date)"
+                (click)="dayHeaderClick(date)">
+                <span class="weekday">
+                  {{
+                    mode() === CalendarView.DAY
+                        ? (date | date:'EEEE':'':'uk')
+                        : (date | date:'EEE':'':'uk')
+                  }}
+                </span>
+                <span class="day-month">{{
+                        mode() === CalendarView.DAY
+                            ? (date | date:'d MMMM':'':'uk')
+                            : (date | date:'d':'':'uk')
+                    }}
+                </span>
+
+                @if (isMobile()) {
+                    <app-load-percent [date]="date" [taskList]="events()" />
+                } @else {
+                    <app-load-indicator [currentDate]="date"
+                                        [taskList]="events()"
+                                        [day]="date.getDate()">
+                    </app-load-indicator>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="grid-body">
+
+        <div class="time-col">
+            <div class="vertical-time-col"></div>
+
+
+            <div #headerCell>
+                @for(h of hours(); track h) {
+                    <div class="time-cell" [style.height.px]="hourHeight()">
+                        <div class="time" [class.first]="$first">
+                            <span>{{ h }}:00</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @for(day of dates(); track $index) {
+            <div
+                class="day-col"
+                [attr.data-day]="day.toDateString()"
+                [class.today-col]="isToday(day)"
+                [class.time-off]="isFullDayOff(day, events())"
+                [class.weekend-col]="isWeekend(day)"
+                (mousedown)="!isMobile() && onSelectionStart($event, day)"
+                (touchstart)="isMobile() && mobileRange.onCellTouchStart($event)"
+                (touchmove)="isMobile() && mobileRange.onCellTouchMove($event)"
+                (touchend)="isMobile() && mobileRange.onCellTouchEnd($event)">
+
+                @if(!isMobile() && isSelecting && selectingDay?.getTime() === day.getTime() && moved){
+                    <div
+                        class="selection"
+                        [style.top.px]="selectionTop"
+                        [style.height.px]="selectionHeight">
+                        <div class="selection-label">
+                            {{ selectionStart | date:'HH:mm' }}
+                            @if(selectionEnd && selectionEnd.getTime() !== selectionStart.getTime()){
+                                <ng-container>
+                                    – {{ selectionEnd | date:'HH:mm' }}
+                                </ng-container>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <app-mobile-range-selection
+                    #mobileRange
+                    [day]="day"
+                    [hourHeight]="hourHeight()"
+                    [startHour]="startHour()"
+                    [endHour]="endHour()"
+                    [isDragging]="isDragging"
+                    [activeDay]="activeMobileSelectionDay()"
+                    (selectionOpened)="activeMobileSelectionDay.set($event)"
+                    (rangeSelected)="onRangeSelect()($event.start, $event.end)">
+                </app-mobile-range-selection>
+
+
+                <div style="position: absolute"></div>
+                @for(h of hours(); track h) {
+                    <div class="cell"
+                         [class.first]="$first"
+                         [attr.data-time-slot]="h + ':00' "
+                         [style.height.px]="hourHeight()"></div>
+                }
+
+                @if(dayColTemplate){
+                    <ng-container [ngTemplateOutlet]="dayColTemplate"
+                                  [ngTemplateOutletContext]="{ $implicit: day, events: generatePositionEvents(day) }">
+                    </ng-container>
+                }
+            </div>
+        }
+
+        @if(showNowLine()){
+            <div class="now-line" [style.top.px]="nowLineTop">
+                <div class="now-dot"></div>
+            </div>
+        }
+    </div>
+</div>
+

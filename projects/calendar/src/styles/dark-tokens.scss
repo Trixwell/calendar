@@ -1,0 +1,127 @@
+$primary-violet: #6C7DE6;
+
+$violet-50: #1e2448;
+$violet-100: #282f5a;
+$violet-200: #333c6e;
+$violet-300: #B9C2FA;
+$violet-500: #848AF5;
+$violet-700: #594AE1;
+$violet-900: #3E33A0;
+
+$default-50: #FFFFFF;
+$default-75: #F0F2F6;
+$default-100: #E3E6ED;
+$default-200: #C5CAD6;
+$default-300: #A8B0C2;
+$default-400: #8B93A7;
+$default-500: #6F788D;
+$default-600: #525C72;
+$default-700: #222836;
+$default-800: #1A2030;
+$default-900: #131622;
+$default-950: #0E121C;
+
+$success-50: #0F2918;
+$success-100: #1A3D24;
+$success-500: #4BB543;
+$success-700: #2F9E44;
+
+$warning-50: #2A2208;
+$warning-100: #3D300C;
+$warning-500: #FAAD14;
+$warning-700: #D48806;
+
+$error-50: #2A1414;
+$error-100: #3D1C1C;
+$error-300: #ff9d9e;
+$error-500: #FF4D4F;
+$error-700: #D9363E;
+
+$pink-50: #FDEEF4;
+$pink-700: #E8729A;
+
+$blue-50: #EAF6FD;
+$blue-700: #4BAEE8;
+
+$mint-50: #E8F8F5;
+$mint-700: #3DBFA0;
+
+$orange-50: #FEF3EA;
+$orange-700: #F5923E;
+
+$yellow-50: #FEFAEA;
+$yellow-700: #F5C842;
+
+$red-50: #FDEEEE;
+$red-700: #E85555;
+
+$gray-50: #EEF1F5;
+$gray-700: #8A9BB0;
+
+$space--2: -2px;
+$space-0: 0px;
+$space-1: 1px;
+$space-2: 2px;
+$space-4: 4px;
+$space-6: 6px;
+$space-8: 8px;
+$space-12: 12px;
+$space-16: 16px;
+$space-20: 20px;
+$space-24: 24px;
+$space-32: 32px;
+$space-40: 40px;
+$space-44: 44px;
+$space-48: 48px;
+$space-56: 56px;
+$space-64: 64px;
+$space-72: 72px;
+
+$font-h1: 700 40px/48px 'Manrope';
+$font-h2: 700 32px/40px 'Manrope';
+$font-h3: 700 24px/32px 'Manrope';
+$font-h4: 700 20px/24px 'Manrope';
+$font-h5: 500 20px/24px 'Manrope';
+
+$font-subtitle-l: 700 16px/20px 'Manrope';
+$font-subtitle-m: 600 16px/20px 'Manrope';
+$font-subtitle-s: 600 14px/18px 'Manrope';
+
+$font-body-l: 400 16px/20px 'Manrope';
+$font-body-m: 300 16px/20px 'Manrope';
+$font-body-s: 400 14px/18px 'Manrope';
+
+$font-button-l: 600 16px/24px 'Manrope';
+$font-button-m: 600 14px/20px 'Manrope';
+
+$font-caption-l: 500 12px/16px 'Manrope';
+$font-caption-m: 400 12px/16px 'Manrope';
+$font-caption-s: 400 10px/14px 'Manrope';
+
+$radius-4: 4px;
+$radius-8: 8px;
+$radius-16: 16px;
+$radius-24: 24px;
+$radius-32: 32px;
+$radius-1000: 1000px;
+
+$border-1: 1px;
+$border-2: 2px;
+$border-3: 3px;
+$border-4: 4px;
+
+[data-theme="dark"] {
+    --primary-violet: #{$primary-violet};
+    --border-subtle: #{$default-700};
+    --border-surface: #{$default-800};
+    --color-error: #{$error-500};
+    --color-success: #{$success-500};
+    --color-warning: #{$warning-500};
+    --color-accent-violet: #{$violet-300};
+    --color-accent-violet-strong: #{$violet-700};
+    --shadow-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0px 4px 12px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0px 8px 24px rgba(0, 0, 0, 0.55);
+    --shadow-soft: 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
+    --icon-filter-invert: brightness(0) invert(1);
+}

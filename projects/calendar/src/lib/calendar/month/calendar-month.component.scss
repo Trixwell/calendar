@@ -1,0 +1,132 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.cell{
+    .head{
+        margin-bottom: tokens.$space-8;
+        display: flex;
+        justify-content: center;
+        gap: tokens.$space-8;
+    }
+
+    .list{
+        display: flex;
+        gap: tokens.$space-4;
+        flex-direction: column;
+    }
+}
+
+.calendar-month-attributes {
+    .count-time-slots {
+        position: absolute;
+        bottom: tokens.$space-8;
+        right: tokens.$space-16;
+
+        p {
+            margin: tokens.$space-0;
+            color: tokens.$default-500;
+            font: tokens.$font-caption-m;
+        }
+    }
+}
+
+::ng-deep{
+    app-calendar-event{
+        .event-block{
+            position: static !important;
+
+            .event-block-attributes {
+                display: flex;
+                gap: tokens.$space-8;
+            }
+        }
+    }
+}
+
+::ng-deep{
+    ngx-popover {
+        .data{
+            position: absolute;
+            bottom: tokens.$space-8;
+        }
+
+        button{
+            border: none;
+            background: transparent;
+            text-decoration: underline;
+            color: tokens.$violet-700;
+            bottom: tokens.$space-16;
+            font: tokens.$font-button-m !important;
+        }
+    }
+
+    .day.time-off{
+        ngx-popover{
+            pointer-events: none;
+        }
+    }
+}
+
+@media (max-width: 800px) {
+    .cell {
+        .head {
+            margin-bottom: tokens.$space-4;
+            justify-content: space-between;
+            align-items: center !important;
+
+
+            .num {
+                font: tokens.$font-subtitle-s;
+            }
+        }
+
+        .list {
+            gap: tokens.$space-2;
+        }
+    }
+
+    ::ng-deep {
+        .day:not(.day-off):not(.outside):not(.today) .cell .head .num {
+            color: tokens.$default-300;
+        }
+
+        app-load-percent{
+            color: tokens.$default-500;
+        }
+    }
+
+    .data {
+        display: none;
+        position: absolute;
+        bottom: tokens.$space-6;
+        left: tokens.$space-6;
+
+        a {
+            display: inline-block;
+            border: none;
+            background: transparent;
+            text-decoration: underline;
+            color: tokens.$violet-700;
+            font: tokens.$font-caption-s;
+        }
+    }
+
+    .calendar-month-attributes {
+        display: none;
+
+        .count-time-slots {
+            right: tokens.$space-6;
+            bottom: tokens.$space-6;
+
+            p {
+                font: tokens.$font-caption-l;
+            }
+        }
+    }
+
+    :host-context([data-theme="dark"]) {
+        .cell .head .num {
+            color: darkTokens.$default-50;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+<div class="month-list">
+    @for (month of month_list; track month.first_date) {
+        <div class="month">
+            <app-calendar-month [current_date]="month.first_date"
+                                [selectDay]="selectDay"
+                                [dayDbClick]="dayDbClick"
+                                [task_list]="taskList"
+                                [clear]="clearAllExcept"
+                                #months_components></app-calendar-month>
+        </div>
+    }
+</div>

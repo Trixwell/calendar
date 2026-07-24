@@ -1,0 +1,12 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    &.low    { background-color: tokens.$violet-100; }
+    &.medium { background-color: tokens.$violet-500; }
+    &.high   { background-color: tokens.$violet-900; }
+    &.full   { background-color: tokens.$error-700; }
+}

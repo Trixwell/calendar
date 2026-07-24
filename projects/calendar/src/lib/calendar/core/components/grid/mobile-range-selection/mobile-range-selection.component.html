@@ -1,0 +1,19 @@
+@if (mobileSelectionActive) {
+    <div class="mobile-selection"
+         [style.top.px]="selectionTop"
+         [style.height.px]="selectionHeight"
+         (touchstart)="onBoxTouchStart($event)"
+         (touchend)="onBoxTouchEnd(); $event.stopPropagation()">
+        <div class="mobile-selection__title">Потягніть, щоб обрати діапазон часу</div>
+    </div>
+
+    <div class="mobile-selection-bar"
+         (touchstart)="$event.stopPropagation()"
+         (touchend)="$event.stopPropagation()">
+        <button mat-flat-button color="primary"
+                class="mobile-selection-bar__button"
+                (click)="confirmMobileSelection()">
+            Обрати {{ selectionStart | date:'HH:mm' }}-{{ selectionEnd | date:'HH:mm' }}
+        </button>
+    </div>
+}

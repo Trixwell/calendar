@@ -1,0 +1,122 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.calendar-toggle-bar{
+    display: flex;
+    gap: tokens.$space-12;
+    align-items: center;
+
+    span{
+        font: tokens.$font-subtitle-m;
+    }
+
+    span.month-title{
+        text-transform: capitalize;
+    }
+
+    &__navigation{
+        display: flex;
+        gap: tokens.$space-4;
+
+        button,
+        button.mat-mdc-icon-button,
+        .mdc-icon-button {
+            background: tokens.$default-75 !important;
+            background-color: tokens.$default-75 !important;
+            margin: tokens.$space-0;
+            border-radius: 50% !important;
+
+            mat-icon{
+                color: tokens.$default-400;
+            }
+        }
+    }
+}
+
+app-calendar-day-slider{
+    display: none;
+}
+
+@media (max-width: 800px) {
+    app-calendar-day-slider{
+        display: block;
+        width: 100%;
+    }
+
+    .calendar-toggle-bar {
+        width: 100%;
+        justify-content: center;
+        padding: tokens.$space-12 tokens.$space-0;
+
+        span {
+            font: tokens.$font-subtitle-m;
+        }
+
+        span.month-title {
+            text-transform: capitalize;
+        }
+
+        &__navigation {
+            position: absolute;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 36px;
+            pointer-events: none;
+
+            button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                pointer-events: auto;
+                width: 36px;
+                height: 36px;
+                padding: tokens.$space-0;
+                min-height: 36px;
+            }
+        }
+    }
+
+    :host {
+        position: relative;
+        display: block;
+        width: 100%;
+        margin: tokens.$space-16 tokens.$space-0;
+    }
+}
+
+::ng-deep {
+    .mat-mdc-option .mat-pseudo-checkbox-minimal {
+        width: 6px;
+        height: 6px;
+        margin: tokens.$space-0 !important;
+    }
+}
+
+:host-context([data-theme="dark"]) {
+    .calendar-toggle-bar {
+        span,
+        span.month-title {
+            color: darkTokens.$default-50;
+        }
+
+        &__navigation button,
+        &__navigation button.mat-mdc-icon-button,
+        &__navigation .mdc-icon-button {
+            background: transparent !important;
+            background-color: transparent !important;
+
+            mat-icon {
+                color: darkTokens.$default-300 !important;
+            }
+
+            &:hover {
+                background: transparent !important;
+                background-color: transparent !important;
+                opacity: 0.7;
+            }
+        }
+    }
+}

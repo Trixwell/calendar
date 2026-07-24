@@ -1,0 +1,140 @@
+<section class="calendar">
+    <div class="base-box">
+        <div class="calendar-controls">
+            <div class="calendar-header">
+                @if (isMobile() && view() === CalendarView.MONTH) {
+                    @if (!daySelectionMode()) {
+                        <button mat-button class="day-selection-entry" (click)="enterDaySelectionMode()">
+                            <img src="assets/icons/calendar-edit.svg" alt="calendar-edit">
+                            Налаштувати дні
+                        </button>
+                    }
+                } @else {
+                    <div class="calendar-header-info">
+                        <h3>Календар</h3>
+                    </div>
+                }
+
+                @if(isMobile()) {
+                    @if (daySelectionMode()) {
+                        <div class="day-selection-toggle">
+                            <span class="day-selection-toggle__title">Оберіть дні та налаштуйте</span>
+                            <button mat-button class="day-selection-toggle__cancel" (click)="cancelDaySelection()">
+                                <img src="assets/icons/close-error.svg" alt="cancel">
+                                Скасувати
+                            </button>
+                        </div>
+                    } @else {
+                        <div class="form-group mobile-view-select">
+                            <mat-form-field appearance="outline">
+                                <mat-select
+                                    [value]="view()"
+                                    (selectionChange)="setView($event.value)">
+                                    <mat-option [value]="CalendarView.YEAR">Рік</mat-option>
+                                    <mat-option [value]="CalendarView.MONTH">Місяць</mat-option>
+                                    <mat-option [value]="CalendarView.WEEK">Тиждень</mat-option>
+                                    <mat-option [value]="CalendarView.DAY">День</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="control-body">
+                <div class="form-group">
+                    <app-toggle-date-bar
+                        [(startDate)]="start_date"
+                        [(endDate)]="end_date"
+                        [(view)]="view"
+                        [(year)]="year"
+                        [(day)]="day"
+                        [taskList]="task_list">
+                    </app-toggle-date-bar>
+                </div>
+
+                @if(!isMobile()) {
+                    <div class="form-group">
+                        <mat-button-toggle-group
+                            [hideSingleSelectionIndicator]="true"
+                            [value]="view()"
+                            (valueChange)="setView($event)"
+                            class="view-toggle">
+                            <mat-button-toggle [value]="CalendarView.YEAR">Рік</mat-button-toggle>
+                            <mat-button-toggle [value]="CalendarView.MONTH">Місяць</mat-button-toggle>
+                            <mat-button-toggle [value]="CalendarView.WEEK">Тиждень</mat-button-toggle>
+                            <mat-button-toggle [value]="CalendarView.DAY">Сьогодні</mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div>
+            @switch (view()){
+                @case(CalendarView.YEAR){
+                    <app-calendar-year
+                        [startDate]="start_date"
+                        [endDate]="end_date"
+                        [dayDbClick]="dayDbClick"
+                        [taskList]="task_list">
+                    </app-calendar-year>
+                }
+
+                @case(CalendarView.WEEK){
+                    <app-calendar-week
+                        [startDate]="weekStart()"
+                        [endDate]="weekEnd()"
+                        [user]="user"
+                        [taskList]="task_list">
+                    </app-calendar-week>
+                }
+
+                @case(CalendarView.MONTH){
+                    <div>
+                        <app-calendar-month
+                            [startDate]="monthStart()"
+                            [endDate]="monthEnd()"
+                            [user]="user"
+                            [(day)]="day"
+                            [(view)]="view"
+                            [taskList]="task_list"
+                            [selectionMode]="daySelectionMode()"
+                            [(selectedDays)]="selectedDays">
+                        </app-calendar-month>
+                    </div>
+
+                    @if (isMobile() && daySelectionMode()) {
+                        @if (!confirmed()) {
+                            <div class="day-selection-footer">
+                                <span class="title">Обрано {{ selectedDays().length }} днів</span>
+                                <button mat-flat-button color="primary"
+                                        [disabled]="!selectedDays().length"
+                                        (click)="confirmDaySelection()">
+                                    Далі
+                                    <img src="assets/icons/arrow-right-white.svg" alt="arrow-right">
+                                </button>
+                            </div>
+                        }
+                    }
+                }
+
+                @case(CalendarView.DAY){
+                    <app-calendar-day
+                        [day]="day"
+                        [user]="user"
+                        [taskList]="task_list">
+                    </app-calendar-day>
+                }
+
+                @default {
+                    <app-calendar-year
+                        [startDate]="start_date"
+                        [endDate]="end_date"
+                        [dayDbClick]="dayDbClick"
+                        [taskList]="task_list">
+                    </app-calendar-year>
+                }
+            }
+        </div>
+    </div>
+</section>

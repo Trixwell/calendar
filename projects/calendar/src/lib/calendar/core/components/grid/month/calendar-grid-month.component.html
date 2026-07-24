@@ -1,0 +1,43 @@
+<div class="month-grid">
+    <div class="grid-header" #dayHeaderContainer>
+        @for (label of weekdayNames(); let i = $index; track i) {
+            <div class="day-label"
+                 [class.first]="$first"
+                 [class.last]="$last"
+                 (click)="selectWeekday(i+1)">{{ label }}</div>
+        }
+    </div>
+
+    <div class="grid-body">
+        @for (week of gridWeeks(); track $index) {
+            <div class="week">
+                @for (d of week; track $index) {
+                    <div class="day"
+                         [attr.data-date]="(d | date:'yyyy-MM-dd')"
+                         [class.outside]="!inMonth(d)"
+                         [class.today]="today(d)"
+                         [class.time-off]="isTimeOff(d)"
+                         [class.working-day]="inMonth(d) && isWorkingDay(d)"
+                         [class.day-off]="inMonth(d) && !isWorkingDay(d) && !isTimeOff(d)"
+                         [class.selected]="isSelected(d)"
+                         (click)="toggleSelect(d, $event)"
+                         (dblclick)="onDayDblClick()(d)">
+                        @if (monthCellTpl) {
+                            <ng-container
+                                [ngTemplateOutlet]="monthCellTpl"
+                                [ngTemplateOutletContext]="{
+                                  $implicit: d,
+                                  date: d,
+                                  inMonth: inMonth(d),
+                                  events: eventsFor(d),
+                                  visible: visibleEvents(d),
+                                  more: moreCount(d)
+                                }">
+                            </ng-container>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

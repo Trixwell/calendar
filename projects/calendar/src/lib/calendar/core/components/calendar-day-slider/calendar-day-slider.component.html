@@ -1,0 +1,14 @@
+<div class="calendar-day-slider">
+    @for (monthDay of monthDays; track monthDay.getTime()) {
+        <button
+            type="button"
+            class="calendar-day-slider__day"
+            [class.calendar-day-slider__day--selected]="isSelectedDay(monthDay)"
+            [class.calendar-day-slider__day--no-record]="!hasRecord(monthDay)"
+            (click)="day.set(monthDay)">
+            <p class="calendar-day-slider__weekday">{{ monthDay | date:'EEEEEE':undefined:'uk-UA' }}</p>
+            <p class="calendar-day-slider__date">{{ monthDay | date:'d':undefined:'uk-UA' }}</p>
+            <app-load-percent [date]="monthDay" [taskList]="taskList()" />
+        </button>
+    }
+</div>

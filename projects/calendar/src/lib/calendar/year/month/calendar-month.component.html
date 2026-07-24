@@ -1,0 +1,43 @@
+<section class="calendar-month">
+    <span>{{ monthName | titlecase }}</span>
+    <div class="calendar">
+        <div class="calendar-header">
+            @for(day of days_of_week; track $index){
+                <div class="calendar-day-of-week"
+                     [class.single-select]="singleSelect()"
+                     [class.weekday-selected]="isWeekdaySelected($index)"
+                     (click)="$event.stopPropagation(); selectWeekday($index, $event)">
+                    {{ day }}
+                </div>
+            }
+        </div>
+
+        <div class="calendar-body">
+            @for(day of days_in_month; track $index){
+                <div tabindex="10"
+                     class="calendar-day"
+                     [class.previous-month-day]="isPrevIdx($index)"
+                     [class.future-month-day]="isNextIdx($index)"
+                     [class.today]="isCurrIdx($index) && isToday(day)"
+                     [class.selected-day]="selected_idx.includes($index)"
+                     (click)="selectDayInCalendar(day, $index, $event)"
+                     (keydown.enter)="selectDayInCalendar(day, $index)"
+                     (dblclick)="onDayDbClickInCalendar(getFullDateByCell(day, $index))"
+                     [class.time-off]="isCurrIdx($index) && isDayTimeOff(day)"
+                     [class.working-day]="isCurrIdx($index) && isWorkingDay(day, $index)"
+                     [ngClass]="isCurrIdx($index) ? getStatusClasses(day) : null"
+                     [attr.data-date]="getFullDateByCell(day, $index)">
+                    <span>
+                        {{ day }}
+
+                        <app-load-indicator
+                            [taskList]="task_list()"
+                            [currentDate]="current_date()"
+                            [day]="day">
+                        </app-load-indicator>
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</section>

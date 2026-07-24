@@ -1,0 +1,51 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.month-list{
+    display: grid;
+    grid-template-columns: repeat(
+                auto-fit,
+            minmax(calc(6 * #{tokens.$space-40} + 2 * #{tokens.$space-32}), 1fr)
+            );
+    column-gap: tokens.$space-56;
+    row-gap: tokens.$space-32;
+
+    .month {
+        flex: 1;
+        box-sizing: border-box;
+
+        span{
+            font: tokens.$font-subtitle-l;
+            color: tokens.$default-900;
+        }
+    }
+}
+
+
+@media(width <= 1500px) {
+    .month-list{
+        grid-template-columns: repeat(
+                auto-fit,
+                minmax(calc(6 * #{tokens.$space-32} + 2 * #{tokens.$space-32}), 1fr)
+            ) !important;
+    }
+}
+
+@media (max-width: 800px) {
+    .month-list {
+        grid-template-columns: minmax(0, 1fr) !important;
+        column-gap: tokens.$space-16;
+        row-gap: tokens.$space-24;
+    }
+}
+
+@media (max-width: 400px) {
+    .month-list {
+        column-gap: tokens.$space-0;
+        row-gap: tokens.$space-24;
+    }
+}
+
+:host-context([data-theme="dark"]) .month span {
+    color: darkTokens.$default-50 !important;
+}

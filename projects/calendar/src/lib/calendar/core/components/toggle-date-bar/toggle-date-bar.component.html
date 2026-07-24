@@ -1,0 +1,115 @@
+@switch(view()){
+    @case(CalendarView.YEAR){
+        @if (isMobile()) {
+            <div class="calendar-toggle-bar">
+                <div class="calendar-toggle-bar__navigation">
+                    <button mat-icon-button (click)="prev()" class="nav-button">
+                        <img src="assets/icons/default-arrow-left.svg" alt="arrow_left">
+                    </button>
+
+                    <button mat-icon-button (click)="next()" class="nav-button">
+                        <img src="assets/icons/default-arrow-right.svg" alt="arrow_right">
+                    </button>
+                </div>
+
+                @if (!isMobile()){
+                    <img src="assets/icons/calendar.svg" alt="calendar">
+                }
+                <span>{{ title }}</span>
+            </div>
+        } @else {
+            <mat-form-field appearance="outline">
+                <mat-select
+                    [value]="year()"
+                    (selectionChange)="year.set($event.value)">
+                    @for (year of years; track year) {
+                        <mat-option [value]="year">{{ year }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        }
+    }
+
+    @case(CalendarView.DAY){
+        @if (isMobile()) {
+            <app-calendar-day-slider
+                [(day)]="day"
+                [taskList]="taskList()">
+            </app-calendar-day-slider>
+        } @else {
+            <div class="calendar-toggle-bar">
+                @if (!isMobile()){
+                    <img src="assets/icons/calendar.svg" alt="calendar">
+                }
+
+                <span>
+                    {{ title }}
+                </span>
+
+                <div class="calendar-toggle-bar__navigation">
+                    <button mat-icon-button (click)="prev()" class="nav-button">
+                        <img src="assets/icons/default-arrow-left.svg" alt="arrow_left">
+                    </button>
+
+                    <button mat-icon-button (click)="next()" class="nav-button">
+                        <img src="assets/icons/default-arrow-right.svg" alt="arrow_right">
+                    </button>
+                </div>
+            </div>
+        }
+    }
+
+    @case(CalendarView.MONTH){
+        <div class="calendar-toggle-bar">
+            @if (!isMobile()){
+                <img src="assets/icons/calendar.svg" alt="calendar">
+            }
+
+            <span class="month-title">{{ title }}</span>
+
+            <div class="calendar-toggle-bar__navigation">
+                <button mat-icon-button (click)="prev()" class="nav-button">
+                    <img src="assets/icons/default-arrow-left.svg" alt="arrow_left">
+                </button>
+
+                <button mat-icon-button (click)="next()" class="nav-button">
+                    <img src="assets/icons/default-arrow-right.svg" alt="arrow_right">
+                </button>
+            </div>
+        </div>
+    }
+
+    @case(CalendarView.WEEK){
+        <div class="calendar-toggle-bar">
+            @if (!isMobile()){
+                <img src="assets/icons/calendar.svg" alt="calendar">
+            }
+
+            <span>
+                {{ title }}
+            </span>
+
+            <div class="calendar-toggle-bar__navigation">
+                <button mat-icon-button (click)="prev()" class="nav-button">
+                    <img src="assets/icons/default-arrow-left.svg" alt="arrow_left">
+                </button>
+
+                <button mat-icon-button (click)="next()" class="nav-button">
+                    <img src="assets/icons/default-arrow-right.svg" alt="arrow_right">
+                </button>
+            </div>
+        </div>
+    }
+
+    @default {
+        <mat-form-field appearance="outline">
+            <mat-select
+                [value]="year()"
+                (selectionChange)="year.set($event.value)">
+                @for (y of years; track y) {
+                    <mat-option [value]="y">{{ y }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    }
+}

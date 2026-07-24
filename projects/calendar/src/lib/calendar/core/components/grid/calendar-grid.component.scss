@@ -1,0 +1,411 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+@use "sass:color";
+
+.calendar-grid-week{
+  .grid-body{
+    display:grid;
+    grid-template-columns: 75px repeat(7, 1fr);
+
+      .day-col{
+          grid-template-columns: 75px repeat(7, 120px);
+          border-right: tokens.$space-1 solid tokens.$default-100;
+
+          @media (max-width: 800px) {
+            ::ng-deep {
+              app-mobile-range-selection{
+                .mobile-selection {
+                  left: tokens.$space-0 !important;
+                }
+              }
+            }
+          }
+      }
+  }
+
+  .grid-header{
+    display:grid;
+    grid-template-columns: 75px repeat(7, 1fr);
+
+      @media (max-width: 800px) {
+          grid-template-columns: 75px repeat(7, 120px);
+          background: transparent;
+      }
+
+    .day-label{
+        user-select: none;
+        justify-content: center;
+
+        @media (max-width: 800px) {
+            border-right: tokens.$border-1 solid tokens.$default-100;
+            padding: tokens.$space-0 !important;
+        }
+    }
+  }
+}
+
+.calendar-grid-day{
+  .grid-body{
+    display:grid;
+    grid-template-columns: 75px repeat(1, 1fr);
+  }
+
+  .grid-header{
+    display:grid;
+    grid-template-columns: 75px repeat(1, 1fr);
+  }
+}
+
+.calendar-grid {
+    display:flex; flex-direction:column;
+
+
+    .grid-body{
+        position: relative;
+        border-left: tokens.$border-1 solid tokens.$default-100;
+        border-right: tokens.$border-1 solid tokens.$default-100;
+        border-bottom: tokens.$border-1 solid tokens.$default-100;
+
+        border-bottom-left-radius: tokens.$radius-16;
+        border-bottom-right-radius: tokens.$radius-16;
+
+        > .time-col + .day-col .selection {
+            left: tokens.$space-6;
+        }
+    }
+}
+.grid-header {
+    background: tokens.$default-100;
+    border-top-left-radius: tokens.$radius-16;
+    border-top-right-radius: tokens.$radius-16;
+    border-bottom: tokens.$border-1 solid tokens.$default-200;
+    position: relative;
+
+    .time-label {
+        min-width: 75px;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        p{
+            font: tokens.$font-body-m;
+            margin: 0;
+        }
+    }
+    .day-label {
+        user-select: none;
+        display: flex;
+        gap: tokens.$space-8;
+        align-items: center;
+        padding: tokens.$space-16;
+        cursor: pointer;
+        transition: background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
+        border-top: tokens.$border-3 solid transparent;
+
+        &.is-past {
+            cursor: default !important;
+        }
+
+        &.today {
+            border-top-color: tokens.$violet-700;
+
+            @media (max-width: 800px) {
+                border: none;
+                background: tokens.$violet-700;
+
+                &.weekday{
+                    color: tokens.$violet-200;
+                }
+
+                .day-month{
+                    color: tokens.$default-50 !important;
+                }
+
+                ::ng-deep {
+                    app-load-percent {
+                        .load-percent{
+                            color: tokens.$default-50;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.today:last-child{
+            border-top-right-radius: tokens.$radius-16;
+        }
+
+        &.selected{
+            background: tokens.$violet-700;
+
+            .day-month{
+                color: tokens.$default-50 !important;
+            }
+
+            ::ng-deep {
+                app-load-percent {
+                    .load-percent{
+                        color: tokens.$default-50;
+                    }
+                }
+            }
+        }
+
+        .weekday {
+            text-transform: capitalize;
+            font: tokens.$font-subtitle-l;
+            color: tokens.$default-900;
+
+            @media (max-width: 800px) {
+                color: tokens.$default-300;
+                font: tokens.$font-caption-s;
+            }
+        }
+
+        .day-month{
+            font: tokens.$font-body-m;
+            color: tokens.$default-900;
+
+            @media (max-width: 800px) {
+                font: tokens.$font-subtitle-s !important;
+            }
+        }
+    }
+}
+
+.time-col {
+    position: relative;
+    padding-top: 20px;
+
+
+    .vertical-time-col {
+        position: absolute;
+        top:        0;
+        bottom:     0;
+        right:      -7px;
+        width:      1px;
+        background: tokens.$default-100;
+        z-index:    10;
+    }
+}
+
+.calendar-grid .day-col:first-child {
+    border-left: none;
+}
+
+
+.day-col.time-off{
+    pointer-events: none;
+}
+
+.time-cell{
+    position: relative;
+
+    .time{
+        position: relative;
+        top: -7px;
+        text-align: center;
+
+        span{
+            color: tokens.$default-800;
+            font: tokens.$font-body-m;
+        }
+    }
+}
+
+.day-col {
+    position:relative;
+    margin-top: tokens.$space-20;
+
+    .selection {
+        position: absolute;
+        z-index: 100;
+        left: 0;
+        right: 0;
+        pointer-events: none;
+        padding: tokens.$space-4;
+        border-radius: tokens.$radius-4;
+
+        background-color: color.scale(tokens.$default-200, $alpha: -50%);
+        background-repeat: repeat-y;
+        background-size: 100% 60px;
+    }
+
+}
+
+.cell:not(.cell:first-child) {
+    border-top: tokens.$border-1 solid tokens.$default-100;
+    position: relative;
+    z-index: 0;
+}
+
+.now-line {
+    position:absolute;
+    left:80px;
+    right:0;
+    height:2px;
+    background: tokens.$error-700;
+    z-index: 100;
+
+    .now-dot {
+        position:absolute;
+        left:-4px;
+        top:-3px;
+        width:8px;
+        height:8px;
+        background: tokens.$error-700;
+        border-radius:50%;
+    }
+}
+
+:host-context([data-theme="dark"]) {
+    .grid-header {
+        background: darkTokens.$default-800;
+        border-bottom-color: darkTokens.$default-700;
+
+        .day-label {
+            &.selected {
+                background: darkTokens.$violet-200;
+            }
+
+            .weekday,
+            .day-month {
+                color: darkTokens.$default-50;
+            }
+        }
+
+        .time-label p {
+            color: darkTokens.$default-300;
+        }
+    }
+
+    .grid-body {
+        border-color: darkTokens.$default-700;
+    }
+
+    .time-col .vertical-time-col {
+        background: darkTokens.$default-700;
+    }
+
+    .cell:not(.cell:first-child) {
+        border-top-color: darkTokens.$default-700;
+    }
+
+    .time-cell .time span {
+        color: darkTokens.$default-300;
+    }
+}
+
+@media (max-width: 800px) {
+    .time-cell{
+        .time{
+            position: relative;
+            top: tokens.$space-0;
+            border-top: tokens.$border-1 solid tokens.$default-100;
+            text-align: center;
+
+            &.first{
+                border: none;
+            }
+        }
+    }
+
+    .calendar-grid-week {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+
+        .grid-header {
+            grid-template-columns: 54px repeat(7, 120px);
+            min-width: 893px;
+
+            .time-label {
+                min-width: 61px;
+                border-right: tokens.$border-1 solid tokens.$default-100;
+                border-left: tokens.$border-1 solid tokens.$default-100;
+
+                p {
+                    font: tokens.$font-caption-m;
+                }
+            }
+
+            .day-label {
+                flex-direction: column;
+                padding: tokens.$space-8 tokens.$space-2;
+                gap: tokens.$space-2;
+                box-shadow: var(--shadow-sm);
+
+                .weekday {
+                    font: tokens.$font-caption-l;
+                }
+
+                .day-month {
+                    font: tokens.$font-caption-m;
+                }
+
+                app-load-percent {
+                    font: tokens.$font-caption-s;
+                    color: tokens.$default-500;
+                }
+            }
+        }
+
+        .grid-body {
+            grid-template-columns: 53px repeat(7, 120px);
+            min-width: 893px;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    .calendar-grid-day {
+        .grid-header {
+            display: none;
+        }
+
+        .grid-body {
+            grid-template-columns: 53px 1fr;
+            border-top-right-radius: tokens.$radius-8;
+            border-bottom-left-radius: tokens.$radius-8;
+        }
+    }
+
+    .grid-header {
+        border-top-left-radius: tokens.$radius-8;
+        border-top-right-radius: tokens.$radius-8;
+
+        .time-label {
+            min-width: 53px;
+        }
+
+        .day-label {
+            padding: tokens.$space-8 tokens.$space-4;
+        }
+    }
+
+    .time-col {
+        padding-top: tokens.$space-0;
+
+        .time-cell .time {
+            text-align: left;
+            padding-left: tokens.$space-16;
+
+            span {
+                font: tokens.$font-caption-m;
+            }
+        }
+    }
+
+    .day-col {
+        margin-top: tokens.$space-0;
+
+        .cell {
+            &.first{
+                border-top: none !important;
+            }
+        }
+    }
+
+    .now-line {
+        left: 53px;
+    }
+}

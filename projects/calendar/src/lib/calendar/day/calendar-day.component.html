@@ -1,0 +1,44 @@
+@if (isMobile()) {
+    <app-records-summary [taskList]="dayTaskList()" />
+}
+
+<app-calendar-grid
+    [mode]="CalendarView.DAY"
+    [dates]="[day()]"
+    [events]="taskList()"
+    [startHour]="toHour(todaySchedule?.start_time ?? '08:00')"
+    [endHour]  ="toHour(todaySchedule?.end_time   ?? '20:00')"
+    [hourHeight]="isMobile() ? 56 : 60"
+    [onSlotClick]="onSlotClick"
+    [onHeaderClick]="onDayHeader"
+    [onRangeSelect]="onRangeSelect"
+>
+    <ng-template #dayCol let-day let-events="events">
+        <ng-container>
+            <div>
+                @if(isFullDayOff(day, taskList())){
+                    <div class="day-off-overlay"
+                         (mousedown)="$event.stopPropagation(); $event.preventDefault()"
+                         (click)="$event.stopPropagation(); $event.preventDefault()"
+                         (dblclick)="$event.stopPropagation(); $event.preventDefault()"
+                         (touchstart)="$event.stopPropagation(); $event.preventDefault()"
+                    >
+                        <span class="label">{{ getDayOffComment(day, taskList()) }}</span>
+                    </div>
+                }
+
+                @if (!isFullDayOff(day, taskList())) {
+                    @for (event of events; track event.id) {
+                        <app-calendar-event
+                            [draggable]="!isMobile()"
+                            [top]="event.top"
+                            [height]="event.height"
+                            [color]="getColor(event, user())"
+                            [event]="event">
+                        </app-calendar-event>
+                    }
+                }
+            </div>
+        </ng-container>
+    </ng-template>
+</app-calendar-grid>

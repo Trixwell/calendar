@@ -1,0 +1,247 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+
+.month-grid{
+    .grid-header{
+        display:grid;
+        grid-template-columns: repeat(7, minmax(180px, 1fr));
+        background: tokens.$default-100;
+        border-top-left-radius: tokens.$radius-16;
+        border-top-right-radius: tokens.$radius-16;
+        position: relative;
+
+
+        @media (max-width: 800px) {
+            background: transparent;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+        }
+
+        .day-label{
+            user-select: none;
+            display: flex;
+            gap: tokens.$space-8;
+            align-items: center;
+            justify-content: center;
+            padding: tokens.$space-16;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
+            font: tokens.$font-subtitle-m;
+            color: tokens.$default-900;
+
+            @media (max-width: 800px) {
+                box-sizing: border-box;
+                padding: tokens.$space-0;
+                height: 24px;
+
+                border: tokens.$border-1 solid tokens.$default-100;
+                border-left: none;
+                border-bottom: tokens.$border-1 solid tokens.$default-100;
+
+                &.first {
+                    border-left: tokens.$border-1 solid tokens.$default-100;
+                }
+            }
+
+            .weekday {
+                text-transform: capitalize;
+                font: tokens.$font-subtitle-l;
+                color: tokens.$default-900;
+                position: relative;
+            }
+
+            .day-month{
+                font: tokens.$font-body-m;
+                color: tokens.$default-900;
+            }
+        }
+    }
+
+    .grid-body {
+        position: relative;
+        border-bottom-left-radius: tokens.$radius-8;
+        border-bottom-right-radius: tokens.$radius-8;
+        overflow: hidden;
+        border-left: tokens.$border-1 solid tokens.$default-100;
+
+        .week {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(180px, 1fr));
+            position: relative;
+
+            .day{
+                min-height: 164px;
+                text-align: left;
+                padding: tokens.$space-16;
+                cursor: pointer;
+                font: tokens.$font-h5;
+                color: tokens.$default-800;
+                position: relative;
+                transition: background-color 0.25s ease, transform 0.2s ease;
+                border-right: tokens.$border-1 solid tokens.$default-100;
+                border-bottom: tokens.$border-1 solid tokens.$default-100;
+                box-sizing: border-box;
+
+                &.outside {
+                    background: color-mix(in srgb, tokens.$default-50 90%, tokens.$default-200 10%);
+                    color: tokens.$default-500;
+                }
+
+                &.outside .event {
+                    background: color-mix(in srgb, tokens.$default-200 70%, white 30%);
+                }
+
+                &.working-day{
+                    background: tokens.$violet-50;
+                }
+
+                &.time-off{
+                    background: tokens.$default-100;
+                }
+
+                &.today{
+                    ::ng-deep .cell{
+                        .head{
+                            .num{
+                                border-radius: 50%;
+                                background: tokens.$violet-700;
+                                width: 32px;
+                                height: 32px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: tokens.$default-50;
+                            }
+                        }
+                    }
+                }
+
+                &.today:last-child{
+                    border-top-right-radius: tokens.$radius-16;
+                }
+
+                &.selected{
+                    background: tokens.$violet-700;
+                    border-color: tokens.$default-100;
+
+
+                    ::ng-deep .cell {
+                        .head{
+                            .num{
+                                color: tokens.$default-50 !important;
+                            }
+
+                            app-load-percent{
+                                color: tokens.$default-50 !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+:host-context([data-theme="dark"]) {
+    .month-grid {
+        .grid-header {
+            background: darkTokens.$default-800;
+            border-bottom: tokens.$border-1 solid darkTokens.$default-600;
+
+            .day-label,
+            .weekday,
+            .day-month {
+                color: darkTokens.$default-50;
+            }
+        }
+
+        .grid-body {
+            border-color: darkTokens.$default-600;
+
+            .day {
+                background: darkTokens.$default-800;
+                color: darkTokens.$default-50;
+                border-color: darkTokens.$default-600;
+
+                &.outside {
+                    background: darkTokens.$default-950;
+                    color: darkTokens.$default-500;
+                }
+
+                &.working-day:not(.today) {
+                    background: darkTokens.$violet-100;
+                    color: darkTokens.$default-50;
+                }
+
+                &.time-off:not(.today) {
+                    background: darkTokens.$default-900;
+                    color: darkTokens.$default-400;
+                }
+
+                &.selected:not(.today) {
+                    background: darkTokens.$default-700;
+                    color: darkTokens.$default-50;
+                }
+
+                &.today {
+                    ::ng-deep .cell .head .num {
+                        border-radius: 50%;
+                        background: darkTokens.$violet-700;
+                        color: darkTokens.$default-50;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 800px) {
+    :host {
+        display: block;
+    }
+
+    .month-grid {
+        .grid-header {
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+
+            .day-label {
+                padding: tokens.$space-8 tokens.$space-4;
+                font: tokens.$font-caption-m;
+                color: tokens.$default-500;
+            }
+        }
+
+        .grid-body {
+            min-width: 0;
+
+            .week {
+                grid-template-columns: repeat(7, minmax(0, 1fr));
+
+                .day {
+                    min-height: 64px;
+                    min-width: 0;
+                    padding: tokens.$space-4 tokens.$space-8;
+                    font: tokens.$font-subtitle-s;
+
+                    &.day-off:not(.selected):not(.today) {
+                        background: tokens.$default-75;
+                        color: tokens.$default-300;
+                    }
+
+                    &.today ::ng-deep .cell .head .num {
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+            }
+        }
+    }
+
+    :host-context([data-theme="dark"]) {
+        .day.day-off:not(.selected):not(.today) {
+            background: darkTokens.$default-900;
+            color: darkTokens.$default-500;
+        }
+    }
+}

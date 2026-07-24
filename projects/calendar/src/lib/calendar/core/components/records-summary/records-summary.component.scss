@@ -1,0 +1,36 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.records-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: tokens.$space-4 tokens.$space-16;
+    background: tokens.$default-50;
+    color: tokens.$default-400;
+    min-height: 32px;
+    border: tokens.$border-1 solid tokens.$default-100;
+
+    &__info {
+        display: flex;
+        align-items: center;
+        gap: tokens.$space-4;
+        font: tokens.$font-caption-m;
+    }
+
+    &__amount{
+        color: tokens.$success-700;
+    }
+
+    &__count,
+    &__amount {
+        font: tokens.$font-caption-l;
+    }
+}
+
+:host-context([data-theme="dark"]) {
+    .records-summary {
+        background: darkTokens.$default-75;
+        color: darkTokens.$default-400;
+    }
+}

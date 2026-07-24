@@ -1,0 +1,12 @@
+@use 'tokens' as tokens;
+
+:host{
+    display: block;
+    font: tokens.$font-caption-m;
+    line-height: 10px;
+}
+
+.load-percent{
+    font: tokens.$font-caption-m;
+    line-height: 10px;
+}

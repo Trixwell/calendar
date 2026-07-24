@@ -1,0 +1,118 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.calendar-day-slider{
+    display: flex;
+    width: 100%;
+    gap: tokens.$space-12;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-top: tokens.$space-8;
+
+    &::-webkit-scrollbar{
+        display: none;
+    }
+
+    &__day{
+        width: 40px;
+        height: 56px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: tokens.$space-2;
+        padding: tokens.$space-8 tokens.$space-4;
+        border: tokens.$border-1 solid tokens.$default-100;
+        border-radius: tokens.$radius-8;
+        background-color: transparent;
+        cursor: pointer;
+
+        app-load-percent {
+            color: tokens.$default-500;
+        }
+
+        &--no-record{
+            border: tokens.$border-1 solid tokens.$default-100;
+            background-color: transparent;
+            cursor: not-allowed;
+
+            .calendar-day-slider__weekday,
+            .calendar-day-slider__date,
+            app-load-percent {
+                color: tokens.$default-300 !important;
+            }
+        }
+
+        &--selected{
+            padding: tokens.$space-8;
+            border-color: tokens.$violet-700;
+            background-color: tokens.$violet-700;
+
+            .calendar-day-slider__weekday {
+                color: tokens.$violet-200;
+            }
+
+            .calendar-day-slider__date,
+            app-load-percent {
+                color: tokens.$default-50 !important;
+            }
+        }
+    }
+
+    &__weekday{
+        margin: tokens.$space-0;
+        font: tokens.$font-caption-s;
+        color: tokens.$default-300;
+        text-transform: capitalize;
+    }
+
+    &__date{
+        margin: tokens.$space-0;
+        font: tokens.$font-subtitle-s;
+        color: tokens.$default-900;
+    }
+}
+
+:host-context([data-theme="dark"]) {
+    .calendar-day-slider__day {
+        border-color: darkTokens.$default-100;
+
+        app-load-percent {
+            color: darkTokens.$default-500;
+        }
+
+        &--no-record {
+            border: tokens.$border-1 solid darkTokens.$default-100;
+            background-color: transparent;
+
+            .calendar-day-slider__weekday,
+            .calendar-day-slider__date,
+            app-load-percent {
+                color: darkTokens.$default-500 !important;
+            }
+        }
+
+        &--selected {
+            border-color: darkTokens.$violet-700;
+            background-color: darkTokens.$violet-700;
+
+            .calendar-day-slider__weekday {
+                color: darkTokens.$violet-200;
+            }
+
+            .calendar-day-slider__date,
+            app-load-percent {
+                color: darkTokens.$default-50;
+            }
+        }
+    }
+
+    .calendar-day-slider__weekday {
+        color: darkTokens.$default-300;
+    }
+
+    .calendar-day-slider__date {
+        color: darkTokens.$default-900;
+    }
+}

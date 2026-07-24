@@ -1,0 +1,324 @@
+@use '@angular/material' as mat;
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.calendar{
+    .base-box{
+        .control-body{
+            display: flex;
+            align-items: center;
+            gap: tokens.$space-16;
+
+            .form-group{
+                mat-form-field{
+                    max-width: 100px;
+                }
+            }
+        }
+
+        .calendar-controls{
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: tokens.$space-24;
+
+            .calendar-header{
+                display: flex;
+                align-items: center;
+                gap: tokens.$space-4;
+
+                .calendar-header-info{
+                    display: flex;
+                    align-items: center;
+                    gap: tokens.$space-4;
+
+                    img{
+                        vertical-align: middle;
+                    }
+                }
+
+                button ,button:not([mat-stroked-button]):focus:not(.mat-button-toggle-button):focus:not(.mdc-icon-button):focus,
+                 button:not([mat-stroked-button]):active:not(.mat-button-toggle-button):active:not(.mdc-icon-button):active {
+                    background-color: transparent !important;
+                    border: none !important;
+                }
+
+                h3{
+                    font: tokens.$font-h3;
+                    margin: 0;
+                }
+
+                .mobile-view-select{
+                    mat-form-field{
+                        width: 91px;
+                        height: 26px;
+                    }
+                }
+            }
+        }
+    }
+
+    .day-selection-entry{
+        display: flex;
+        align-items: center;
+        gap: tokens.$space-8;
+        color: tokens.$violet-700 !important;
+        font: tokens.$font-button-l;
+    }
+
+    .day-selection-toggle{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        width: 100%;
+        gap: tokens.$space-8;
+
+        &__title{
+            font: tokens.$font-subtitle-m;
+            color: tokens.$default-950;
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__cancel{
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            gap: tokens.$space-8;
+            color: tokens.$error-700 !important;
+            font: tokens.$font-button-l;
+            white-space: nowrap;
+        }
+    }
+
+    .day-selection-footer{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: tokens.$space-16;
+        padding: tokens.$space-8 tokens.$space-16;
+        background: tokens.$violet-50;
+        border-radius: tokens.$radius-16;
+        margin-top: tokens.$space-16;
+
+
+        button{
+            font: tokens.$font-button-l;
+            color: tokens.$default-50 !important;
+        }
+
+        .title{
+            font: tokens.$font-subtitle-s;
+            color: tokens.$default-900;
+        }
+    }
+}
+
+[data-theme="dark"] app-calendar {
+    .calendar {
+        .calendar-controls .calendar-header h3 {
+            color: darkTokens.$default-50;
+        }
+
+        mat-button-toggle-group {
+            --mat-button-toggle-text-color: #{darkTokens.$default-200};
+            --mat-button-toggle-selected-state-text-color: #{darkTokens.$default-50};
+            --mat-button-toggle-selected-state-background-color: #{darkTokens.$violet-700};
+            --mat-button-toggle-divider-color: #{darkTokens.$default-700};
+        }
+
+        mat-button-toggle:not(.mat-button-toggle-checked) button {
+            color: darkTokens.$default-200 !important;
+        }
+
+        .form-group mat-form-field {
+            .mat-mdc-select-value,
+            .mat-mdc-select-value-text {
+                color: darkTokens.$default-50 !important;
+            }
+        }
+
+        .day-selection-toggle__title {
+            color: darkTokens.$default-950;
+        }
+
+        .day-selection-footer {
+            background: darkTokens.$violet-50;
+        }
+    }
+}
+
+@media (max-width: 800px) {
+    .calendar .base-box {
+        .calendar-controls {
+            flex-direction: column;
+            gap: tokens.$space-4;
+            margin-bottom: tokens.$space-0;
+
+            .calendar-header {
+                justify-content: space-between;
+                width: 100%;
+
+                .mobile-view-select {
+                    .mdc-text-field--outlined .mat-mdc-form-field-infix, .mdc-text-field--no-label .mat-mdc-form-field-infix {
+                        padding: tokens.$space-4 tokens.$space-8;
+                        min-height: 26px;
+                    }
+                }
+
+                h3 {
+                    font: tokens.$font-h5;
+                }
+            }
+        }
+
+        .control-body {
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: tokens.$space-4;
+
+            .form-group {
+                width: 100%;
+
+                mat-form-field {
+                    max-width: 100%;
+                    width: 100%;
+                }
+            }
+        }
+
+        .view-toggle {
+            width: 100%;
+            display: flex;
+
+            .mat-button-toggle {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+    }
+}
+
+html {
+    @include mat.button-toggle-overrides((
+        disabled-selected-state-background-color: tokens.$violet-700,
+        height: 40px,
+        shape: tokens.$space-4,
+        text-color: tokens.$default-800,
+        label-text-size: 14px,
+        disabled-selected-state-text-color: tokens.$default-50,
+        disabled-state-background-color: tokens.$violet-700,
+        selected-state-background-color: tokens.$violet-700,
+        selected-state-text-color: tokens.$default-50,
+        divider-color: tokens.$default-100,
+    ));
+
+    @include mat.select-overrides((
+        panel-background-color: tokens.$default-50,
+        placeholder-text-color: tokens.$default-800,
+        trigger-text-font: tokens.$font-body-s,
+        enabled-trigger-text-color: tokens.$default-800,
+    ));
+
+    @include mat.button-overrides((
+        filled-container-color: tokens.$violet-700,
+    ));
+}
+
+.form-group .mdc-text-field--no-label {
+    font: tokens.$font-body-s;
+    color: tokens.$default-800;
+}
+
+.mat-mdc-form-field {
+    width: 300px;
+    height: 40px;
+
+    .mat-mdc-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-mdc-text-field-wrapper {
+        height: 40px;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
+        display: none;
+    }
+
+    .mdc-text-field--outlined .mat-mdc-form-field-infix, .mdc-text-field--no-label .mat-mdc-form-field-infix {
+        padding: tokens.$space-8 tokens.$space-12;
+        min-height: 40px;
+    }
+}
+
+.mat-mdc-option {
+    padding: 0 tokens.$space-8 !important;
+    min-height: 40px;
+}
+
+.mat-mdc-option.mdc-list-item {
+    min-height: 40px;
+}
+
+.mat-mdc-select-panel-above div.mat-mdc-select-panel,
+.cdk-overlay-pane:not(.mat-mdc-select-panel-above) div.mat-mdc-select-panel {
+    margin: tokens.$space-4 tokens.$space-0 !important;
+    padding: tokens.$space-8 !important;
+    border-radius: tokens.$radius-8 !important;
+    display: flex !important;
+    gap: tokens.$space-8 !important;
+    flex-direction: column !important;
+    box-sizing: border-box;
+    min-height: 40px;
+
+    .mat-mdc-option {
+        padding: 0 tokens.$space-8 !important;
+        min-height: 40px;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: tokens.$radius-8;
+    }
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: white !important;
+    border: 1px solid tokens.$default-200 !important;
+    overflow: auto;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+.mat-mdc-select-trigger {
+    width: 99%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: tokens.$space-12 !important;
+}
+
+.mat-mdc-select-value {
+    width: 92% !important;
+}
+
+.mdc-text-field--outlined {
+    padding: 0 !important;
+
+    &:hover {
+        font: tokens.$font-body-s;
+    }
+
+    &:hover:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) .mat-mdc-notch-piece {
+        border-color: tokens.$violet-700 !important;
+        border-width: tokens.$border-1 !important;
+    }
+
+    &.mdc-text-field--focused .mat-mdc-notch-piece {
+        border-width: tokens.$border-1 !important;
+    }
+}
+
+.mat-mdc-select-placeholder {
+    padding-left: tokens.$space-12 !important;
+}

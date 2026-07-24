@@ -1,0 +1,36 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.day-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+.day-off-overlay {
+    position: absolute;
+    inset: 0;
+    background: tokens.$default-100;
+    border-radius: tokens.$radius-4;
+    pointer-events: none;
+    left: tokens.$space-6;
+}
+
+.day-off-overlay .label {
+    position: absolute;
+    color: tokens.$default-800;
+    font: tokens.$font-button-m;
+    top: tokens.$space-6;
+    left: tokens.$space-8;
+}
+
+@media (max-width: 800px) {
+    .day-off-overlay {
+        left: tokens.$space-4;
+    }
+
+    .day-off-overlay .label {
+        font: tokens.$font-caption-l;
+        top: tokens.$space-4;
+        left: tokens.$space-4;
+    }
+}

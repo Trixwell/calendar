@@ -1,0 +1,222 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+.calendar-month {
+    .calendar {
+        margin-top: tokens.$space-4;
+
+
+        &-day:nth-child(7n+1):nth-last-child(-n+7) {
+            border-bottom-left-radius: tokens.$radius-16;
+        }
+
+        &-day:nth-child(7n):nth-last-child(-n+7) {
+            border-bottom-right-radius: tokens.$radius-16;
+        }
+
+        &-day{
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            transition: background-color 0.25s ease, transform 0.2s ease;
+            border-radius: tokens.$radius-4;
+            width: 100%;
+
+            &.previous-month-day, &.future-month-day{
+                color: tokens.$default-300;
+            }
+
+            &.status-partialavailability{
+                background-image: repeating-linear-gradient(
+                    130deg,
+                    rgba(tokens.$default-700, 0.15) 0, rgba(tokens.$default-700, 0.15) 1px,
+                    transparent 2px, transparent 8px
+                );
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+
+            &.status-sickleave{
+                background: tokens.$error-50;
+            }
+
+            &.status-vacation{
+                background: tokens.$warning-50;
+            }
+
+            &.working-day{
+                background: tokens.$violet-50;
+            }
+
+            &.time-off{
+                background: tokens.$default-100;
+            }
+
+            &.selected-day{
+                background: tokens.$violet-200;
+                border-radius: tokens.$radius-4;
+                color: tokens.$default-700
+            }
+
+            &.today{
+                border-radius: 50%;
+                background: tokens.$violet-700;
+                color: tokens.$default-50;
+            }
+
+            span{
+                font: tokens.$font-body-s;
+                text-align: center;
+                flex: 1;
+
+                app-load-indicator{
+                    position: absolute;
+                    top: tokens.$space-4;
+                    right: tokens.$space-4;
+                }
+            }
+        }
+
+        &-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: tokens.$space-40;
+            align-items: center;
+            gap: tokens.$space-4;
+            margin-bottom: tokens.$space-4;
+
+            .weekday-selected{
+                background: tokens.$violet-200;
+                border-radius: tokens.$radius-4;
+            }
+        }
+
+        &-day-of-week {
+            user-select: none;
+            cursor: pointer;
+            font: tokens.$font-button-m;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+
+            &.single-select{
+                cursor: default;
+            }
+        }
+
+        &-day-of-week:first-of-type{
+            border-top-left-radius: tokens.$radius-16;
+        }
+
+        &-day-of-week:last-of-type{
+            border-top-right-radius: tokens.$radius-16;
+        }
+
+        &-body {
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: tokens.$space-40;
+            align-items: center;
+            gap: tokens.$space-4;
+            justify-items: center;
+        }
+    }
+
+}
+
+:host-context([data-theme="dark"]) {
+    .calendar-month {
+        .calendar-day-of-week {
+            color: darkTokens.$default-200;
+        }
+
+        .calendar-day {
+            color: darkTokens.$default-50;
+
+            &.previous-month-day,
+            &.future-month-day {
+                color: darkTokens.$default-500;
+                background: transparent;
+            }
+
+            &.working-day:not(.today) {
+                background: darkTokens.$violet-50;
+                color: darkTokens.$default-50;
+            }
+
+            &.time-off:not(.today) {
+                background: darkTokens.$default-900;
+                color: darkTokens.$default-400;
+            }
+
+            &.selected-day:not(.today) {
+                background: darkTokens.$default-700;
+                color: darkTokens.$default-50;
+            }
+
+            &.today,
+            &.today.working-day,
+            &.today.time-off {
+                border-radius: 50%;
+                background: darkTokens.$violet-700;
+                color: darkTokens.$default-50;
+            }
+
+            &.status-sickleave {
+                background: darkTokens.$error-50;
+                color: darkTokens.$default-50;
+            }
+
+            &.status-vacation {
+                background: darkTokens.$warning-50;
+                color: darkTokens.$default-50;
+            }
+
+            span {
+                color: inherit;
+            }
+        }
+
+        .weekday-selected {
+            background: darkTokens.$default-700;
+            color: darkTokens.$default-50;
+        }
+    }
+}
+
+@media (max-width: 800px) {
+    .calendar-month .calendar {
+        &-header {
+            grid-auto-rows: tokens.$space-32;
+            gap: tokens.$space-2;
+        }
+
+        &-day-of-week {
+            font: tokens.$font-caption-m;
+        }
+
+        &-body {
+            grid-auto-rows: tokens.$space-48;
+            gap: tokens.$space-2;
+        }
+
+        &-day span {
+            font: tokens.$font-caption-m;
+        }
+
+        &-day {
+            width: 48px;
+            height: 48px;
+
+            &.today {
+                border-radius: tokens.$radius-8;
+            }
+        }
+    }
+}

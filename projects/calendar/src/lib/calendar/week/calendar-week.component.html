@@ -1,0 +1,70 @@
+@if (isMobile()) {
+    <app-records-summary [taskList]="periodTaskList()" />
+}
+
+<app-calendar-grid
+    [mode]="CalendarView.WEEK"
+    [dates]="weekDays()"
+    [events]="taskList()"
+    [startHour]="toHour(todaySchedule?.start_time ?? '08:00')"
+    [endHour]="toHour(todaySchedule?.end_time   ?? '20:00')"
+    [hourHeight]="isMobile() ? 56 : 60"
+    [onSlotClick]="onSlotClick"
+    [onHeaderClick]="onDayHeader"
+    [onRangeSelect]="onRangeSelect"
+    [onEventDrop]="onEventDrop"
+>
+    <ng-template #dayCol let-day let-events="events">
+        <div>
+
+            @if (isFullDayOff(day, taskList())) {
+                <div class="day-off-overlay"
+                     (mousedown)="$event.stopPropagation(); $event.preventDefault()"
+                     (click)="$event.stopPropagation(); $event.preventDefault()"
+                     (dblclick)="$event.stopPropagation(); $event.preventDefault()"
+                     (touchstart)="$event.stopPropagation(); $event.preventDefault()">
+                    <span class="label">{{ getDayOffComment(day, taskList()) }}</span>
+                </div>
+            }
+
+            @if (!isFullDayOff(day, taskList())) {
+                @for (event of events; track event.id) {
+                    <div class="event-anchor">
+                        @if (!isMobile()) {
+                            <div
+                                class="event-wrapper"
+                                cdkDrag
+                                [cdkDragData]="event"
+                                cdkDragBoundary=".grid-body"
+                                (cdkDragStarted)="calendarGrid.onEventDragStarted($event)"
+                                (cdkDragEnded)="calendarGrid.onEventDragEnded($event)"
+                                [style.top.px]="event.top"
+                                [style.height.px]="event.height">
+                                <app-calendar-event
+                                    [event]="event"
+                                    [top]="event.top"
+                                    [height]="event.height"
+                                    [color]="getColor(event, user())">
+                                </app-calendar-event>
+                            </div>
+                        }
+
+                        @if (isMobile()) {
+                            <div
+                                class="event-wrapper"
+                                [style.top.px]="event.top"
+                                [style.height.px]="event.height">
+                                <app-calendar-event
+                                    [event]="event"
+                                    [top]="event.top"
+                                    [height]="event.height"
+                                    [color]="getColor(event, user())">
+                                </app-calendar-event>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </ng-template>
+</app-calendar-grid>
