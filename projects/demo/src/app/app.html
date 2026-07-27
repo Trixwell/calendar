@@ -1,3 +1,6 @@
 <main class="demo-shell">
-  <app-calendar />
+  <app-calendar
+    (daysConfirmed)="onDaysConfirmed($event)"
+    (dateSelected)="onDateSelected($event)"
+    (rangeSelected)="onRangeSelected($event)" />
 </main>

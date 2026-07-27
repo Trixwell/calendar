@@ -1,0 +1,21 @@
+<ng-template #contentTpl>
+    <ng-content></ng-content>
+</ng-template>
+
+@if (isMobile()) {
+    <app-bottom-sheet-modal #bottomSheet [allowClose]="allowClose()" (closed)="onBottomSheetClosed()">
+        <ng-container *ngTemplateOutlet="contentTpl"></ng-container>
+    </app-bottom-sheet-modal>
+} @else {
+    <div class="modal">
+        <div class="content">
+            @if (allowClose()) {
+                <button mat-icon-button class="close-button" (click)="close()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+            <ng-container *ngTemplateOutlet="contentTpl"></ng-container>
+        </div>
+    </div>
+    <div class="modal-background"></div>
+}

@@ -1,0 +1,54 @@
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+:host {
+    display: block;
+}
+
+.date-picker-modal {
+    padding: tokens.$space-24;
+
+    @media (max-width: 800px) {
+        padding: tokens.$space-0;
+    }
+
+    &__title {
+        margin: 0 0 tokens.$space-20 0;
+        font: tokens.$font-h4;
+        color: tokens.$default-900;
+        text-align: center;
+    }
+
+    &__footer {
+        margin-top: tokens.$space-24;
+
+        button {
+            width: 100%;
+        }
+    }
+}
+
+::ng-deep {
+    .calendar-month {
+        > span {
+            display: none;
+        }
+    }
+
+    app-calendar-month .calendar-header {
+        border-bottom: tokens.$border-1 solid tokens.$default-100;
+    }
+}
+
+[data-theme="dark"] :host {
+    .date-picker-modal {
+        &__title,
+        &__month {
+            color: darkTokens.$default-50 !important;
+        }
+    }
+
+    ::ng-deep app-calendar-month .calendar-header {
+        border-bottom-color: darkTokens.$default-100;
+    }
+}

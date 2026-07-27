@@ -9,4 +9,16 @@ import { CalendarComponent } from 'calendar';
 })
 export class App {
   protected readonly title = signal('demo');
+
+  onDaysConfirmed(days: Date[]): void {
+    console.log('daysConfirmed', days);
+  }
+
+  onDateSelected(date: Date): void {
+    console.log('dateSelected', date);
+  }
+
+  onRangeSelected(range: { start: Date; end: Date }): void {
+    console.log('rangeSelected', range);
+  }
 }

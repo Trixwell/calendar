@@ -9,10 +9,10 @@
     [startHour]="toHour(todaySchedule?.start_time ?? '08:00')"
     [endHour]="toHour(todaySchedule?.end_time   ?? '20:00')"
     [hourHeight]="isMobile() ? 56 : 60"
-    [onSlotClick]="onSlotClick"
-    [onHeaderClick]="onDayHeader"
-    [onRangeSelect]="onRangeSelect"
-    [onEventDrop]="onEventDrop"
+    [onSlotClick]="onSlotClick()"
+    [onHeaderClick]="onDayHeader()"
+    [onRangeSelect]="onRangeSelect()"
+    [onEventDrop]="onEventDrop()"
 >
     <ng-template #dayCol let-day let-events="events">
         <div>

@@ -1,19 +1,7 @@
-@use '@angular/material' as mat;
+@use '../../calendar/src/styles/theme';
 
 * {
   box-sizing: border-box;
-}
-
-html {
-  height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$violet-palette,
-      tertiary: mat.$cyan-palette,
-    ),
-    typography: Manrope,
-    density: 0,
-  ));
 }
 
 body {

@@ -230,8 +230,8 @@
                     }
 
                     &.today ::ng-deep .cell .head .num {
-                        width: 24px;
-                        height: 24px;
+                        width: unset;
+                        height: unset;
                     }
                 }
             }

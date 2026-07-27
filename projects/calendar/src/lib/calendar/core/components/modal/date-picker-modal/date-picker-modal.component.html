@@ -1,0 +1,30 @@
+<app-modal #modal>
+    <div class="date-picker-modal">
+        <div class="date-picker-modal__header">
+            <h3 class="date-picker-modal__title">Перейти до дати</h3>
+
+            <app-toggle-date-bar
+                [(day)]="viewDate"
+                [(view)]="pickerView"
+                [(year)]="pickerYear"
+                [(startDate)]="pickerStart"
+                [(endDate)]="pickerEnd">
+            </app-toggle-date-bar>
+        </div>
+
+        <app-calendar-month
+            [current_date]="viewDate()"
+            [singleSelect]="true"
+            [allowPastSelection]="true"
+            [selectDay]="selectDay()">
+        </app-calendar-month>
+
+        <div class="date-picker-modal__footer">
+            <button mat-stroked-button
+                    (click)="onAdjustDaysClick()">
+                <img src="assets/icons/calendar-edit-violet.svg" alt="calendar-edit">
+                Налаштувати дні
+            </button>
+        </div>
+    </div>
+</app-modal>

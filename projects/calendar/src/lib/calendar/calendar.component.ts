@@ -4,6 +4,7 @@ import {
     inject,
     Input, OnInit, output,
     signal,
+    ViewChild,
     ViewEncapsulation, WritableSignal
 } from '@angular/core';
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
@@ -28,6 +29,7 @@ import {MatSelect} from "@angular/material/select";
 import {CALENDAR_DATA} from "../providers/calendar-data.provider";
 import {CALENDAR_USER} from "../providers/calendar-user.provider";
 import {CALENDAR_VIEWPORT} from "../providers/calendar-viewport.provider";
+import {DatePickerModalComponent} from "./core/components/modal/date-picker-modal/date-picker-modal.component";
 
 @Component({
     selector: 'app-calendar',
@@ -44,6 +46,7 @@ import {CALENDAR_VIEWPORT} from "../providers/calendar-viewport.provider";
         MatOption,
         MatSelect,
         MatButtonModule,
+        DatePickerModalComponent,
     ],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
@@ -64,8 +67,10 @@ export class CalendarComponent implements OnInit{
     daySelectionMode = signal<boolean>(false);
     selectedDays = signal<Date[]>([]);
     daysConfirmed = output<Date[]>();
+    dateSelected = output<Date>();
+    rangeSelected = output<{ start: Date; end: Date }>();
 
-    confirmed = signal<boolean>(false);
+    @ViewChild('datePicker') datePickerModal!: DatePickerModalComponent;
 
     private readonly calendarData = inject(CALENDAR_DATA);
     private readonly userProvider = inject(CALENDAR_USER);
@@ -122,21 +127,24 @@ export class CalendarComponent implements OnInit{
         this.view.set(CalendarView.DAY);
     };
 
+    onRangeSelect = (start: Date, end: Date) => {
+        this.rangeSelected.emit({start, end});
+    };
+
     enterDaySelectionMode(): void {
         this.selectedDays.set([]);
-        this.confirmed.set(false);
         this.daySelectionMode.set(true);
     }
 
     cancelDaySelection(): void {
         this.daySelectionMode.set(false);
         this.selectedDays.set([]);
-        this.confirmed.set(false);
     }
 
     confirmDaySelection(): void {
         this.daysConfirmed.emit(this.selectedDays());
-        this.confirmed.set(true);
+        this.daySelectionMode.set(false);
+        this.selectedDays.set([]);
     }
 
     setView(view?: CalendarView){
@@ -155,6 +163,26 @@ export class CalendarComponent implements OnInit{
         }
 
         return this;
+    }
+
+    onCalendarIconClick(): void {
+        this.datePickerModal.open();
+    }
+
+    onDateChosen(date: Date): void {
+        this.day.set(date);
+        this.view.set(CalendarView.DAY);
+        this.dateSelected.emit(date);
+    }
+
+    onWeekDayHeader = (date: Date) => {
+        this.dateSelected.emit(date);
+    };
+
+    onAdjustDaysRequested(): void {
+        this.view.set(CalendarView.MONTH);
+        this.daySelectionMode.set(true);
+        this.selectedDays.set([]);
     }
 
     weekStart = computed(() => startOfWeek(this.day(), { weekStartsOn: 1 }));

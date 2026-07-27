@@ -1,0 +1,320 @@
+@use '@angular/material' as mat;
+@use 'tokens' as tokens;
+@use 'dark-tokens' as darkTokens;
+
+@mixin light-theme {
+    --mat-button-outlined-label-text-color: #{tokens.$default-50};
+
+    @include mat.button-toggle-overrides((
+        disabled-selected-state-background-color: tokens.$violet-700,
+        height: 40px,
+        shape: tokens.$space-4,
+        text-color: tokens.$default-800,
+        label-text-size: 14px,
+        disabled-selected-state-text-color: tokens.$default-50,
+        disabled-state-background-color: tokens.$violet-700,
+        selected-state-background-color: tokens.$violet-700,
+        selected-state-text-color: tokens.$default-50,
+        divider-color: tokens.$default-100,
+    ));
+
+    @include mat.button-overrides((
+        filled-container-color: tokens.$violet-700,
+    ));
+}
+
+@mixin dark-theme {
+    @include mat.button-overrides((
+        filled-label-text-color: darkTokens.$default-50,
+        outlined-label-text-color: darkTokens.$violet-300,
+        protected-label-text-color: darkTokens.$default-50,
+        text-label-text-color: darkTokens.$default-50,
+        filled-container-color: darkTokens.$primary-violet,
+        outlined-outline-color: darkTokens.$default-600,
+        outlined-disabled-outline-color: darkTokens.$default-600,
+        filled-label-text-font: Manrope,
+        outlined-label-text-font: Manrope,
+        text-label-text-font: Manrope,
+        filled-label-text-size: 16px,
+        filled-label-text-weight: 600,
+        outlined-label-text-size: 14px,
+        outlined-label-text-weight: 600,
+        text-label-text-size: 14px,
+        text-label-text-weight: 600,
+    ));
+
+    @include mat.button-toggle-overrides((
+        text-color: darkTokens.$default-200,
+        selected-state-text-color: darkTokens.$default-50,
+        disabled-selected-state-text-color: darkTokens.$default-50,
+        disabled-selected-state-background-color: darkTokens.$violet-700,
+        disabled-state-background-color: darkTokens.$violet-700,
+        selected-state-background-color: darkTokens.$violet-700,
+        divider-color: darkTokens.$default-700,
+    ));
+}
+
+button {
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: tokens.$radius-8 !important;
+
+    &:not(.mat-mdc-button) {
+        font: tokens.$font-button-l !important;
+    }
+
+    .mdc-button__label {
+        display: flex;
+        align-items: center;
+        gap: tokens.$space-8;
+    }
+
+    .icon {
+        width: tokens.$space-20;
+        height: tokens.$space-20;
+        margin-right: tokens.$space-8;
+        vertical-align: middle;
+    }
+}
+
+button:not([mat-stroked-button]):not([mat-flat-button]):not([mat-raised-button]):not(.mat-mdc-button-base):focus:not(.mat-button-toggle-button):focus:not(.mdc-icon-button):focus,
+button:not([mat-stroked-button]):not([mat-flat-button]):not([mat-raised-button]):not(.mat-mdc-button-base):active:not(.mat-button-toggle-button):active:not(.mdc-icon-button):active {
+    color: tokens.$default-50;
+}
+
+button:not([matChipRemove],[mat-stroked-button]):not([mat-flat-button]):not([mat-raised-button]):not(.mat-mdc-button-base):not(.mat-button-toggle-button):hover:not(.mdc-icon-button):hover {
+    color: tokens.$default-50;
+}
+
+button[mat-flat-button]:not(:disabled):not(.outlined-button):hover,
+button[mat-raised-button]:not(:disabled):hover,
+.mat-mdc-unelevated-button:not(:disabled):hover,
+.mat-mdc-raised-button:not(:disabled):hover {
+    background-color: tokens.$violet-700 !important;
+
+    .mdc-button__label,
+    .mdc-button__label span {
+        color: tokens.$default-50 !important;
+    }
+}
+
+button[disabled] {
+    border: tokens.$default-200;
+}
+
+.mat-mdc-outlined-button:hover {
+    .mdc-button__label img {
+        filter: invert(214%) sepia(163%) saturate(1095%) hue-rotate(209deg) brightness(65%) contrast(99%);
+    }
+}
+
+[data-theme="light"] {
+    button[mat-stroked-button],
+    .mat-mdc-outlined-button:not(:disabled) {
+        border: tokens.$border-1 solid tokens.$violet-200 !important;
+
+        &:hover {
+            border: tokens.$border-1 solid tokens.$violet-500 !important;
+        }
+
+        &:focus {
+            border: tokens.$border-1 solid tokens.$violet-700 !important;
+        }
+    }
+
+    button[mat-stroked-button]:hover {
+        border: tokens.$border-2 solid tokens.$violet-500 !important;
+    }
+
+    button[mat-stroked-button]:focus {
+        border: tokens.$border-2 solid tokens.$violet-700 !important;
+    }
+
+    button[mat-stroked-button][disabled] {
+        background: tokens.$default-50;
+        border: tokens.$border-1 solid tokens.$default-200 !important;
+
+        .mdc-button__label {
+            color: tokens.$default-300;
+            display: flex;
+            gap: tokens.$space-4;
+        }
+    }
+
+    .mat-mdc-outlined-button {
+        .mdc-button__label {
+            --mat-button-outlined-label-text-color: white;
+            color: tokens.$violet-900;
+            font: tokens.$font-button-m;
+            display: flex;
+            gap: tokens.$space-4;
+        }
+    }
+}
+
+mat-button-toggle-group {
+    mat-button-toggle {
+        button {
+            font: tokens.$font-button-m !important;
+
+            .mat-button-toggle-label-content {
+                padding: 0 tokens.$space-32 !important;
+            }
+        }
+    }
+
+    .mat-button-toggle-button {
+        margin: 0 !important;
+    }
+}
+
+@media (max-width: 800px) {
+    mat-button-toggle-group {
+        mat-button-toggle {
+            button {
+                font: tokens.$font-caption-l !important;
+                height: 36px !important;
+
+                .mat-button-toggle-label-content {
+                    padding: 0 tokens.$space-8 !important;
+                }
+            }
+        }
+    }
+
+    mat-button-toggle-group.view-toggle {
+        border: none !important;
+        box-shadow: none !important;
+        background: tokens.$default-100;
+        border-radius: 12px !important;
+        width: 100%;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        padding: tokens.$space-0;
+
+        .mat-button-toggle-appearance-standard + .mat-button-toggle-appearance-standard {
+            border-left: none !important;
+        }
+
+        mat-button-toggle {
+            flex: 1;
+            min-width: 0;
+            border-radius: tokens.$radius-8 !important;
+            border: none !important;
+            background: transparent !important;
+
+            button {
+                font: tokens.$font-button-m !important;
+                height: 28px !important;
+                border-radius: tokens.$radius-8 !important;
+                background: transparent !important;
+                color: tokens.$default-800 !important;
+
+                .mat-button-toggle-label-content {
+                    padding: 0 tokens.$space-8 !important;
+                    line-height: 28px !important;
+                }
+            }
+
+            .mat-button-toggle-focus-overlay {
+                border-radius: tokens.$radius-8;
+            }
+
+            &.mat-button-toggle-checked {
+                background: tokens.$violet-700 !important;
+
+                button {
+                    color: tokens.$default-50 !important;
+                    font-weight: 700 !important;
+                }
+            }
+        }
+    }
+}
+
+[data-theme="dark"] {
+    @media (max-width: 800px) {
+        mat-button-toggle-group.view-toggle {
+            background: darkTokens.$default-800 !important;
+
+            mat-button-toggle {
+                button {
+                    color: darkTokens.$default-200 !important;
+                }
+
+                &.mat-button-toggle-checked {
+                    background: darkTokens.$violet-700 !important;
+
+                    button {
+                        color: darkTokens.$default-50 !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .mat-mdc-button-base,
+    .mat-mdc-button,
+    .mdc-button {
+        .mdc-button__label,
+        .mdc-button__label span {
+            color: darkTokens.$default-50 !important;
+        }
+    }
+
+    .mat-mdc-outlined-button:not(:disabled) .mdc-button__label,
+    .mat-mdc-outlined-button .mdc-button__label,
+    button.outlined-button .mdc-button__label,
+    button[mat-stroked-button] .mdc-button__label {
+        color: darkTokens.$violet-300 !important;
+        --mat-button-outlined-label-text-color: #{darkTokens.$violet-300} !important;
+    }
+
+    button[mat-flat-button]:not(.outlined-button) .mdc-button__label,
+    button[mat-raised-button] .mdc-button__label {
+        color: darkTokens.$default-50 !important;
+        --mat-button-filled-label-text-color: #{darkTokens.$default-50};
+    }
+
+    button[mat-flat-button]:not(:disabled):not(.outlined-button),
+    button[mat-raised-button]:not(:disabled),
+    .mat-mdc-unelevated-button:not(:disabled) {
+        .mdc-button__label {
+            color: darkTokens.$default-50 !important;
+        }
+    }
+
+    button[mat-flat-button]:not(:disabled):not(.outlined-button):hover,
+    button[mat-raised-button]:not(:disabled):hover,
+    .mat-mdc-unelevated-button:not(:disabled):hover,
+    .mat-mdc-raised-button:not(:disabled):hover {
+        background-color: darkTokens.$primary-violet !important;
+
+        .mdc-button__label,
+        .mdc-button__label span {
+            color: darkTokens.$default-50 !important;
+        }
+    }
+
+    button[mat-stroked-button],
+    .mat-mdc-outlined-button,
+    button.outlined-button {
+        --mat-button-outlined-outline-color: #{darkTokens.$default-600};
+        border: tokens.$border-1 solid darkTokens.$default-600 !important;
+        border-color: darkTokens.$default-600 !important;
+
+        &:hover:not(:disabled) {
+            border-color: darkTokens.$primary-violet !important;
+        }
+
+        &:focus:not(:disabled) {
+            border-color: darkTokens.$primary-violet !important;
+        }
+
+        .mdc-button__label {
+            color: darkTokens.$violet-300 !important;
+            --mat-button-outlined-label-text-color: #{darkTokens.$violet-300} !important;
+        }
+    }
+}

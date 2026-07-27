@@ -2,6 +2,16 @@
 @use 'tokens' as tokens;
 @use 'dark-tokens' as darkTokens;
 
+
+:root{
+  @include mat.select-overrides((
+    panel-background-color: tokens.$default-50,
+    placeholder-text-color: tokens.$default-800,
+    trigger-text-font: tokens.$font-body-s,
+    enabled-trigger-text-color: tokens.$default-800
+  ));
+}
+
 .calendar{
     .base-box{
         .control-body{

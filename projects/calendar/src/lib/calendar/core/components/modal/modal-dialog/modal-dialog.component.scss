@@ -1,0 +1,139 @@
+@use 'tokens' as token;
+@use 'dark-tokens' as darkTokens;
+
+:host {
+    display: none;
+
+    .modal {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 999;
+        overflow: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+        background: #DCDCDC66;
+        align-items: center;
+    }
+
+    .modal .content {
+        padding: token.$space-24;
+        background: token.$default-50;
+        height: fit-content;
+        overflow: auto;
+        box-shadow: 0 token.$space-4 token.$space-12 0 #00000014;
+        border-radius: token.$radius-16;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content {
+        position: relative;
+    }
+
+    .modal-background {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0.75;
+        z-index: 900;
+    }
+}
+
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.wrap-modal-body {
+    padding: token.$space-6;
+}
+
+@media (max-width: 2561px) and (min-width: 1580px) {
+    app-modal .modal .modal-body {
+        padding: token.$space-6 token.$space-8 token.$space-8 token.$space-8;
+        border-radius: token.$space-1;
+    }
+}
+
+
+@media (max-width: 1080px) {
+    app-modal .modal .modal-body {
+        width: 40vw;
+    }
+}
+
+@media (max-width: 768px) {
+    app-modal .modal .modal-body {
+        width: 60vw;
+    }
+}
+
+@media (max-width: 600px) {
+    app-modal .modal .modal-body {
+        width: 73vw;
+    }
+}
+
+@media (max-width: 516px) {
+    app-modal .modal .modal-body {
+        width: 80vw;
+    }
+}
+
+.content {
+    position: relative;
+}
+
+.close-button {
+    position: absolute !important;
+    right: token.$space-8;
+    top: token.$space-16;
+    z-index: 1;
+    color: token.$default-400;
+    background: transparent !important;
+    --mat-icon-button-state-layer-color: transparent !important;
+
+    .mat-mdc-button-persistent-ripple::before {
+        background: transparent !important;
+    }
+}
+
+:host-context([data-theme="dark"]) {
+    .modal {
+        background: rgb(14 18 28 / 0.75);
+    }
+
+    .modal .content {
+        background: darkTokens.$default-900;
+        color: darkTokens.$default-50;
+        border: 1px solid darkTokens.$default-700;
+        box-shadow: none;
+    }
+
+    .close-button {
+        background: transparent !important;
+        color: darkTokens.$default-300 !important;
+
+        mat-icon,
+        .mat-icon {
+            color: darkTokens.$default-300 !important;
+        }
+
+        &:hover {
+            background: transparent !important;
+            opacity: 0.7;
+
+            mat-icon,
+            .mat-icon {
+                color: darkTokens.$default-50 !important;
+            }
+        }
+    }
+}

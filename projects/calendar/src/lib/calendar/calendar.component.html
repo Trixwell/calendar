@@ -12,6 +12,9 @@
                 } @else {
                     <div class="calendar-header-info">
                         <h3>Календар</h3>
+                        <button (click)="onCalendarIconClick()">
+                            <img src="assets/icons/calendar-icon.svg" alt="desc">
+                        </button>
                     </div>
                 }
 
@@ -85,7 +88,9 @@
                         [startDate]="weekStart()"
                         [endDate]="weekEnd()"
                         [user]="user"
-                        [taskList]="task_list">
+                        [taskList]="task_list"
+                        [onRangeSelect]="onRangeSelect"
+                        [onDayHeader]="onWeekDayHeader">
                     </app-calendar-week>
                 }
 
@@ -104,17 +109,15 @@
                     </div>
 
                     @if (isMobile() && daySelectionMode()) {
-                        @if (!confirmed()) {
-                            <div class="day-selection-footer">
-                                <span class="title">Обрано {{ selectedDays().length }} днів</span>
-                                <button mat-flat-button color="primary"
-                                        [disabled]="!selectedDays().length"
-                                        (click)="confirmDaySelection()">
-                                    Далі
-                                    <img src="assets/icons/arrow-right-white.svg" alt="arrow-right">
-                                </button>
-                            </div>
-                        }
+                        <div class="day-selection-footer">
+                            <span class="title">Обрано {{ selectedDays().length }} днів</span>
+                            <button mat-flat-button color="primary"
+                                    [disabled]="!selectedDays().length"
+                                    (click)="confirmDaySelection()">
+                                Далі
+                                <img src="assets/icons/arrow-right-white.svg" alt="arrow-right">
+                            </button>
+                        </div>
                     }
                 }
 
@@ -122,7 +125,8 @@
                     <app-calendar-day
                         [day]="day"
                         [user]="user"
-                        [taskList]="task_list">
+                        [taskList]="task_list"
+                        [onRangeSelect]="onRangeSelect">
                     </app-calendar-day>
                 }
 
@@ -137,4 +141,10 @@
             }
         </div>
     </div>
+
+    <app-date-picker-modal
+        #datePicker
+        (dateChosen)="onDateChosen($event)"
+        (adjustDays)="onAdjustDaysRequested()">
+    </app-date-picker-modal>
 </section>

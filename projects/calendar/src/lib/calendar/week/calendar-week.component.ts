@@ -71,22 +71,10 @@ export class CalendarWeekComponent implements OnInit{
         return this;
     }
 
-    onSlotClick = (date: Date) => {
-        console.log(date);
-    };
-
-    onEventDrop = (_task: MasterTask, oldStart: Date, newStart: Date) => {
-        console.log(oldStart, newStart);
-    };
-
-    onDayHeader = (date: Date) => {
-        console.log(date);
-    };
-
-    onRangeSelect = (start: Date, end: Date) => {
-        console.log(start);
-        console.log(end);
-    };
+    onSlotClick = input<(date: Date) => void>(() => {});
+    onEventDrop = input<(task: MasterTask, oldStart: Date, newStart: Date) => void>(() => {});
+    onDayHeader = input<(date: Date) => void>(() => {});
+    onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
     toHour(fullTime: string): number {
         const hourStr = fullTime.split(':')[0];

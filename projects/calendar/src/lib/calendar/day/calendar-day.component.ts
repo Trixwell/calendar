@@ -52,18 +52,9 @@ export class CalendarDayComponent implements OnInit{
         return this.taskList().filter(t => t.assign_time.startsWith(isoDay));
     });
 
-    onSlotClick = (date: Date) => {
-        console.log(date);
-    };
-
-    onDayHeader = (date: Date) => {
-        this.day.set(date);
-    };
-
-    onRangeSelect = (start: Date, end: Date) => {
-        console.log(start);
-        console.log(end);
-    };
+    onSlotClick = input<(date: Date) => void>(() => {});
+    onDayHeader = input<(date: Date) => void>((date: Date) => this.day.set(date));
+    onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
     toHour(fullTime: string): number {
         const hourStr = fullTime.split(':')[0];

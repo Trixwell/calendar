@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+@use 'buttons';
+@use 'select';
+
+html {
+    height: 100%;
+
+    @include mat.theme((
+        color: (
+            primary: mat.$violet-palette,
+            tertiary: mat.$cyan-palette,
+        ),
+        typography: Manrope,
+        density: 0,
+    ));
+
+    @include buttons.light-theme;
+    @include select.light-theme;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    @include buttons.dark-theme;
+    @include select.dark-theme;
+}

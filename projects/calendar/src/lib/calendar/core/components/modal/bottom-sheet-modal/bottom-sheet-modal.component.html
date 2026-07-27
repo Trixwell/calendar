@@ -1,0 +1,22 @@
+<div class="overlay" (click)="onOverlayClick($event)">
+    <div #sheet
+         class="sheet"
+         [style.border-radius]="isFullscreen ? '0' : ''">
+        <div class="drag-handle"
+             (touchstart)="onDragStart($event)"
+             (touchmove)="onDragMove($event)"
+             (touchend)="onDragEnd()">
+            <svg width="48" height="4" viewBox="0 0 48 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="48" height="4" rx="2" fill="#D1D5DB"/>
+            </svg>
+        </div>
+        @if (allowClose()) {
+            <button mat-icon-button class="close-button" (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+        <div class="sheet-content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>
