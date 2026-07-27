@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, input, model} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {eachDayOfInterval, endOfMonth, startOfMonth} from 'date-fns';
+import {eachDayOfInterval, endOfMonth, startOfDay, startOfMonth} from 'date-fns';
 import {MasterTask} from '../../entity';
 import {LoadPercentComponent} from './load-percent/load-percent.component';
 import {hasRecord as hasRecordUtil} from '../../../../util/util';
@@ -20,7 +20,7 @@ export class CalendarDaySliderComponent {
     taskList = input<MasterTask[]>([]);
 
     get monthDays(): Date[] {
-        const day = this.day();
+        const day = startOfDay(this.day());
         return eachDayOfInterval({ start: startOfMonth(day), end: endOfMonth(day) });
     }
 

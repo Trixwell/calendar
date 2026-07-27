@@ -51,7 +51,7 @@
                         [(view)]="view"
                         [(year)]="year"
                         [(day)]="day"
-                        [taskList]="task_list">
+                        [taskList]="task_list()">
                     </app-toggle-date-bar>
                 </div>
 
@@ -79,60 +79,56 @@
                         [startDate]="start_date"
                         [endDate]="end_date"
                         [dayDbClick]="dayDbClick"
-                        [taskList]="task_list"
+                        [taskList]="task_list()"
                         [(selectedDays)]="selectedDays">
                     </app-calendar-year>
                 }
 
                 @case(CalendarView.WEEK){
-                    <app-calendar-week
-                        [startDate]="weekStart()"
-                        [endDate]="weekEnd()"
-                        [user]="user"
-                        [taskList]="task_list"
-                        [onRangeSelect]="onRangeSelect"
-                        [onDayHeader]="onWeekDayHeader"
-                        (eventOpen)="onEventOpen($event)">
-                    </app-calendar-week>
+                    @if (user; as currentUser) {
+                        <app-calendar-week
+                            [startDate]="weekStart()"
+                            [endDate]="weekEnd()"
+                            [user]="currentUser"
+                            [taskList]="task_list()"
+                            [onRangeSelect]="onRangeSelect"
+                            [onDayHeader]="onWeekDayHeader"
+                            [(selectedDays)]="selectedDays"
+                            (eventOpen)="onEventOpen($event)">
+                        </app-calendar-week>
+                    }
                 }
 
                 @case(CalendarView.MONTH){
                     <div>
-                        <app-calendar-month
-                            [startDate]="monthStart()"
-                            [endDate]="monthEnd()"
-                            [user]="user"
-                            [(day)]="day"
-                            [(view)]="view"
-                            [taskList]="task_list"
-                            [selectionMode]="daySelectionMode()"
-                            [(selectedDays)]="selectedDays"
-                            (eventOpen)="onEventOpen($event)"
-                            (moreOpen)="onMoreOpen($event)">
-                        </app-calendar-month>
+                        @if (user; as currentUser) {
+                            <app-calendar-month
+                                [startDate]="monthStart()"
+                                [endDate]="monthEnd()"
+                                [user]="currentUser"
+                                [(day)]="day"
+                                [(view)]="view"
+                                [taskList]="task_list()"
+                                [selectionMode]="daySelectionMode()"
+                                [(selectedDays)]="selectedDays"
+                                (eventOpen)="onEventOpen($event)"
+                                (moreOpen)="onMoreOpen($event)">
+                            </app-calendar-month>
+                        }
                     </div>
-
-                    @if (isMobile() && daySelectionMode()) {
-                        <div class="day-selection-footer">
-                            <span class="title">Обрано {{ selectedDays().length }} днів</span>
-                            <button mat-flat-button color="primary"
-                                    [disabled]="!selectedDays().length"
-                                    (click)="confirmDaySelection()">
-                                Далі
-                                <img src="assets/icons/arrow-right-white.svg" alt="arrow-right">
-                            </button>
-                        </div>
-                    }
                 }
 
                 @case(CalendarView.DAY){
-                    <app-calendar-day
-                        [day]="day"
-                        [user]="user"
-                        [taskList]="task_list"
-                        [onRangeSelect]="onRangeSelect"
-                        (eventOpen)="onEventOpen($event)">
-                    </app-calendar-day>
+                    @if (user; as currentUser) {
+                        <app-calendar-day
+                            [day]="day"
+                            [user]="currentUser"
+                            [taskList]="task_list()"
+                            [onRangeSelect]="onRangeSelect"
+                            [(selectedDays)]="selectedDays"
+                            (eventOpen)="onEventOpen($event)">
+                        </app-calendar-day>
+                    }
                 }
 
                 @default {
@@ -140,12 +136,24 @@
                         [startDate]="start_date"
                         [endDate]="end_date"
                         [dayDbClick]="dayDbClick"
-                        [taskList]="task_list"
+                        [taskList]="task_list()"
                         [(selectedDays)]="selectedDays">
                     </app-calendar-year>
                 }
             }
         </div>
+
+        @if (isMobile() && daySelectionMode()) {
+            <div class="day-selection-footer">
+                <span class="title">Обрано {{ selectedDays().length }} днів</span>
+                <button mat-flat-button color="primary"
+                        [disabled]="!selectedDays().length"
+                        (click)="confirmDaySelection()">
+                    Далі
+                    <img src="assets/icons/arrow-right-white.svg" alt="arrow-right">
+                </button>
+            </div>
+        }
     </div>
 
     <app-date-picker-modal

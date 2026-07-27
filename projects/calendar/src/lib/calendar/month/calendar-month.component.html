@@ -5,7 +5,7 @@
 <app-calendar-grid-month
     [startDate]="startDate()"
     [taskList]="taskList()"
-    [schedule]="user().schedule"
+    [schedule]="user()?.schedule ?? null"
     [maxVisiblePerDay]="maxVisible()"
     [(selectedKeys)]="selectedDays"
     [selectionMode]="selectionMode()"

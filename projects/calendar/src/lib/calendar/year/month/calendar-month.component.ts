@@ -135,6 +135,11 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
         this.emitSelectDiffIdx([]);
     }
 
+    public resetSelection(): void {
+        this.selected_idx = [];
+        this.cdr.markForCheck();
+    }
+
     selectWeekday(colIndex: number, event?: MouseEvent): void {
         if (this.singleSelect()) {
             return;

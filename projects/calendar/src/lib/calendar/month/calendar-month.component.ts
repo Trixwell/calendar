@@ -73,7 +73,7 @@ export class CalendarMonthComponent {
 
     timeFreeSlotsCount(): number {
         const used = new Set(this.taskList().map(task => task.time_slot_id));
-        return this.user().timeSlotList.filter(slot => !used.has(slot.id)).length;
+        return (this.user()?.timeSlotList ?? []).filter(slot => !used.has(slot.id)).length;
     }
 
     protected readonly CalendarView = CalendarView;

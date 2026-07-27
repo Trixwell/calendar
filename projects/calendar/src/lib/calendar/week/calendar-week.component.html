@@ -13,6 +13,7 @@
     [onHeaderClick]="onDayHeader()"
     [onRangeSelect]="onRangeSelect()"
     [onEventDrop]="onEventDrop()"
+    [(selectedDates)]="selectedDays"
 >
     <ng-template #dayCol let-day let-events="events">
         <div>

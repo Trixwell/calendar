@@ -10,7 +10,7 @@
             <div
                 class="day-label"
                 [class.is-past]="isPastDate(date)"
-                [attr.data-date]="date.toISOString().slice(0,10)"
+                [attr.data-date]="date | date:'yyyy-MM-dd'"
                 [class.today]="isToday(date)"
                 [class.time-off]="isFullDayOff(date, events())"
                 [class.weekend]="isWeekend(date)"

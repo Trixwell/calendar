@@ -12,6 +12,7 @@
     [onSlotClick]="onSlotClick()"
     [onHeaderClick]="onDayHeader()"
     [onRangeSelect]="onRangeSelect()"
+    [(selectedDates)]="selectedDays"
 >
     <ng-template #dayCol let-day let-events="events">
         <ng-container>

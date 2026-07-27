@@ -2,7 +2,7 @@ import {
     AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef,
     Component, computed,
     ContentChild, effect,
-    ElementRef, inject, input, OnDestroy,
+    ElementRef, inject, input, model, OnDestroy,
     OnInit,
     signal,
     TemplateRef,
@@ -49,6 +49,8 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         (task: MasterTask, oldStart: Date, newStart: Date) => void
     >(() => {});
 
+    selectedDates = model<Date[]>([]);
+
     @ContentChild('dayCol', { static: false }) dayColTemplate!: TemplateRef<any>;
     @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLElement>;
     @ViewChild('dayHeaderContainer', { read: ElementRef, static: true })
@@ -57,7 +59,6 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     timerLine!: Subscription;
     nowLineTop = 0;
     currentTimeLine = new Date();
-    currentDate: Date | [] = [];
 
     moved = false;
     isDragging = false;
@@ -94,6 +95,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         effect(() => {
             this.datesRangeKey();
             this.resetSelectionState();
+            this.selectedDates.set([]);
         });
     }
 
@@ -281,18 +283,27 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     dayHeaderClick(date: Date){
         if (isPastDate(date)) return this;
 
+        this.toggleSelectedDate(date);
         this.onHeaderClick()(date);
-        this.currentDate = date;
 
         return this;
     }
 
-    isSelected(date: Date): boolean {
-        if (Array.isArray(this.currentDate)) {
-            return this.currentDate.some(d => d === date.toDateString());
-        }
+    private hasDate(list: Date[], d: Date): boolean {
+        return list.some(x => isSameDay(x, d));
+    }
 
-        return this.currentDate.toDateString() === date.toDateString();
+    private toggleSelectedDate(date: Date): void {
+        const list = this.selectedDates();
+        if (this.hasDate(list, date)) {
+            this.selectedDates.set(list.filter(d => !isSameDay(d, date)));
+        } else {
+            this.selectedDates.set([...list, new Date(date)]);
+        }
+    }
+
+    isSelected(date: Date): boolean {
+        return this.hasDate(this.selectedDates(), date);
     }
 
     showNowLine(): boolean {

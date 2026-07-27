@@ -1,6 +1,7 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    effect,
     Input,
     model,
     OnChanges,
@@ -32,6 +33,12 @@ export class CalendarYearComponent implements OnChanges {
 
     constructor(){
         this.setMonthList();
+
+        effect(() => {
+            if (this.selectedDays().length === 0) {
+                this.months_components?.forEach(m => m.resetSelection());
+            }
+        });
     }
 
     selectDay = (date: Date, unset: boolean) => {

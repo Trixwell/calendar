@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, OnInit, output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, model, OnInit, output, ViewChild} from '@angular/core';
 import {MasterTask} from "../core/entity";
 import {DaySchedule, User} from "../core/entity";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
@@ -26,6 +26,7 @@ export class CalendarWeekComponent implements OnInit{
     user = input.required<User>();
     startDate = input<Date>(new Date());
     endDate = input<Date>(new Date());
+    selectedDays = model<Date[]>([]);
     eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
     isMobile;
 

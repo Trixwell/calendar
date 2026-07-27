@@ -58,19 +58,20 @@ export class CalendarComponent implements OnInit{
     @Input() end_date: Date = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
     day:        WritableSignal<Date> = signal<Date>(new Date());
 
-    task_list: MasterTask[] = [];
+    task_list: WritableSignal<MasterTask[]> = signal<MasterTask[]>([]);
     year: WritableSignal<number | null> = signal<number | null>(null);
     view: WritableSignal<CalendarView> = signal<CalendarView>(CalendarView.YEAR);
-    user!: User;
+    user: User | null = null;
     isMobile;
 
-    daySelectionMode = signal<boolean>(false);
+    daySelectionMode = model<boolean>(false);
     selectedDays = model<Date[]>([]);
     daysConfirmed = output<Date[]>();
     dateSelected = output<Date>();
     rangeSelected = output<{ start: Date; end: Date }>();
     eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
     moreOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
+    iconClick = output<void>();
 
     @ViewChild('datePicker') datePickerModal!: DatePickerModalComponent;
 
@@ -88,10 +89,8 @@ export class CalendarComponent implements OnInit{
         this.year.set(new Date().getFullYear());
 
         this.userProvider.profile$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
-            if(user) {
-                this.user = user;
-                this.cdr.markForCheck();
-            }
+            this.user = user;
+            this.cdr.markForCheck();
         });
 
         effect(() => {
@@ -119,7 +118,7 @@ export class CalendarComponent implements OnInit{
         const search_end = new Date(this.end_date.getFullYear(),   this.end_date.getMonth() + 1, 1);
 
         this.calendarData.getTasks(start.toISOString(), search_end.toISOString()).subscribe(taskList => {
-            this.task_list = taskList;
+            this.task_list.set(taskList);
             this.cdr.markForCheck();
         });
     }
@@ -163,6 +162,7 @@ export class CalendarComponent implements OnInit{
 
         localStorage.setItem('calendarView', view);
         this.view.set(view);
+        this.selectedDays.set([]);
 
         if (view === CalendarView.YEAR) {
             const y = this.year() ?? this.day().getFullYear();
@@ -174,7 +174,11 @@ export class CalendarComponent implements OnInit{
     }
 
     onCalendarIconClick(): void {
-        this.datePickerModal.open();
+        if (this.isMobile()) {
+            this.datePickerModal.open();
+        } else {
+            this.iconClick.emit();
+        }
     }
 
     onDateChosen(date: Date): void {
@@ -184,6 +188,10 @@ export class CalendarComponent implements OnInit{
     }
 
     onWeekDayHeader = (date: Date) => {
+        if (this.isMobile()) {
+            this.daySelectionMode.set(true);
+        }
+
         this.dateSelected.emit(date);
     };
 
@@ -207,7 +215,7 @@ export class CalendarComponent implements OnInit{
 
     eventsByDay = computed(() => {
         const map = new Map<string, MasterTask[]>();
-        for (const t of this.task_list) {
+        for (const t of this.task_list()) {
             const k = format(t.assign_time, 'yyyy-MM-dd');
             if (!map.has(k)) map.set(k, []);
             map.get(k)!.push(t);

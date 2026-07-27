@@ -15,7 +15,7 @@ export interface CalendarConfig {
 
 function bind<T>(token: InjectionToken<T>, value: Type<T> | T): Provider {
     return typeof value === 'function'
-        ? {provide: token, useClass: value as Type<T>}
+        ? {provide: token, useExisting: value as Type<T>}
         : {provide: token, useValue: value};
 }
 
