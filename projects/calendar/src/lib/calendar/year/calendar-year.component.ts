@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     Input,
+    model,
     OnChanges,
     QueryList, SimpleChanges,
     ViewChildren
@@ -25,7 +26,7 @@ export class CalendarYearComponent implements OnChanges {
     @Input() dayDbClick = (date: any) => {};
 
     month_list: { month: number, year: number, first_date: Date }[] = [];
-    selected_days: Date[] = [];
+    selectedDays = model<Date[]>([]);
 
     @ViewChildren('months_components') months_components!: QueryList<CalendarMonthComponent>;
 
@@ -35,9 +36,9 @@ export class CalendarYearComponent implements OnChanges {
 
     selectDay = (date: Date, unset: boolean) => {
         if (unset) {
-            this.selected_days = this.selected_days.filter(d => d.getTime() !== date.getTime());
+            this.selectedDays.update(days => days.filter(d => d.getTime() !== date.getTime()));
         } else {
-            this.selected_days.push(date);
+            this.selectedDays.update(days => [...days, date]);
         }
     };
 
@@ -69,7 +70,7 @@ export class CalendarYearComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['startDate'] || changes['endDate']) {
-            this.selected_days = [];
+            this.selectedDays.set([]);
             this.setMonthList();
         }
     }

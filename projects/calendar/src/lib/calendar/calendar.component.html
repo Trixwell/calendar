@@ -79,7 +79,8 @@
                         [startDate]="start_date"
                         [endDate]="end_date"
                         [dayDbClick]="dayDbClick"
-                        [taskList]="task_list">
+                        [taskList]="task_list"
+                        [(selectedDays)]="selectedDays">
                     </app-calendar-year>
                 }
 
@@ -90,7 +91,8 @@
                         [user]="user"
                         [taskList]="task_list"
                         [onRangeSelect]="onRangeSelect"
-                        [onDayHeader]="onWeekDayHeader">
+                        [onDayHeader]="onWeekDayHeader"
+                        (eventOpen)="onEventOpen($event)">
                     </app-calendar-week>
                 }
 
@@ -104,7 +106,9 @@
                             [(view)]="view"
                             [taskList]="task_list"
                             [selectionMode]="daySelectionMode()"
-                            [(selectedDays)]="selectedDays">
+                            [(selectedDays)]="selectedDays"
+                            (eventOpen)="onEventOpen($event)"
+                            (moreOpen)="onMoreOpen($event)">
                         </app-calendar-month>
                     </div>
 
@@ -126,7 +130,8 @@
                         [day]="day"
                         [user]="user"
                         [taskList]="task_list"
-                        [onRangeSelect]="onRangeSelect">
+                        [onRangeSelect]="onRangeSelect"
+                        (eventOpen)="onEventOpen($event)">
                     </app-calendar-day>
                 }
 
@@ -135,7 +140,8 @@
                         [startDate]="start_date"
                         [endDate]="end_date"
                         [dayDbClick]="dayDbClick"
-                        [taskList]="task_list">
+                        [taskList]="task_list"
+                        [(selectedDays)]="selectedDays">
                     </app-calendar-year>
                 }
             }
@@ -147,4 +153,6 @@
         (dateChosen)="onDateChosen($event)"
         (adjustDays)="onAdjustDaysRequested()">
     </app-date-picker-modal>
+
+    <ng-content select="[calendarOverlays]"></ng-content>
 </section>

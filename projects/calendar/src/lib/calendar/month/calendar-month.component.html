@@ -9,9 +9,8 @@
     [maxVisiblePerDay]="maxVisible()"
     [(selectedKeys)]="selectedDays"
     [selectionMode]="selectionMode()"
-    [onDayDblClick]="onDayDbl"
-    [onEventClick]="onEventOpen">
-    <ng-template #monthCell let-date="date" let-visible="visible" let-more="more" let-inMonth="inMonth">
+    [onDayDblClick]="onDayDbl">
+    <ng-template #monthCell let-date="date" let-visible="visible" let-more="more" let-inMonth="inMonth" let-events="events">
         <ng-container>
             <div class="cell" [class.outside]="!inMonth">
                 <div class="head">
@@ -37,7 +36,8 @@
                             [top]="event.top"
                             [height]="event.height"
                             [color]="getColor(event, user())"
-                            [event]="event">
+                            [event]="event"
+                            (click)="onEventClick(event, date, $event)">
                         </app-calendar-event>
                     }
                 </div>
@@ -49,6 +49,12 @@
                         <p>
                             Віконець: {{ timeFreeSlotsCount() }}
                         </p>
+                    </div>
+
+                    <div class="data">
+                        <a type="button" (click)="onMoreClick(events[0], date, $event)">
+                            Ще {{ more }}
+                        </a>
                     </div>
                 </div>
             }

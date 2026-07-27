@@ -34,7 +34,8 @@
                             [top]="event.top"
                             [height]="event.height"
                             [color]="getColor(event, user())"
-                            [event]="event">
+                            [event]="event"
+                            (click)="onEventClick(event, day, $event)">
                         </app-calendar-event>
                     }
                 }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, model} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, model, output} from '@angular/core';
 import {MasterTask} from "../core/entity";
 import {User} from "../core/entity";
 import {CalendarGridMonthComponent} from "../core/components/grid/month/calendar-grid-month.component";
@@ -36,6 +36,8 @@ export class CalendarMonthComponent {
     selectionMode = input<boolean>(false);
 
     selectedDays = model<Date[]>([]);
+    eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
+    moreOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
     isMobile;
     maxVisible;
 
@@ -61,7 +63,13 @@ export class CalendarMonthComponent {
         this.view.set(CalendarView.DAY);
     };
 
-    onEventOpen = (_event: MasterTask, _date: Date) => {};
+    onEventClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
+        this.eventOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    };
+
+    onMoreClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
+        this.moreOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    };
 
     timeFreeSlotsCount(): number {
         const used = new Set(this.taskList().map(task => task.time_slot_id));

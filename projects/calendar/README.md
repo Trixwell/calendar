@@ -1,64 +1,113 @@
-# Calendar
+# @trixwell/calendar
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+Angular calendar / scheduler library — year, month, week, and day views with
+drag-to-select, mobile touch selection, and a date-picker modal, built on
+Angular Material.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Install
 
 ```bash
-ng generate --help
+npm install @trixwell/calendar @angular/material @angular/cdk date-fns
 ```
 
-## Building
+`@angular/material`, `@angular/cdk`, and `date-fns` are **peer dependencies** —
+they are not bundled and must be installed in the consuming app.
 
-To build the library, run:
+You'll also need:
 
-```bash
-ng build calendar
+- An animations provider registered in your app config (`provideAnimations()`
+  or `provideAnimationsAsync()` from `@angular/platform-browser/animations`) —
+  required by Angular Material.
+- The Material Icons font, since components use `<mat-icon>` ligature icons.
+  Add this to your `index.html`:
+  ```html
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  ```
+
+## Theme setup
+
+Add the library's theme (Material theming + button/select overrides) to your
+global stylesheet:
+
+```scss
+@use '@trixwell/calendar/styles/theme';
 ```
 
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
+This single `@use` sets up `mat.theme(...)` plus light/dark button and select
+styling. If you only want the design tokens (colors, spacing, radii, fonts)
+without the Material overrides, `@use` `@trixwell/calendar/styles/tokens` and
+`@trixwell/calendar/styles/dark-tokens` directly instead.
 
-### Publishing the Library
+## App setup
 
-Once the project is built, you can publish your library by following these steps:
+```ts
+import { ApplicationConfig } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideCalendar } from '@trixwell/calendar';
 
-1. Navigate to the `dist` directory:
-
-   ```bash
-   cd dist/calendar
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideAnimations(),
+    provideCalendar({
+      data: MyCalendarDataProvider,   // implements CalendarDataProvider
+      user: MyCalendarUserProvider,   // implements CalendarUserProvider
+      // viewport is optional — defaults to a BreakpointObserver-based provider
+    }),
+  ],
+};
 ```
 
-## Running end-to-end tests
+`CalendarDataProvider` and `CalendarUserProvider` are interfaces you implement
+against your own backend:
 
-For end-to-end (e2e) testing, run:
+```ts
+interface CalendarDataProvider {
+  getTasks(startISO: string, endISO: string): Observable<MasterTask[]>;
+}
 
-```bash
-ng e2e
+interface CalendarUserProvider {
+  profile$: Observable<User | null>;
+}
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Usage
 
-## Additional Resources
+```html
+<app-calendar
+  (daysConfirmed)="onDaysConfirmed($event)"
+  (dateSelected)="onDateSelected($event)"
+  (rangeSelected)="onRangeSelected($event)">
+</app-calendar>
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```ts
+onDaysConfirmed(days: Date[]): void {
+  // user confirmed which days to configure (mobile day-selection flow)
+}
+
+onDateSelected(date: Date): void {
+  // user picked a date (date-picker modal, or a day header in week view)
+}
+
+onRangeSelected(range: { start: Date; end: Date }): void {
+  // user selected a time range in day/week view (desktop drag or mobile touch)
+}
+```
+
+## Public API
+
+Exported from the package entry point:
+
+- `CalendarComponent` — the top-level `<app-calendar>` facade
+- `provideCalendar(config)` and `CalendarConfig` — app-level DI setup
+- `CALENDAR_DATA`, `CALENDAR_USER`, `CALENDAR_VIEWPORT` — injection tokens for
+  the three provider interfaces (`CalendarDataProvider`, `CalendarUserProvider`,
+  `CalendarViewportProvider`)
+- `DefaultCalendarViewportProvider` — the default `BreakpointObserver`-based
+  viewport provider
+- Entity types (`MasterTask`, `User`, `CalendarView`, etc.) from
+  `./lib/calendar/core/entity`
+
+## License
+
+[LGPL-3.0-only](./LICENSE)

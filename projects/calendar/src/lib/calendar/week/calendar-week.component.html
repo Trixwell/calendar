@@ -39,7 +39,8 @@
                                 (cdkDragStarted)="calendarGrid.onEventDragStarted($event)"
                                 (cdkDragEnded)="calendarGrid.onEventDragEnded($event)"
                                 [style.top.px]="event.top"
-                                [style.height.px]="event.height">
+                                [style.height.px]="event.height"
+                                (click)="onEventClick(event, day, $event)">
                                 <app-calendar-event
                                     [event]="event"
                                     [top]="event.top"
@@ -53,7 +54,8 @@
                             <div
                                 class="event-wrapper"
                                 [style.top.px]="event.top"
-                                [style.height.px]="event.height">
+                                [style.height.px]="event.height"
+                                (click)="onEventClick(event, day, $event)">
                                 <app-calendar-event
                                     [event]="event"
                                     [top]="event.top"

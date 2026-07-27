@@ -2,7 +2,7 @@ import {
     ChangeDetectionStrategy, ChangeDetectorRef, computed,
     Component, DestroyRef, effect,
     inject,
-    Input, OnInit, output,
+    Input, model, OnInit, output,
     signal,
     ViewChild,
     ViewEncapsulation, WritableSignal
@@ -65,10 +65,12 @@ export class CalendarComponent implements OnInit{
     isMobile;
 
     daySelectionMode = signal<boolean>(false);
-    selectedDays = signal<Date[]>([]);
+    selectedDays = model<Date[]>([]);
     daysConfirmed = output<Date[]>();
     dateSelected = output<Date>();
     rangeSelected = output<{ start: Date; end: Date }>();
+    eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
+    moreOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
 
     @ViewChild('datePicker') datePickerModal!: DatePickerModalComponent;
 
@@ -143,9 +145,15 @@ export class CalendarComponent implements OnInit{
 
     confirmDaySelection(): void {
         this.daysConfirmed.emit(this.selectedDays());
-        this.daySelectionMode.set(false);
-        this.selectedDays.set([]);
     }
+
+    onEventOpen = (payload: { task: MasterTask; date: Date; anchor: HTMLElement }): void => {
+        this.eventOpen.emit(payload);
+    };
+
+    onMoreOpen = (payload: { task: MasterTask; date: Date; anchor: HTMLElement }): void => {
+        this.moreOpen.emit(payload);
+    };
 
     setView(view?: CalendarView){
         if(!view){

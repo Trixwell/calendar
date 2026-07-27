@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, Input, OnInit, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, Input, OnInit, output, WritableSignal} from '@angular/core';
 import {MasterTask} from "../core/entity";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
@@ -23,6 +23,7 @@ export class CalendarDayComponent implements OnInit{
     @Input() day!: WritableSignal<Date>;
     taskList = input<MasterTask[]>([]);
     user = input.required<User>();
+    eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
 
     todaySchedule: DaySchedule | undefined = undefined;
     isMobile;
@@ -51,6 +52,10 @@ export class CalendarDayComponent implements OnInit{
         const isoDay = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         return this.taskList().filter(t => t.assign_time.startsWith(isoDay));
     });
+
+    onEventClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
+        this.eventOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    };
 
     onSlotClick = input<(date: Date) => void>(() => {});
     onDayHeader = input<(date: Date) => void>((date: Date) => this.day.set(date));
