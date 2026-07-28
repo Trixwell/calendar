@@ -73,6 +73,10 @@
         gap: tokens.$space-8;
         color: tokens.$violet-700 !important;
         font: tokens.$font-button-l;
+
+        .mdc-button__label{
+            color: inherit !important;
+        }
     }
 
     .day-selection-toggle{
@@ -101,6 +105,10 @@
             color: tokens.$error-700 !important;
             font: tokens.$font-button-l;
             white-space: nowrap;
+
+            .mdc-button__label{
+                color: inherit !important;
+            }
         }
     }
 
@@ -118,6 +126,10 @@
         button{
             font: tokens.$font-button-l;
             color: tokens.$default-50 !important;
+
+            .mdc-button__label{
+                color: inherit !important;
+            }
         }
 
         .title{
@@ -167,10 +179,16 @@
             flex-direction: column;
             gap: tokens.$space-4;
             margin-bottom: tokens.$space-0;
+            padding-left: tokens.$space-16;
+            padding-right: tokens.$space-16;
 
             .calendar-header {
                 justify-content: space-between;
                 width: 100%;
+
+                > button {
+                    padding: tokens.$space-0;
+                }
 
                 .mobile-view-select {
                     .mdc-text-field--outlined .mat-mdc-form-field-infix, .mdc-text-field--no-label .mat-mdc-form-field-infix {

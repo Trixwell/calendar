@@ -54,6 +54,10 @@
     ));
 }
 
+.mat-mdc-button-base .mdc-button__label {
+    color: inherit;
+}
+
 button {
     cursor: pointer;
     white-space: nowrap;
@@ -108,47 +112,50 @@ button[disabled] {
     }
 }
 
-[data-theme="light"] {
-    button[mat-stroked-button],
-    .mat-mdc-outlined-button:not(:disabled) {
-        border: tokens.$border-1 solid tokens.$violet-200 !important;
+// Light is the default theme — `theme.scss` applies `light-theme` to `html`
+// unconditionally and only gates dark behind `[data-theme="dark"]`. Scoping
+// these rules under `[data-theme="light"]` made them dead in any host app that
+// does not set the attribute, leaving the outlined button with no border and a
+// white label (from `--mat-button-outlined-label-text-color` in `light-theme`).
+button[mat-stroked-button],
+.mat-mdc-outlined-button:not(:disabled) {
+    border: tokens.$border-1 solid tokens.$violet-200 !important;
 
-        &:hover {
-            border: tokens.$border-1 solid tokens.$violet-500 !important;
-        }
-
-        &:focus {
-            border: tokens.$border-1 solid tokens.$violet-700 !important;
-        }
+    &:hover {
+        border: tokens.$border-1 solid tokens.$violet-500 !important;
     }
 
-    button[mat-stroked-button]:hover {
-        border: tokens.$border-2 solid tokens.$violet-500 !important;
+    &:focus {
+        border: tokens.$border-1 solid tokens.$violet-700 !important;
     }
+}
 
-    button[mat-stroked-button]:focus {
-        border: tokens.$border-2 solid tokens.$violet-700 !important;
+button[mat-stroked-button]:hover {
+    border: tokens.$border-2 solid tokens.$violet-500 !important;
+}
+
+button[mat-stroked-button]:focus {
+    border: tokens.$border-2 solid tokens.$violet-700 !important;
+}
+
+button[mat-stroked-button][disabled] {
+    background: tokens.$default-50;
+    border: tokens.$border-1 solid tokens.$default-200 !important;
+
+    .mdc-button__label {
+        color: tokens.$default-300;
+        display: flex;
+        gap: tokens.$space-4;
     }
+}
 
-    button[mat-stroked-button][disabled] {
-        background: tokens.$default-50;
-        border: tokens.$border-1 solid tokens.$default-200 !important;
-
-        .mdc-button__label {
-            color: tokens.$default-300;
-            display: flex;
-            gap: tokens.$space-4;
-        }
-    }
-
-    .mat-mdc-outlined-button {
-        .mdc-button__label {
-            --mat-button-outlined-label-text-color: white;
-            color: tokens.$violet-900;
-            font: tokens.$font-button-m;
-            display: flex;
-            gap: tokens.$space-4;
-        }
+.mat-mdc-outlined-button {
+    .mdc-button__label {
+        --mat-button-outlined-label-text-color: #{tokens.$violet-900};
+        color: tokens.$violet-900;
+        font: tokens.$font-button-m;
+        display: flex;
+        gap: tokens.$space-4;
     }
 }
 
@@ -304,17 +311,27 @@ mat-button-toggle-group {
         border: tokens.$border-1 solid darkTokens.$default-600 !important;
         border-color: darkTokens.$default-600 !important;
 
+        // Full shorthand, not just `border-color` — the default (light) rules
+        // widen the stroked button to 2px on hover/focus.
         &:hover:not(:disabled) {
-            border-color: darkTokens.$primary-violet !important;
+            border: tokens.$border-1 solid darkTokens.$primary-violet !important;
         }
 
         &:focus:not(:disabled) {
-            border-color: darkTokens.$primary-violet !important;
+            border: tokens.$border-1 solid darkTokens.$primary-violet !important;
         }
 
         .mdc-button__label {
             color: darkTokens.$violet-300 !important;
             --mat-button-outlined-label-text-color: #{darkTokens.$violet-300} !important;
+        }
+    }
+
+    button[mat-stroked-button][disabled] {
+        background: darkTokens.$default-800;
+
+        .mdc-button__label {
+            color: darkTokens.$default-500 !important;
         }
     }
 }

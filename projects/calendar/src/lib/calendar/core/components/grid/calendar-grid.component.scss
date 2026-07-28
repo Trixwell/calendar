@@ -114,8 +114,8 @@
                 border: none;
                 background: tokens.$violet-700;
 
-                &.weekday{
-                    color: tokens.$violet-200;
+                .weekday{
+                    color: tokens.$default-50 !important;
                 }
 
                 .day-month{
