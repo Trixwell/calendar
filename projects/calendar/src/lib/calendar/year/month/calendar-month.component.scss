@@ -68,6 +68,10 @@
             }
 
             span{
+                // `.today` / `.selected-day` colour the cell and let the number
+                // inherit; a host app's global `span { color: … }` would
+                // otherwise beat that inheritance and keep the number black.
+                color: inherit;
                 font: tokens.$font-body-s;
                 text-align: center;
                 flex: 1;

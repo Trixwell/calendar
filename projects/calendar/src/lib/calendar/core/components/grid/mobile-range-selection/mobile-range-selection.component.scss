@@ -13,7 +13,7 @@
     flex-direction: column;
     align-items: center;
     padding: tokens.$space-8;
-    border: tokens.$border-1 solid tokens.$violet-500;
+    border: tokens.$border-2 solid tokens.$violet-500;
     border-radius: tokens.$radius-8;
     background-color: color.scale(tokens.$violet-50, $alpha: -60%);
     pointer-events: auto;
@@ -25,6 +25,21 @@
         text-align: center;
         font: tokens.$font-caption-l;
         color: tokens.$default-500;
+    }
+
+    &__marker {
+        position: absolute;
+        pointer-events: none;
+
+        &--top-left {
+            top: -5px;
+            left: 31px;
+        }
+
+        &--bottom-right {
+            bottom: -5px;
+            right: 31px;
+        }
     }
 }
 

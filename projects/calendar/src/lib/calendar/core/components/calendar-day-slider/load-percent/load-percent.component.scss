@@ -6,7 +6,12 @@
     line-height: 10px;
 }
 
+// Callers colour this component by setting `color` on the `app-load-percent`
+// host and letting the label inherit. A host app's global `span { color: … }`
+// is a direct declaration and beats that inheritance, so the label must
+// re-declare it.
 .load-percent{
+    color: inherit;
     font: tokens.$font-caption-m;
     line-height: 10px;
 }

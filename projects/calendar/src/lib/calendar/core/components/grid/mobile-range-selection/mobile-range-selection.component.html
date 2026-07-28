@@ -4,7 +4,9 @@
          [style.height.px]="selectionHeight"
          (touchstart)="onBoxTouchStart($event)"
          (touchend)="onBoxTouchEnd(); $event.stopPropagation()">
+        <img class="mobile-selection__marker mobile-selection__marker--top-left" src="assets/icons/mobile-selection-marker.svg" alt="">
         <div class="mobile-selection__title">Потягніть, щоб обрати діапазон часу</div>
+        <img class="mobile-selection__marker mobile-selection__marker--bottom-right" src="assets/icons/mobile-selection-marker.svg" alt="">
     </div>
 
     <div class="mobile-selection-bar"

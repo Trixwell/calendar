@@ -49,10 +49,7 @@
             border-color: tokens.$violet-700;
             background-color: tokens.$violet-700;
 
-            .calendar-day-slider__weekday {
-                color: tokens.$violet-200;
-            }
-
+            .calendar-day-slider__weekday,
             .calendar-day-slider__date,
             app-load-percent {
                 color: tokens.$default-50 !important;
@@ -97,13 +94,10 @@
             border-color: darkTokens.$violet-700;
             background-color: darkTokens.$violet-700;
 
-            .calendar-day-slider__weekday {
-                color: darkTokens.$violet-200;
-            }
-
+            .calendar-day-slider__weekday,
             .calendar-day-slider__date,
             app-load-percent {
-                color: darkTokens.$default-50;
+                color: darkTokens.$default-50 !important;
             }
         }
     }

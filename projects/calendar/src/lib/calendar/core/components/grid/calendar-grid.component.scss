@@ -139,6 +139,7 @@
         &.selected{
             background: tokens.$violet-700;
 
+            .weekday,
             .day-month{
                 color: tokens.$default-50 !important;
             }

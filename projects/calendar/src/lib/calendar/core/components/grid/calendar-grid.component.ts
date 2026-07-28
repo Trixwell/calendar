@@ -2,11 +2,13 @@ import {
     AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef,
     Component, computed,
     ContentChild, effect,
-    ElementRef, inject, input, model, OnDestroy,
+    ElementRef, HostListener, inject, input, model, OnDestroy,
     OnInit,
+    QueryList,
     signal,
     TemplateRef,
-    ViewChild
+    ViewChild,
+    ViewChildren
 } from '@angular/core';
 import {DatePipe, NgClass, NgTemplateOutlet} from "@angular/common";
 import {MasterTask} from "../../entity";
@@ -55,6 +57,8 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLElement>;
     @ViewChild('dayHeaderContainer', { read: ElementRef, static: true })
     dayContainerRef!: ElementRef<HTMLElement>;
+    @ViewChildren(MobileRangeSelectionComponent)
+    mobileRangeComponents!: QueryList<MobileRangeSelectionComponent>;
 
     timerLine!: Subscription;
     nowLineTop = 0;
@@ -109,6 +113,26 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         this.moved = false;
         this.activeMobileSelectionDay.set(null);
         this.cdr.markForCheck();
+    }
+
+    @HostListener('document:click', ['$event'])
+    @HostListener('document:touchstart', ['$event'])
+    onDocumentInteraction(event: MouseEvent | TouchEvent): void {
+        const activeDay = this.activeMobileSelectionDay();
+        if (!activeDay) return;
+
+        const target = event.target as Node;
+        if (this.containerRef.nativeElement.contains(target)) return;
+
+        this.cancelActiveMobileSelection(activeDay);
+    }
+
+    private cancelActiveMobileSelection(activeDay: Date): void {
+        this.mobileRangeComponents
+            ?.find(c => c.day().getTime() === activeDay.getTime())
+            ?.cancelMobileSelection();
+
+        this.activeMobileSelectionDay.set(null);
     }
 
     ngOnInit(): void {
