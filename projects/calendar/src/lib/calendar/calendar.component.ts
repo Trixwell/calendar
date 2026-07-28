@@ -188,10 +188,6 @@ export class CalendarComponent implements OnInit{
     }
 
     onWeekDayHeader = (date: Date) => {
-        if (this.isMobile()) {
-            this.daySelectionMode.set(true);
-        }
-
         this.dateSelected.emit(date);
     };
 
