@@ -227,6 +227,11 @@
                 min-width: 0;
             }
         }
+
+        .day-selection-footer {
+            margin-left: tokens.$space-16;
+            margin-right: tokens.$space-16;
+        }
     }
 }
 

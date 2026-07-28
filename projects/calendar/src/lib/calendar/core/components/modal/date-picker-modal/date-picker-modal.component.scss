@@ -27,9 +27,11 @@
             border: tokens.$border-1 solid tokens.$violet-200 !important;
             border-radius: tokens.$radius-8 !important;
 
-            .mdc-button__label {
+            ::ng-deep .mdc-button__label {
                 color: tokens.$violet-500 !important;
                 --mat-button-outlined-label-text-color: #{tokens.$violet-500} !important;
+                font: tokens.$font-button-l !important;
+                gap: tokens.$space-8 !important;
             }
         }
     }
