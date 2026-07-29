@@ -22,10 +22,12 @@ export function getColor(event: MasterTask, user: User): string {
 
 export function isFullDayOff(day: Date, taskList: MasterTask[]): boolean {
     const task = (taskList ?? []).find(t =>
+        t.taskType.isTimeOff() &&
+        Number(t.duration) <= 0 &&
         new Date(t.assign_time).toDateString() === day.toDateString()
     );
 
-    return task?.taskType.isTimeOff() || false;
+    return !!task;
 }
 
 export function hasRecord(day: Date, taskList: MasterTask[]): boolean {
@@ -37,6 +39,7 @@ export function hasRecord(day: Date, taskList: MasterTask[]): boolean {
 export function getDayOffComment(date: Date, taskList: MasterTask[]): string | null {
     const task = (taskList ?? []).find(t =>
         t.taskType.isTimeOff() &&
+        Number(t.duration) <= 0 &&
         new Date(t.assign_time).toDateString() === date.toDateString()
     );
 
