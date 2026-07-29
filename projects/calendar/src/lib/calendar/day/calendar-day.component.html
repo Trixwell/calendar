@@ -30,14 +30,27 @@
 
                 @if (!isFullDayOff(day, taskList())) {
                     @for (event of events; track event.id) {
-                        <app-calendar-event
-                            [draggable]="!isMobile()"
-                            [top]="event.top"
-                            [height]="event.height"
-                            [color]="getColor(event, user())"
-                            [event]="event"
-                            (click)="onEventClick(event, day, $event)">
-                        </app-calendar-event>
+                        @if (isTimeOffBlock(event)) {
+                            <div class="time-off-block"
+                                 [style.top.px]="event.top"
+                                 [style.height.px]="event.height"
+                                 (mousedown)="$event.stopPropagation(); $event.preventDefault()"
+                                 (click)="$event.stopPropagation(); $event.preventDefault()"
+                                 (dblclick)="$event.stopPropagation(); $event.preventDefault()"
+                                 (touchstart)="$event.stopPropagation(); $event.preventDefault()"
+                            >
+                                <span class="label">{{ event.taskType.name }}</span>
+                            </div>
+                        } @else {
+                            <app-calendar-event
+                                [draggable]="!isMobile()"
+                                [top]="event.top"
+                                [height]="event.height"
+                                [color]="getColor(event, user())"
+                                [event]="event"
+                                (click)="onEventClick(event, day, $event)">
+                            </app-calendar-event>
+                        }
                     }
                 }
             </div>

@@ -31,39 +31,52 @@
             @if (!isFullDayOff(day, taskList())) {
                 @for (event of events; track event.id) {
                     <div class="event-anchor">
-                        @if (!isMobile()) {
-                            <div
-                                class="event-wrapper"
-                                cdkDrag
-                                [cdkDragData]="event"
-                                cdkDragBoundary=".grid-body"
-                                (cdkDragStarted)="calendarGrid.onEventDragStarted($event)"
-                                (cdkDragEnded)="calendarGrid.onEventDragEnded($event)"
-                                [style.top.px]="event.top"
-                                [style.height.px]="event.height"
-                                (click)="onEventClick(event, day, $event)">
-                                <app-calendar-event
-                                    [event]="event"
-                                    [top]="event.top"
-                                    [height]="event.height"
-                                    [color]="getColor(event, user())">
-                                </app-calendar-event>
+                        @if (isTimeOffBlock(event)) {
+                            <div class="time-off-block"
+                                 [style.top.px]="event.top"
+                                 [style.height.px]="event.height"
+                                 (mousedown)="$event.stopPropagation(); $event.preventDefault()"
+                                 (click)="$event.stopPropagation(); $event.preventDefault()"
+                                 (dblclick)="$event.stopPropagation(); $event.preventDefault()"
+                                 (touchstart)="$event.stopPropagation(); $event.preventDefault()"
+                            >
+                                <span class="label">{{ event.taskType.name }}</span>
                             </div>
-                        }
+                        } @else {
+                            @if (!isMobile()) {
+                                <div
+                                    class="event-wrapper"
+                                    cdkDrag
+                                    [cdkDragData]="event"
+                                    cdkDragBoundary=".grid-body"
+                                    (cdkDragStarted)="calendarGrid.onEventDragStarted($event)"
+                                    (cdkDragEnded)="calendarGrid.onEventDragEnded($event)"
+                                    [style.top.px]="event.top"
+                                    [style.height.px]="event.height"
+                                    (click)="onEventClick(event, day, $event)">
+                                    <app-calendar-event
+                                        [event]="event"
+                                        [top]="event.top"
+                                        [height]="event.height"
+                                        [color]="getColor(event, user())">
+                                    </app-calendar-event>
+                                </div>
+                            }
 
-                        @if (isMobile()) {
-                            <div
-                                class="event-wrapper"
-                                [style.top.px]="event.top"
-                                [style.height.px]="event.height"
-                                (click)="onEventClick(event, day, $event)">
-                                <app-calendar-event
-                                    [event]="event"
-                                    [top]="event.top"
-                                    [height]="event.height"
-                                    [color]="getColor(event, user())">
-                                </app-calendar-event>
-                            </div>
+                            @if (isMobile()) {
+                                <div
+                                    class="event-wrapper"
+                                    [style.top.px]="event.top"
+                                    [style.height.px]="event.height"
+                                    (click)="onEventClick(event, day, $event)">
+                                    <app-calendar-event
+                                        [event]="event"
+                                        [top]="event.top"
+                                        [height]="event.height"
+                                        [color]="getColor(event, user())">
+                                    </app-calendar-event>
+                                </div>
+                            }
                         }
                     </div>
                 }

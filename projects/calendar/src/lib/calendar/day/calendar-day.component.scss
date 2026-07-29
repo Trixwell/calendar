@@ -23,12 +23,40 @@
     left: tokens.$space-8;
 }
 
+.time-off-block {
+    position: absolute;
+    left: tokens.$space-6;
+    right: 0;
+    background: tokens.$default-100;
+    border-radius: tokens.$radius-4;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.time-off-block .label {
+    position: absolute;
+    color: tokens.$default-800;
+    font: tokens.$font-button-m;
+    top: tokens.$space-6;
+    left: tokens.$space-8;
+}
+
 @media (max-width: 800px) {
     .day-off-overlay {
         left: tokens.$space-4;
     }
 
     .day-off-overlay .label {
+        font: tokens.$font-caption-l;
+        top: tokens.$space-4;
+        left: tokens.$space-4;
+    }
+
+    .time-off-block {
+        left: tokens.$space-4;
+    }
+
+    .time-off-block .label {
         font: tokens.$font-caption-l;
         top: tokens.$space-4;
         left: tokens.$space-4;

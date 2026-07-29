@@ -30,6 +30,10 @@ export function isFullDayOff(day: Date, taskList: MasterTask[]): boolean {
     return !!task;
 }
 
+export function isTimeOffBlock(event: MasterTask): boolean {
+    return event.taskType.isTimeOff() && Number(event.duration) > 0;
+}
+
 export function hasRecord(day: Date, taskList: MasterTask[]): boolean {
     return (taskList ?? []).some(t =>
         new Date(t.assign_time).toDateString() === day.toDateString()
