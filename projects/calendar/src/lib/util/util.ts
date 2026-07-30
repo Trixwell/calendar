@@ -34,6 +34,13 @@ export function isTimeOffBlock(event: MasterTask): boolean {
     return event.taskType.isTimeOff() && Number(event.duration) > 0;
 }
 
+const DAY_STATUS_COMMENT_CODES = new Set(['dayOff', 'vacation', 'sick', 'partial']);
+
+export function getEventTitle(event: MasterTask): string {
+    if (!event.taskType.isTimeOff()) return event.taskType.name;
+    return DAY_STATUS_COMMENT_CODES.has(event.comment) ? 'Вихідний' : 'Заблокований час';
+}
+
 export function hasRecord(day: Date, taskList: MasterTask[]): boolean {
     return (taskList ?? []).some(t =>
         new Date(t.assign_time).toDateString() === day.toDateString()

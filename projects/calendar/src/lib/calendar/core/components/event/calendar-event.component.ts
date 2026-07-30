@@ -3,6 +3,7 @@ import {MasterTask} from "../../entity";
 import {DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {CalendarView} from "../../entity";
+import {getEventTitle} from "../../../../util/util";
 
 @Component({
   selector: 'app-calendar-event',
@@ -46,7 +47,7 @@ export class CalendarEventComponent {
     }
 
     title(){
-        return this.isTimeOff() ? 'Заблокований час' : this.event().taskType.name;
+        return getEventTitle(this.event());
     }
 
     protected readonly CalendarView = CalendarView;

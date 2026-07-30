@@ -1,9 +1,10 @@
 import {ChangeDetectionStrategy, Component, computed, inject, input, Input, model, OnInit, output, WritableSignal} from '@angular/core';
+import {DatePipe} from "@angular/common";
 import {MasterTask} from "../core/entity";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {DaySchedule, User} from "../core/entity";
-import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {getColor, getDayOffComment, getEventTitle, isFullDayOff, isTimeOffBlock} from "../../util/util";
 import {CalendarView, Weekday} from "../core/entity";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
@@ -14,6 +15,7 @@ import {RecordsSummaryComponent} from "../core/components/records-summary/record
         CalendarGridComponent,
         CalendarEventComponent,
         RecordsSummaryComponent,
+        DatePipe,
     ],
   templateUrl: './calendar-day.component.html',
   styleUrl: './calendar-day.component.scss',
@@ -72,4 +74,5 @@ export class CalendarDayComponent implements OnInit{
     protected readonly isFullDayOff = isFullDayOff;
     protected readonly getDayOffComment = getDayOffComment;
     protected readonly isTimeOffBlock = isTimeOffBlock;
+    protected readonly getEventTitle = getEventTitle;
 }

@@ -39,7 +39,11 @@
                                  (dblclick)="$event.stopPropagation(); $event.preventDefault()"
                                  (touchstart)="$event.stopPropagation(); $event.preventDefault()"
                             >
-                                <span class="label">{{ event.taskType.name }}</span>
+                                <span class="label">{{ getEventTitle(event) }}</span>
+                                @if (+event.duration > 0) {
+                                    <span class="time">{{ event.assign_time | date:'HH:mm' }}
+                                        – {{ event.approximate_end_time | date:'HH:mm' }}</span>
+                                }
                             </div>
                         } @else {
                             <app-calendar-event

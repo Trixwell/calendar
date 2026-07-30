@@ -1,6 +1,6 @@
 {
   "name": "@trixwell/calendar",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Angular calendar/scheduler library — year, month, week, and day views with drag-to-select, mobile touch selection, and a date-picker modal, built on Angular Material.",
   "license": "LGPL-3.0-only",
   "author": "Trixwell",

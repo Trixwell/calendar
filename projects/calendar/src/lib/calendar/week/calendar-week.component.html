@@ -40,7 +40,7 @@
                                  (dblclick)="$event.stopPropagation(); $event.preventDefault()"
                                  (touchstart)="$event.stopPropagation(); $event.preventDefault()"
                             >
-                                <span class="label">{{ event.taskType.name }}</span>
+                                <span class="label">{{ getEventTitle(event) }}</span>
                             </div>
                         } @else {
                             @if (!isMobile()) {

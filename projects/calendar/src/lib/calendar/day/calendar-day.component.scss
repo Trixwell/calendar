@@ -41,6 +41,15 @@
     left: tokens.$space-8;
 }
 
+.time-off-block .time {
+    position: absolute;
+    color: tokens.$default-800;
+    font: tokens.$font-body-s;
+    top: tokens.$space-6;
+    right: tokens.$space-8;
+    white-space: nowrap;
+}
+
 @media (max-width: 800px) {
     .day-off-overlay {
         left: tokens.$space-4;
@@ -60,5 +69,11 @@
         font: tokens.$font-caption-l;
         top: tokens.$space-4;
         left: tokens.$space-4;
+    }
+
+    .time-off-block .time {
+        font: tokens.$font-caption-s;
+        top: tokens.$space-4;
+        right: tokens.$space-4;
     }
 }

@@ -184,8 +184,9 @@
         position: absolute;
         top:        0;
         bottom:     0;
-        right:      -7px;
+        right:      0;
         width:      1px;
+        box-sizing: border-box;
         background: tokens.$default-100;
         z-index:    10;
     }
@@ -289,6 +290,14 @@
         background: darkTokens.$default-700;
     }
 
+    .calendar-grid-week .grid-body .time-col {
+        background: darkTokens.$default-900;
+    }
+
+    .calendar-grid-week .grid-header .time-label {
+        background: darkTokens.$default-800;
+    }
+
     .cell:not(.cell:first-child) {
         border-top-color: darkTokens.$default-700;
     }
@@ -315,13 +324,19 @@
     .calendar-grid-week {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        position: relative;
 
         .grid-header {
             grid-template-columns: 54px repeat(7, 120px);
             min-width: 893px;
 
             .time-label {
-                min-width: 61px;
+                position: sticky;
+                left: 0;
+                z-index: 15;
+                width: 100%;
+                box-sizing: border-box;
+                background: tokens.$default-100;
                 border-right: tokens.$border-1 solid tokens.$default-100;
                 border-left: tokens.$border-1 solid tokens.$default-100;
 
@@ -355,6 +370,15 @@
             grid-template-columns: 53px repeat(7, 120px);
             min-width: 893px;
             border-bottom-left-radius: 0;
+
+            .time-col {
+                position: sticky;
+                left: 0;
+                z-index: 15;
+                width: 100%;
+                box-sizing: border-box;
+                background: tokens.$default-50;
+            }
         }
     }
 

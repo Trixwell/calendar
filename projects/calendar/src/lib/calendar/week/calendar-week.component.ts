@@ -4,7 +4,7 @@ import {DaySchedule, User} from "../core/entity";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CdkDrag} from "@angular/cdk/drag-drop";
-import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {getColor, getDayOffComment, getEventTitle, isFullDayOff, isTimeOffBlock} from "../../util/util";
 import {CalendarView, Weekday} from "../core/entity";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
@@ -92,4 +92,5 @@ export class CalendarWeekComponent implements OnInit{
     protected readonly isFullDayOff = isFullDayOff;
     protected readonly getDayOffComment = getDayOffComment;
     protected readonly isTimeOffBlock = isTimeOffBlock;
+    protected readonly getEventTitle = getEventTitle;
 }
