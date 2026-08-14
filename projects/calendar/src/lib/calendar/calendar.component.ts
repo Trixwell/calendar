@@ -1,7 +1,7 @@
 import {
     ChangeDetectionStrategy, ChangeDetectorRef, computed,
     Component, DestroyRef, effect,
-    inject,
+    inject, input,
     Input, model, OnInit, output,
     signal,
     ViewChild,
@@ -57,6 +57,7 @@ import {shiftMonthRange} from "../util/util";
 export class CalendarComponent implements OnInit{
     @Input() start_date: Date = new Date(new Date().getFullYear(), 0, 1);
     @Input() end_date: Date = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
+    showYearView = input<boolean>(true);
     day:        WritableSignal<Date> = signal<Date>(new Date());
 
     task_list: WritableSignal<MasterTask[]> = signal<MasterTask[]>([]);
@@ -169,8 +170,19 @@ export class CalendarComponent implements OnInit{
 
     setView(view?: CalendarView){
         if(!view){
-            this.view.set(localStorage.getItem('calendarView') as CalendarView);
+            const stored = localStorage.getItem('calendarView') as CalendarView;
+
+            if (!this.showYearView() && (!stored || stored === CalendarView.YEAR)) {
+                this.setView(CalendarView.MONTH);
+                return;
+            }
+
+            this.view.set(stored);
             return;
+        }
+
+        if (view === CalendarView.YEAR && !this.showYearView()) {
+            view = CalendarView.MONTH;
         }
 
         localStorage.setItem('calendarView', view);

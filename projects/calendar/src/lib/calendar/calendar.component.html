@@ -33,7 +33,9 @@
                                 <mat-select
                                     [value]="view()"
                                     (selectionChange)="setView($event.value)">
-                                    <mat-option [value]="CalendarView.YEAR">Рік</mat-option>
+                                    @if (showYearView()) {
+                                        <mat-option [value]="CalendarView.YEAR">Рік</mat-option>
+                                    }
                                     <mat-option [value]="CalendarView.MONTH">Місяць</mat-option>
                                     <mat-option [value]="CalendarView.WEEK">Тиждень</mat-option>
                                     <mat-option [value]="CalendarView.DAY">День</mat-option>
@@ -62,7 +64,9 @@
                             [value]="view()"
                             (valueChange)="setView($event)"
                             class="view-toggle">
-                            <mat-button-toggle [value]="CalendarView.YEAR">Рік</mat-button-toggle>
+                            @if (showYearView()) {
+                                <mat-button-toggle [value]="CalendarView.YEAR">Рік</mat-button-toggle>
+                            }
                             <mat-button-toggle [value]="CalendarView.MONTH">Місяць</mat-button-toggle>
                             <mat-button-toggle [value]="CalendarView.WEEK">Тиждень</mat-button-toggle>
                             <mat-button-toggle [value]="CalendarView.DAY">Сьогодні</mat-button-toggle>
