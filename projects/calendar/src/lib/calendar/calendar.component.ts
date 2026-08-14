@@ -30,6 +30,7 @@ import {CALENDAR_DATA} from "../providers/calendar-data.provider";
 import {CALENDAR_USER} from "../providers/calendar-user.provider";
 import {CALENDAR_VIEWPORT} from "../providers/calendar-viewport.provider";
 import {DatePickerModalComponent} from "./core/components/modal/date-picker-modal/date-picker-modal.component";
+import {shiftMonthRange} from "../util/util";
 
 @Component({
     selector: 'app-calendar',
@@ -127,6 +128,18 @@ export class CalendarComponent implements OnInit{
         this.day.set(date);
         this.view.set(CalendarView.DAY);
     };
+
+    shiftMonth(delta: number): void {
+        const {start, end} = shiftMonthRange(this.day(), delta);
+
+        this.day.set(start);
+        this.start_date = start;
+        this.end_date   = end;
+
+        if (this.year() !== start.getFullYear()) {
+            this.year.set(start.getFullYear());
+        }
+    }
 
     onRangeSelect = (start: Date, end: Date) => {
         this.rangeSelected.emit({start, end});

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, model, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, model, output, signal} from '@angular/core';
 import {MasterTask} from "../core/entity";
 import {User} from "../core/entity";
 import {CalendarGridMonthComponent} from "../core/components/grid/month/calendar-grid-month.component";
@@ -10,6 +10,7 @@ import {CalendarEventComponent} from "../core/components/event/calendar-event.co
 import {CalendarView} from "../core/entity";
 import {getColor} from "../../util/util";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
+import {SwipeDirection, SwipeDirective} from "../core/directives/swipe.directive";
 
 
 @Component({
@@ -21,6 +22,7 @@ import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
         LoadPercentComponent,
         RecordsSummaryComponent,
         CalendarEventComponent,
+        SwipeDirective,
     ],
   templateUrl: './calendar-month.component.html',
   styleUrl: './calendar-month.component.scss',
@@ -38,8 +40,10 @@ export class CalendarMonthComponent {
     selectedDays = model<Date[]>([]);
     eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
     moreOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
+    monthShift = output<number>();
     isMobile;
     maxVisible;
+    slide = signal<'prev' | 'next' | null>(null);
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
 
@@ -62,6 +66,18 @@ export class CalendarMonthComponent {
         this.day.set(date);
         this.view.set(CalendarView.DAY);
     };
+
+    onSwipe(direction: SwipeDirection): void {
+        const delta = direction === 'left' ? 1 : -1;
+
+        this.slide.set(delta > 0 ? 'next' : 'prev');
+        this.monthShift.emit(delta);
+    }
+
+    onSlideEnd(event: AnimationEvent): void {
+        if (event.target !== event.currentTarget) return;
+        this.slide.set(null);
+    }
 
     onEventClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
         this.eventOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });

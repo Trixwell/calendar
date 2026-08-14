@@ -5,10 +5,10 @@ import {CalendarView} from "../../entity";
 import {FormsModule} from "@angular/forms";
 import {
     addDays,
-    addMonths,
     startOfWeek,
     endOfWeek,
 } from 'date-fns';
+import {shiftMonthRange} from "../../../../util/util";
 import {DatePipe} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
@@ -72,9 +72,7 @@ export class ToggleDateBarComponent {
                 break;
             }
             case CalendarView.MONTH: {
-                const nextDay = addMonths(this.day(), delta);
-                const mStart = new Date(nextDay.getFullYear(), nextDay.getMonth(), 1);
-                const mEnd   = new Date(nextDay.getFullYear(), nextDay.getMonth() + 1, 0);
+                const {start: mStart, end: mEnd} = shiftMonthRange(this.day(), delta);
 
                 this.day.set(mStart);
                 this.startDate.set(mStart);

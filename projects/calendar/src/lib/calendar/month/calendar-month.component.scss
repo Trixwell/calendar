@@ -1,6 +1,37 @@
 @use 'tokens' as tokens;
 @use 'dark-tokens' as darkTokens;
 
+.month-swipe {
+    &.swipeable {
+        touch-action: pan-y;
+    }
+
+    &.slide-next {
+        animation: month-slide-next 0.25s ease-out;
+    }
+
+    &.slide-prev {
+        animation: month-slide-prev 0.25s ease-out;
+    }
+}
+
+@keyframes month-slide-next {
+    from { transform: translateX(24%); opacity: 0.4; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes month-slide-prev {
+    from { transform: translateX(-24%); opacity: 0.4; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .month-swipe.slide-next,
+    .month-swipe.slide-prev {
+        animation: none;
+    }
+}
+
 .cell{
     .head{
         margin-bottom: tokens.$space-8;

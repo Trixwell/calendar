@@ -1,4 +1,14 @@
+import {addMonths} from 'date-fns';
 import {MasterTask, TaskStatusEnum, User} from '../calendar/core/entity';
+
+export function shiftMonthRange(date: Date, delta: number): { start: Date; end: Date } {
+    const target = addMonths(date, delta);
+
+    return {
+        start: new Date(target.getFullYear(), target.getMonth(), 1),
+        end: new Date(target.getFullYear(), target.getMonth() + 1, 0),
+    };
+}
 
 export function getPrimaryVioletColor(): string {
     if (typeof window === 'undefined' || typeof document === 'undefined') return '#6C7DE6';

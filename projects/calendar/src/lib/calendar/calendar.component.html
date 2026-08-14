@@ -112,7 +112,8 @@
                                 [selectionMode]="daySelectionMode()"
                                 [(selectedDays)]="selectedDays"
                                 (eventOpen)="onEventOpen($event)"
-                                (moreOpen)="onMoreOpen($event)">
+                                (moreOpen)="onMoreOpen($event)"
+                                (monthShift)="shiftMonth($event)">
                             </app-calendar-month>
                         }
                     </div>

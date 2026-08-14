@@ -2,6 +2,14 @@
     <app-records-summary [taskList]="periodTaskList()" />
 }
 
+<div class="month-swipe"
+     [class.swipeable]="isMobile()"
+     [class.slide-next]="slide() === 'next'"
+     [class.slide-prev]="slide() === 'prev'"
+     appSwipe
+     [swipeEnabled]="isMobile()"
+     (swipe)="onSwipe($event)"
+     (animationend)="onSlideEnd($event)">
 <app-calendar-grid-month
     [startDate]="startDate()"
     [taskList]="taskList()"
@@ -61,3 +69,4 @@
         </ng-container>
     </ng-template>
 </app-calendar-grid-month>
+</div>
