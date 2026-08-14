@@ -7,13 +7,14 @@ export type SwipeDirection = 'left' | 'right';
 })
 export class SwipeDirective {
     swipeEnabled = input<boolean>(true);
-    swipeThreshold = input<number>(60);
+    swipeThreshold = input<number>(45);
 
     swipe = output<SwipeDirection>();
 
-    private static readonly MAX_DURATION = 800;
-    private static readonly DIRECTION_RATIO = 1.5;
-    private static readonly SCROLL_TOLERANCE = 12;
+    private static readonly MAX_DURATION = 1000;
+    private static readonly DIRECTION_RATIO = 1.2;
+    private static readonly SCROLL_TOLERANCE = 24;
+    private static readonly HORIZONTAL_LOCK = 20;
     private static readonly CLICK_SUPPRESS_MS = 500;
 
     private startX = 0;
@@ -55,6 +56,9 @@ export class SwipeDirective {
         const touch = event.touches[0];
         const dx = touch.clientX - this.startX;
         const dy = touch.clientY - this.startY;
+
+        // once the gesture is clearly horizontal it stays a swipe, whatever the finger does next
+        if (Math.abs(dx) > SwipeDirective.HORIZONTAL_LOCK) return;
 
         if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SwipeDirective.SCROLL_TOLERANCE) {
             this.tracking = false;
