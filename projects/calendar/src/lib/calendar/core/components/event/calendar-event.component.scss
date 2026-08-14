@@ -1,6 +1,11 @@
 @use 'tokens' as tokens;
 @use 'dark-tokens' as darkTokens;
 
+
+:host:hover{
+  opacity: 0.8;
+}
+
 .event-block {
     position: absolute;
     left: 9px;
