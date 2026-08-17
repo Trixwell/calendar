@@ -1,35 +1,18 @@
 @use 'tokens' as tokens;
 @use 'dark-tokens' as darkTokens;
 
-.month-swipe {
-    &.swipeable {
-        touch-action: pan-y;
-    }
-
-    &.slide-next {
-        animation: month-slide-next 0.25s ease-out;
-    }
-
-    &.slide-prev {
-        animation: month-slide-prev 0.25s ease-out;
-    }
+// the neighbouring months live outside the viewport and must never be visible next to the
+// current one, so the slider clips them away
+.month-swiper {
+    display: block;
+    width: 100%;
+    overflow: hidden;
 }
 
-@keyframes month-slide-next {
-    from { transform: translateX(24%); opacity: 0.4; }
-    to   { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes month-slide-prev {
-    from { transform: translateX(-24%); opacity: 0.4; }
-    to   { transform: translateX(0); opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .month-swipe.slide-next,
-    .month-swipe.slide-prev {
-        animation: none;
-    }
+swiper-slide {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .cell{

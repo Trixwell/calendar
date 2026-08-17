@@ -2,71 +2,81 @@
     <app-records-summary [taskList]="periodTaskList()" />
 }
 
-<div class="month-swipe"
-     [class.swipeable]="isMobile()"
-     [class.slide-next]="slide() === 'next'"
-     [class.slide-prev]="slide() === 'prev'"
-     appSwipe
-     [swipeEnabled]="isMobile()"
-     (swipe)="onSwipe($event)"
-     (animationend)="onSlideEnd($event)">
-<app-calendar-grid-month
-    [startDate]="startDate()"
-    [taskList]="taskList()"
-    [schedule]="user()?.schedule ?? null"
-    [maxVisiblePerDay]="maxVisible()"
-    [(selectedKeys)]="selectedDays"
-    [selectionMode]="selectionMode()"
-    [onDayDblClick]="onDayDbl">
-    <ng-template #monthCell let-date="date" let-visible="visible" let-more="more" let-inMonth="inMonth" let-events="events">
-        <ng-container>
-            <div class="cell" [class.outside]="!inMonth">
-                <div class="head">
-                    <span class="num">{{ date | date:'d' }}</span>
-                    @if (isMobile()) {
-                        <app-load-percent
-                            [date]="date"
-                            [taskList]="taskList()">
-                        </app-load-percent>
-                    } @else {
-                        <app-load-indicator
-                            [currentDate]="date"
-                            [taskList]="taskList()"
-                            [day]="date.getDate()">
-                        </app-load-indicator>
-                    }
-                </div>
-                <div class="list">
-                    @for (event of visible; track event) {
-                        <app-calendar-event
-                            [draggable]="false"
-                            [view]="CalendarView.MONTH"
-                            [top]="event.top"
-                            [height]="event.height"
-                            [color]="getColor(event, user())"
-                            [event]="event"
-                            (click)="onEventClick(event, date, $event)">
-                        </app-calendar-event>
-                    }
-                </div>
-            </div>
-
-            @if (more > 0) {
-                <div class="calendar-month-attributes">
-                    <div class="count-time-slots">
-                        <p>
-                            Віконець: {{ timeFreeSlotsCount() }}
-                        </p>
+<ng-template #monthGrid let-start="start">
+    <app-calendar-grid-month
+        [startDate]="start"
+        [taskList]="taskList()"
+        [schedule]="user()?.schedule ?? null"
+        [maxVisiblePerDay]="maxVisible()"
+        [(selectedKeys)]="selectedDays"
+        [selectionMode]="selectionMode()"
+        [onDayDblClick]="onDayDbl">
+        <ng-template #monthCell let-date="date" let-visible="visible" let-more="more" let-inMonth="inMonth" let-events="events">
+            <ng-container>
+                <div class="cell" [class.outside]="!inMonth">
+                    <div class="head">
+                        <span class="num">{{ date | date:'d' }}</span>
+                        @if (isMobile()) {
+                            <app-load-percent
+                                [date]="date"
+                                [taskList]="taskList()">
+                            </app-load-percent>
+                        } @else {
+                            <app-load-indicator
+                                [currentDate]="date"
+                                [taskList]="taskList()"
+                                [day]="date.getDate()">
+                            </app-load-indicator>
+                        }
                     </div>
-
-                    <div class="data">
-                        <a type="button" (click)="onMoreClick(events[0], date, $event)">
-                            Ще {{ more }}
-                        </a>
+                    <div class="list">
+                        @for (event of visible; track event) {
+                            <app-calendar-event
+                                [draggable]="false"
+                                [view]="CalendarView.MONTH"
+                                [top]="event.top"
+                                [height]="event.height"
+                                [color]="getColor(event, user())"
+                                [event]="event"
+                                (click)="onEventClick(event, date, $event)">
+                            </app-calendar-event>
+                        }
                     </div>
                 </div>
-            }
-        </ng-container>
-    </ng-template>
-</app-calendar-grid-month>
-</div>
+
+                @if (more > 0) {
+                    <div class="calendar-month-attributes">
+                        <div class="count-time-slots">
+                            <p>
+                                Віконець: {{ timeFreeSlotsCount() }}
+                            </p>
+                        </div>
+
+                        <div class="data">
+                            <a type="button" (click)="onMoreClick(events[0], date, $event)">
+                                Ще {{ more }}
+                            </a>
+                        </div>
+                    </div>
+                }
+            </ng-container>
+        </ng-template>
+    </app-calendar-grid-month>
+</ng-template>
+
+@if (isMobile()) {
+    <swiper-container #swiper
+                      class="month-swiper"
+                      init="false"
+                      (swiperslidechangetransitionend)="onSlideSettled($event)">
+        @for (start of monthSlides(); track $index) {
+            <swiper-slide>
+                <ng-container [ngTemplateOutlet]="monthGrid"
+                              [ngTemplateOutletContext]="{ start: start }"></ng-container>
+            </swiper-slide>
+        }
+    </swiper-container>
+} @else {
+    <ng-container [ngTemplateOutlet]="monthGrid"
+                  [ngTemplateOutletContext]="{ start: startDate() }"></ng-container>
+}

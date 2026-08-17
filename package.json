@@ -23,6 +23,7 @@
     "@angular/router": "^21.2.0",
     "date-fns": "^4.1.0",
     "rxjs": "~7.8.0",
+    "swiper": "^14.1.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
