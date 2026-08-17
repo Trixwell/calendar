@@ -170,14 +170,15 @@ export class CalendarComponent implements OnInit{
 
     setView(view?: CalendarView){
         if(!view){
-            const stored = localStorage.getItem('calendarView') as CalendarView;
+            const stored = localStorage.getItem('calendarView') as CalendarView | null;
+            const isKnown = !!stored && Object.values(CalendarView).includes(stored);
 
-            if (!this.showYearView() && (!stored || stored === CalendarView.YEAR)) {
+            if (!this.showYearView() && (!isKnown || stored === CalendarView.YEAR)) {
                 this.setView(CalendarView.MONTH);
                 return;
             }
 
-            this.view.set(stored);
+            this.setView(isKnown ? stored! : CalendarView.YEAR);
             return;
         }
 
