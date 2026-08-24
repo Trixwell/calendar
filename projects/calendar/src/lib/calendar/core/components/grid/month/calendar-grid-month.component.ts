@@ -176,16 +176,17 @@ export class CalendarGridMonthComponent {
     }
 
     onCellTouchStart(e: TouchEvent): void {
-        if (this.selectionMode()) return;
-
         const target = e.target as HTMLElement;
-        this.touchIgnoreCell = !!target.closest('app-calendar-event, a, button');
-        if (this.touchIgnoreCell) return;
+        this.touchIgnoreCell = this.isMobile()
+            ? !!target.closest('a, button')
+            : !!target.closest('app-calendar-event, a, button');
 
         const touch = e.touches[0];
         this.touchStartX = touch.clientX;
         this.touchStartY = touch.clientY;
         this.touchMoved = false;
+
+        if (this.selectionMode() || this.touchIgnoreCell) return;
     }
 
     onCellTouchMove(e: TouchEvent): void {
@@ -201,7 +202,11 @@ export class CalendarGridMonthComponent {
     }
 
     onCellTouchEnd(date: Date, e: TouchEvent): void {
-        if (this.selectionMode() || this.touchIgnoreCell) return;
+        if (this.selectionMode() || this.touchIgnoreCell) {
+            this.lastTapKey = null;
+            this.lastTapTime = 0;
+            return;
+        }
 
         if (this.touchMoved) {
             this.touchMoved = false;
