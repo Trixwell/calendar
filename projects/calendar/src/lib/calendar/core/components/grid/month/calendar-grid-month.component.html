@@ -21,7 +21,10 @@
                          [class.day-off]="inMonth(d) && !isWorkingDay(d) && !isTimeOff(d)"
                          [class.selected]="isSelected(d)"
                          (click)="toggleSelect(d, $event)"
-                         (dblclick)="onDayDblClick()(d)">
+                         (dblclick)="onDayDoubleClick(d)"
+                         (touchstart)="onCellTouchStart($event)"
+                         (touchmove)="onCellTouchMove($event)"
+                         (touchend)="onCellTouchEnd(d, $event)">
                         @if (monthCellTpl) {
                             <ng-container
                                 [ngTemplateOutlet]="monthCellTpl"

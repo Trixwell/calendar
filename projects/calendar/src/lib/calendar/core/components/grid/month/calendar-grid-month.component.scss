@@ -223,6 +223,10 @@
                     min-width: 0;
                     padding: tokens.$space-4 tokens.$space-8;
                     font: tokens.$font-subtitle-s;
+                    touch-action: manipulation;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -webkit-tap-highlight-color: transparent;
 
                     &.day-off:not(.selected):not(.today) {
                         background: tokens.$default-75;

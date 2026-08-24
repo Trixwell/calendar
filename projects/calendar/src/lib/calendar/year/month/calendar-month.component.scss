@@ -24,6 +24,10 @@
             transition: background-color 0.25s ease, transform 0.2s ease;
             border-radius: tokens.$radius-4;
             width: 100%;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
 
             &.previous-month-day, &.future-month-day{
                 color: tokens.$default-300;

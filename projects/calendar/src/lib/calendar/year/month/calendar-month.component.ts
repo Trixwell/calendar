@@ -36,6 +36,16 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
     statusMap: Record<string, TaskStatusEnum[]> = {};
     private user: User | null = null;
 
+    private touchStartX = 0;
+    private touchStartY = 0;
+    private touchMoved = false;
+    private lastTapKey: string | null = null;
+    private lastTapTime = 0;
+    private lastDoubleTapAt = 0;
+
+    private readonly TAP_MOVE_THRESHOLD = 10;
+    private readonly DOUBLE_TAP_MS = 300;
+
     private readonly userProvider = inject(CALENDAR_USER);
 
     constructor(
@@ -211,6 +221,48 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
     onDayDbClickInCalendar(date: string) {
         this.dayDbClick()(new Date(date));
         return this;
+    }
+
+    onCellTouchStart(e: TouchEvent): void {
+        const touch = e.touches[0];
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+        this.touchMoved = false;
+    }
+
+    onCellTouchMove(e: TouchEvent): void {
+        const touch = e.touches[0];
+        const dx = Math.abs(touch.clientX - this.touchStartX);
+        const dy = Math.abs(touch.clientY - this.touchStartY);
+
+        if (dx > this.TAP_MOVE_THRESHOLD || dy > this.TAP_MOVE_THRESHOLD) {
+            this.touchMoved = true;
+        }
+    }
+
+    onCellTouchEnd(dateKey: string, e: TouchEvent): void {
+        if (this.touchMoved) {
+            this.touchMoved = false;
+            this.lastTapKey = null;
+            return;
+        }
+
+        const now = Date.now();
+
+        if (this.lastTapKey === dateKey && (now - this.lastTapTime) <= this.DOUBLE_TAP_MS) {
+            this.lastTapKey = null;
+            this.lastDoubleTapAt = performance.now();
+            this.onDayDbClickInCalendar(dateKey);
+            return;
+        }
+
+        this.lastTapKey = dateKey;
+        this.lastTapTime = now;
+    }
+
+    onDayDoubleClick(date: string): void {
+        if (performance.now() - this.lastDoubleTapAt < 700) return;
+        this.onDayDbClickInCalendar(date);
     }
 
     isWorkingDay(day: number, idx: number): boolean {

@@ -50,6 +50,17 @@ export class CalendarGridMonthComponent {
 
     isMobile;
 
+    private touchStartX = 0;
+    private touchStartY = 0;
+    private touchMoved = false;
+    private touchIgnoreCell = false;
+    private lastTapKey: string | null = null;
+    private lastTapTime = 0;
+    private lastDoubleTapAt = 0;
+
+    private readonly TAP_MOVE_THRESHOLD = 6;
+    private readonly DOUBLE_TAP_MS = 300;
+
     private readonly viewport = inject(CALENDAR_VIEWPORT);
 
     constructor() {
@@ -162,6 +173,61 @@ export class CalendarGridMonthComponent {
         this.onDayClick()(d);
 
         return this;
+    }
+
+    onCellTouchStart(e: TouchEvent): void {
+        if (this.selectionMode()) return;
+
+        const target = e.target as HTMLElement;
+        this.touchIgnoreCell = !!target.closest('app-calendar-event, a, button');
+        if (this.touchIgnoreCell) return;
+
+        const touch = e.touches[0];
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+        this.touchMoved = false;
+    }
+
+    onCellTouchMove(e: TouchEvent): void {
+        if (this.selectionMode() || this.touchIgnoreCell) return;
+
+        const touch = e.touches[0];
+        const dx = Math.abs(touch.clientX - this.touchStartX);
+        const dy = Math.abs(touch.clientY - this.touchStartY);
+
+        if (dx > this.TAP_MOVE_THRESHOLD || dy > this.TAP_MOVE_THRESHOLD) {
+            this.touchMoved = true;
+        }
+    }
+
+    onCellTouchEnd(date: Date, e: TouchEvent): void {
+        if (this.selectionMode() || this.touchIgnoreCell) return;
+
+        if (this.touchMoved) {
+            this.touchMoved = false;
+            this.lastTapKey = null;
+            return;
+        }
+
+        const key = format(date, 'yyyy-MM-dd');
+        const now = Date.now();
+
+        if (this.lastTapKey === key && (now - this.lastTapTime) <= this.DOUBLE_TAP_MS) {
+            this.lastTapKey = null;
+            this.lastDoubleTapAt = performance.now();
+            this.onDayDblClick()(date);
+            return;
+        }
+
+        this.lastTapKey = key;
+        this.lastTapTime = now;
+    }
+
+    onDayDoubleClick(d: Date): void {
+        // Safari (and sometimes Chrome Android) synthesizes a native dblclick from a double-tap;
+        // if the touch handlers already handled this double-tap, ignore the synthesized one.
+        if (performance.now() - this.lastDoubleTapAt < 700) return;
+        this.onDayDblClick()(d);
     }
 
     selectWeekday(idx: number) {
