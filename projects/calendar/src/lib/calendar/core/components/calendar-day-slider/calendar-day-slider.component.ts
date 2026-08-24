@@ -1,9 +1,11 @@
-import {ChangeDetectionStrategy, Component, input, model} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input, linkedSignal, model} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {eachDayOfInterval, endOfMonth, startOfDay, startOfMonth} from 'date-fns';
+import {addDays, differenceInCalendarDays, eachDayOfInterval, startOfDay} from 'date-fns';
 import {MasterTask} from '../../entity';
 import {LoadPercentComponent} from './load-percent/load-percent.component';
 import {hasRecord as hasRecordUtil} from '../../../../util/util';
+
+const VISIBLE_DAYS = 7;
 
 @Component({
     selector: 'app-calendar-day-slider',
@@ -19,10 +21,24 @@ export class CalendarDaySliderComponent {
     day = model.required<Date>();
     taskList = input<MasterTask[]>([]);
 
-    get monthDays(): Date[] {
-        const day = startOfDay(this.day());
-        return eachDayOfInterval({ start: startOfMonth(day), end: endOfMonth(day) });
-    }
+    private readonly anchor = linkedSignal<Date, Date>({
+        source: () => startOfDay(this.day()),
+        computation: (selected, previous) => {
+            if (!previous) {
+                return selected;
+            }
+
+            const offset = differenceInCalendarDays(selected, previous.value);
+
+            return offset >= 0 && offset < VISIBLE_DAYS ? previous.value : selected;
+        },
+    });
+
+    protected readonly visibleDays = computed<Date[]>(() => {
+        const start = this.anchor();
+
+        return eachDayOfInterval({ start, end: addDays(start, VISIBLE_DAYS - 1) });
+    });
 
     isSelectedDay(date: Date): boolean {
         return date.toDateString() === this.day().toDateString();
