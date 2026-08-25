@@ -3,10 +3,7 @@
 
 .month-list{
     display: grid;
-    grid-template-columns: repeat(
-                auto-fit,
-            minmax(calc(6 * #{tokens.$space-40} + 2 * #{tokens.$space-32}), 1fr)
-            );
+    grid-template-columns: repeat(4, 1fr);
     column-gap: tokens.$space-56;
     row-gap: tokens.$space-32;
 
@@ -22,12 +19,15 @@
 }
 
 
-@media(width <= 1500px) {
-    .month-list{
-        grid-template-columns: repeat(
-                auto-fit,
-                minmax(calc(6 * #{tokens.$space-32} + 2 * #{tokens.$space-32}), 1fr)
-            ) !important;
+@media (width <= 1500px) {
+    .month-list {
+        column-gap: tokens.$space-32;
+    }
+}
+
+@media (width <= 1100px) {
+    .month-list {
+        column-gap: tokens.$space-16;
     }
 }
 
