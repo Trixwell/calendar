@@ -40,9 +40,11 @@ export class MobileRangeSelectionComponent implements OnDestroy {
     private touchStartX = 0;
     private touchStartY = 0;
     private touchMoved = false;
+    private touchOnEmptySlot = false;
     private startY = 0;
     private containerEl!: HTMLElement;
 
+    private readonly EMPTY_SLOT_SELECTOR = '.cell';
     private readonly TAP_MOVE_THRESHOLD = 10;
     private readonly DEFAULT_RANGE_MS = 60 * 60 * 1000;
     private readonly MIN_BOX_HEIGHT_PX = 56;
@@ -69,6 +71,11 @@ export class MobileRangeSelectionComponent implements OnDestroy {
             return;
         }
 
+        this.touchOnEmptySlot = this.isEmptySlotTarget(e.target);
+        if (!this.touchOnEmptySlot) {
+            return;
+        }
+
         const touch = e.touches[0];
         this.touchStartX = touch.clientX;
         this.touchStartY = touch.clientY;
@@ -78,7 +85,7 @@ export class MobileRangeSelectionComponent implements OnDestroy {
     }
 
     onCellTouchMove(e: TouchEvent): void {
-        if (this.isDragging()) {
+        if (this.isDragging() || !this.touchOnEmptySlot) {
             return;
         }
 
@@ -92,9 +99,12 @@ export class MobileRangeSelectionComponent implements OnDestroy {
     }
 
     onCellTouchEnd(e: TouchEvent): void {
-        if (this.isDragging()) {
+        if (this.isDragging() || !this.touchOnEmptySlot) {
+            this.touchOnEmptySlot = false;
             return;
         }
+
+        this.touchOnEmptySlot = false;
 
         if (this.touchMoved) {
             this.touchMoved = false;
@@ -102,6 +112,14 @@ export class MobileRangeSelectionComponent implements OnDestroy {
         }
 
         this.openMobileSelection(e.changedTouches[0].clientY);
+    }
+
+    /**
+     * Range selection may only start on an empty hour cell — a tap that lands on an
+     * event (or any other overlay projected into the day column) belongs to that element.
+     */
+    private isEmptySlotTarget(target: EventTarget | null): boolean {
+        return target instanceof Element && !!target.closest(this.EMPTY_SLOT_SELECTOR);
     }
 
     private openMobileSelection(clientY: number): void {
