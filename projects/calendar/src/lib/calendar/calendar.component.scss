@@ -24,6 +24,15 @@
                     max-width: 100px;
                 }
             }
+
+            .view-select-group{
+                display: none;
+
+                mat-form-field{
+                    width: 140px;
+                    max-width: 140px;
+                }
+            }
         }
 
         .calendar-controls{
@@ -173,6 +182,18 @@
     }
 }
 
+@media (max-width: 960px) {
+    .calendar .base-box .control-body {
+        .view-toggle-group{
+            display: none;
+        }
+
+        .view-select-group{
+            display: block;
+        }
+    }
+}
+
 @media (max-width: 800px) {
     .calendar .base-box {
         .calendar-controls {
@@ -207,6 +228,10 @@
             flex-direction: column-reverse;
             align-items: center;
             gap: tokens.$space-4;
+
+            .view-select-group {
+                display: none;
+            }
 
             .form-group {
                 width: 100%;

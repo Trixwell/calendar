@@ -6,10 +6,11 @@
 }
 
 .month-grid{
-    overflow: scroll;
+    @media (min-width: 768px) {
+        overflow: scroll;
+    }
 
     .grid-header{
-        min-width: calc(7 * 180px);
         display:grid;
         grid-template-columns: repeat(7, minmax(180px, 1fr));
         background: tokens.$default-100;
@@ -17,6 +18,9 @@
         border-top-right-radius: tokens.$radius-16;
         position: relative;
 
+        @media (min-width: 768px) {
+            min-width: calc(7 * 180px);
+        }
 
         @media (max-width: 800px) {
             background: transparent;

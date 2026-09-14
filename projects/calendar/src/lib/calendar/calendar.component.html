@@ -57,22 +57,35 @@
                     </app-toggle-date-bar>
                 </div>
 
-                @if(!isMobile()) {
-                    <div class="form-group">
-                        <mat-button-toggle-group
-                            [hideSingleSelectionIndicator]="true"
+                <div class="form-group view-toggle-group">
+                    <mat-button-toggle-group
+                        [hideSingleSelectionIndicator]="true"
+                        [value]="view()"
+                        (valueChange)="setView($event)"
+                        class="view-toggle">
+                        @if (showYearView()) {
+                            <mat-button-toggle [value]="CalendarView.YEAR">Рік</mat-button-toggle>
+                        }
+                        <mat-button-toggle [value]="CalendarView.MONTH">Місяць</mat-button-toggle>
+                        <mat-button-toggle [value]="CalendarView.WEEK">Тиждень</mat-button-toggle>
+                        <mat-button-toggle [value]="CalendarView.DAY">Сьогодні</mat-button-toggle>
+                    </mat-button-toggle-group>
+                </div>
+
+                <div class="form-group view-select-group">
+                    <mat-form-field appearance="outline">
+                        <mat-select
                             [value]="view()"
-                            (valueChange)="setView($event)"
-                            class="view-toggle">
+                            (selectionChange)="setView($event.value)">
                             @if (showYearView()) {
-                                <mat-button-toggle [value]="CalendarView.YEAR">Рік</mat-button-toggle>
+                                <mat-option [value]="CalendarView.YEAR">Рік</mat-option>
                             }
-                            <mat-button-toggle [value]="CalendarView.MONTH">Місяць</mat-button-toggle>
-                            <mat-button-toggle [value]="CalendarView.WEEK">Тиждень</mat-button-toggle>
-                            <mat-button-toggle [value]="CalendarView.DAY">Сьогодні</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                }
+                            <mat-option [value]="CalendarView.MONTH">Місяць</mat-option>
+                            <mat-option [value]="CalendarView.WEEK">Тиждень</mat-option>
+                            <mat-option [value]="CalendarView.DAY">Сьогодні</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
 
