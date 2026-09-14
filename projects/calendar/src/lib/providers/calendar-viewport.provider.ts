@@ -14,7 +14,7 @@ export class DefaultCalendarViewportProvider implements CalendarViewportProvider
     private readonly breakpointObserver = inject(BreakpointObserver);
 
     readonly isMobile: Signal<boolean> = toSignal(
-        this.breakpointObserver.observe('(max-width: 800px)').pipe(
+        this.breakpointObserver.observe('(max-width: 960px)').pipe(
             map(result => result.matches),
         ),
         {initialValue: false},

@@ -1,9 +1,15 @@
 @use 'tokens' as tokens;
 @use 'dark-tokens' as darkTokens;
 
+:host{
+  overflow: hidden;
+}
 
 .month-grid{
+    overflow: scroll;
+
     .grid-header{
+        min-width: calc(7 * 180px);
         display:grid;
         grid-template-columns: repeat(7, minmax(180px, 1fr));
         background: tokens.$default-100;
@@ -62,7 +68,6 @@
         position: relative;
         border-bottom-left-radius: tokens.$radius-8;
         border-bottom-right-radius: tokens.$radius-8;
-        overflow: hidden;
         border-left: tokens.$border-1 solid tokens.$default-100;
 
         .week {
