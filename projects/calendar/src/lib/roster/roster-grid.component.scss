@@ -1,0 +1,191 @@
+@use 'tokens' as tokens;
+
+.roster-grid {
+    width: max-content;
+    max-width: none;
+
+    &__table {
+        display: grid;
+        grid-template-rows: 40px;
+        grid-auto-rows: 32px;
+
+        > * {
+            box-sizing: border-box;
+        }
+    }
+
+    &__sticky-col {
+        background-color: var(--roster-grid-bg, #FFFFFF);
+    }
+
+    &__sticky-row {
+        background-color: var(--roster-grid-bg, #FFFFFF);
+    }
+
+    &__corner {
+        display: flex;
+        align-items: center;
+        padding: tokens.$space-4 tokens.$space-12;
+        border: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        font: var(--roster-corner-font, #{tokens.$font-caption-l});
+        font-family: inherit;
+        color: var(--roster-corner-color, #{tokens.$default-700});
+    }
+
+    &__col-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: tokens.$space-4;
+        font: tokens.$font-caption-l;
+        font-family: inherit;
+        color: tokens.$default-700;
+        border-top: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        border-right: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        border-bottom: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+
+        &--weekend {
+            background-color: var(--roster-weekend-bg, #DEE2E6);
+        }
+
+        &--holiday {
+            background-color: tokens.$warning-50;
+        }
+    }
+
+    &__col-weekday {
+        text-transform: capitalize;
+    }
+
+    &__col-day {
+        font: tokens.$font-subtitle-s;
+        font-family: inherit;
+        color: tokens.$default-900;
+    }
+
+    &__row-title {
+        height: 32px;
+        padding: 0 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font: tokens.$font-body-s;
+        font-family: inherit;
+        line-height: 32px;
+        color: tokens.$default-900;
+        border-left: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        border-right: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        border-bottom: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+
+        &--sub {
+            text-align: right;
+            font: var(--roster-subrow-font, #{tokens.$font-caption-m});
+            font-family: inherit;
+            line-height: 32px;
+            color: var(--roster-subrow-color, #{tokens.$default-500});
+        }
+    }
+
+    &__cell {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-right: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        border-bottom: tokens.$border-1 solid var(--roster-grid-line-color, #E9EAEC);
+        cursor: pointer;
+        background-color: var(--cell-tint, transparent);
+
+        &--weekend {
+            background-color: var(--roster-weekend-bg, #DEE2E6);
+        }
+
+        &--holiday {
+            background-color: tokens.$warning-50;
+        }
+
+        &--selected {
+            outline: 2px solid var(--roster-selected-color, #4F46E5);
+            outline-offset: -2px;
+        }
+    }
+
+    &__cell-number {
+        font-family: inherit;
+        font-size: 12px;
+    }
+
+    &__cell-icon {
+        position: relative;
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    &__cell-badge {
+        position: absolute;
+        bottom: -2px;
+        right: -4px;
+        min-width: 12px;
+        height: 12px;
+        border-radius: tokens.$radius-1000;
+        background-color: var(--cell-tint, tokens.$default-100);
+        font-size: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__total-cell {
+        width: auto;
+        align-items: center;
+        justify-content: center;
+        font: tokens.$font-subtitle-s;
+        font-family: inherit;
+        cursor: default;
+    }
+
+    // Row-level enter/leave animation, driven by the native `animate.enter`/`animate.leave`
+    // template bindings on every grid item that makes up a row (title, cells, total-cell),
+    // so the whole row fades/slides in or out together when the row set changes (filtering).
+    &__row-enter {
+        animation: roster-row-enter var(--roster-row-anim-duration, 160ms) ease-out;
+    }
+
+    &__row-leave {
+        animation: roster-row-leave var(--roster-row-anim-duration, 160ms) ease-out;
+    }
+}
+
+@keyframes roster-row-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes roster-row-leave {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .roster-grid__row-enter,
+    .roster-grid__row-leave {
+        animation-duration: 0ms;
+    }
+}

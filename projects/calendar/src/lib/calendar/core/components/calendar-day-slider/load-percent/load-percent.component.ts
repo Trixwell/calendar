@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MasterTask} from '../../../entity';
-import {User} from '../../../entity';
+import {CalendarEvent} from '../../../../../contracts/calendar-event';
+import {CalendarDayHours, CalendarUserContext} from '../../../../../contracts/calendar-user-context';
 import {CALENDAR_USER} from '../../../../../providers/calendar-user.provider';
 
 @Component({
@@ -13,9 +13,9 @@ import {CALENDAR_USER} from '../../../../../providers/calendar-user.provider';
 })
 export class LoadPercentComponent {
     date = input.required<Date>();
-    taskList = input<MasterTask[]>([]);
+    taskList = input<CalendarEvent[]>([]);
 
-    profile!: User;
+    profile!: CalendarUserContext;
 
     private readonly userProvider = inject(CALENDAR_USER);
 
@@ -28,30 +28,20 @@ export class LoadPercentComponent {
         });
     }
 
-    private parseHm(hm: string): number {
-        const [h, m] = hm.split(':').map(Number);
-        return h * 60 + m;
-    }
-
-    private get weekdayKey(): string {
-        return ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][this.date().getDay()];
+    private get daySchedule(): CalendarDayHours | null {
+        return this.profile?.getDayHours(this.date()) ?? null;
     }
 
     private get totalMinutes(): number {
-        const daySchedule = this.profile?.schedule?.[this.weekdayKey];
-        if (!daySchedule?.start_time) return 0;
-        return Math.max(0, this.parseHm(daySchedule.end_time) - this.parseHm(daySchedule.start_time));
-    }
-
-    private get isoDay(): string {
-        const d = this.date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const sch = this.daySchedule;
+        return sch ? Math.max(0, sch.endMinutes - sch.startMinutes) : 0;
     }
 
     private get occupiedMinutes(): number {
+        const target = this.date().toDateString();
         return this.taskList()
-            .filter(t => t.assign_time.startsWith(this.isoDay))
-            .reduce((sum, t) => sum + (Number(t.duration) || 0), 0);
+            .filter(t => t.getStart().toDateString() === target)
+            .reduce((sum, t) => sum + t.getDurationMinutes(), 0);
     }
 
     get percent(): number {
@@ -62,6 +52,7 @@ export class LoadPercentComponent {
     }
 
     get hasTask(): boolean {
-        return this.taskList().some(t => t.assign_time.startsWith(this.isoDay) && !t.taskType.isTimeOff());
+        const target = this.date().toDateString();
+        return this.taskList().some(t => t.getStart().toDateString() === target && !t.isBlocking());
     }
 }

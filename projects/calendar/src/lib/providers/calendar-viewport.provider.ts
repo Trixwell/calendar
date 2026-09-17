@@ -7,7 +7,10 @@ export interface CalendarViewportProvider {
     isMobile: Signal<boolean>;
 }
 
-export const CALENDAR_VIEWPORT = new InjectionToken<CalendarViewportProvider>('CALENDAR_VIEWPORT');
+export const CALENDAR_VIEWPORT = new InjectionToken<CalendarViewportProvider>('CALENDAR_VIEWPORT', {
+    providedIn: 'root',
+    factory: () => inject(DefaultCalendarViewportProvider),
+});
 
 @Injectable({providedIn: 'root'})
 export class DefaultCalendarViewportProvider implements CalendarViewportProvider {

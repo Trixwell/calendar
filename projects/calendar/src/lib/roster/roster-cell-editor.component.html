@@ -1,0 +1,46 @@
+<div class="roster-cell-editor">
+    <div class="roster-cell-editor__title-row">
+        <h3 class="roster-cell-editor__title">{{ resolvedLabels().title }}</h3>
+        <button type="button" mat-icon-button class="roster-cell-editor__close" (click)="close()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="roster-cell-editor__row">
+        <label class="roster-cell-editor__field">
+            <span>{{ resolvedLabels().dayType }}</span>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="roster-cell-editor__form-field">
+                <mat-select [(ngModel)]="dayTypeId" [placeholder]="resolvedLabels().dayTypePlaceholder">
+                    @for (dayType of dayTypes(); track dayType.id) {
+                        <mat-option [value]="dayType.id">{{ dayType.name }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </label>
+
+        <label class="roster-cell-editor__field roster-cell-editor__field--hours">
+            <span>{{ resolvedLabels().hours }}</span>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="roster-cell-editor__form-field">
+                <input matInput type="number" min="0" step="0.5" [placeholder]="resolvedLabels().hoursPlaceholder" [(ngModel)]="hours">
+            </mat-form-field>
+        </label>
+    </div>
+
+    <label class="roster-cell-editor__field">
+        <span>{{ resolvedLabels().comment }}</span>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="roster-cell-editor__form-field">
+            <textarea matInput rows="3" [placeholder]="resolvedLabels().commentPlaceholder" [(ngModel)]="comment"></textarea>
+        </mat-form-field>
+    </label>
+
+    <div class="roster-cell-editor__actions">
+        <button type="button" mat-flat-button color="primary" class="roster-cell-editor__save" (click)="save()">
+            {{ resolvedLabels().save }}
+        </button>
+        @if (allowDelete() && event()) {
+            <button type="button" mat-stroked-button class="roster-cell-editor__delete" (click)="remove()">
+                {{ resolvedLabels().delete }}
+            </button>
+        }
+    </div>
+</div>

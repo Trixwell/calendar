@@ -91,7 +91,11 @@ export class CalendarComponent implements OnInit{
         this.year.set(new Date().getFullYear());
 
         this.userProvider.profile$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
-            this.user = user;
+            // CALENDAR_USER now speaks the general CalendarUserContext contract, but this
+            // component's own views (day/week/month) still render booking-domain fields
+            // (categories, task types) that only exist on the concrete User class. Every
+            // provider actually wired up for this component supplies a real User instance.
+            this.user = user as User | null;
             this.cdr.markForCheck();
         });
 
@@ -120,7 +124,9 @@ export class CalendarComponent implements OnInit{
         const search_end = new Date(this.end_date.getFullYear(),   this.end_date.getMonth() + 1, 1);
 
         this.calendarData.getTasks(start.toISOString(), search_end.toISOString()).subscribe(taskList => {
-            this.task_list.set(taskList);
+            // Same reasoning as above: CALENDAR_DATA speaks CalendarEvent[] generally, this
+            // component narrows back to the concrete MasterTask it actually renders.
+            this.task_list.set(taskList as MasterTask[]);
             this.cdr.markForCheck();
         });
     }
@@ -238,7 +244,7 @@ export class CalendarComponent implements OnInit{
     eventsByDay = computed(() => {
         const map = new Map<string, MasterTask[]>();
         for (const t of this.task_list()) {
-            const k = format(t.assign_time, 'yyyy-MM-dd');
+            const k = format(t.getStart(), 'yyyy-MM-dd');
             if (!map.has(k)) map.set(k, []);
             map.get(k)!.push(t);
         }

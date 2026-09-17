@@ -1,0 +1,55 @@
+<div class="roster-grid">
+    <div class="roster-grid__scroll">
+        <div class="roster-grid__table"
+             [style.grid-template-columns]="'minmax(280px, max-content) repeat(' + columns().length + ', 32px) 32px'">
+
+            <div class="roster-grid__corner roster-grid__sticky-col roster-grid__sticky-row">{{ cornerLabel() }}</div>
+            @for (column of columns(); track column.date.getTime()) {
+                <div class="roster-grid__col-header roster-grid__sticky-row"
+                     [class.roster-grid__col-header--weekend]="column.isWeekend"
+                     [class.roster-grid__col-header--holiday]="column.isHoliday">
+                    <span class="roster-grid__col-weekday">{{ column.date | date:'EEE':undefined:'uk' }}</span>
+                    <span class="roster-grid__col-day">{{ column.date | date:'d' }}</span>
+                </div>
+            }
+            <div class="roster-grid__col-header roster-grid__sticky-row roster-grid__total-header">{{ totalLabel() }}</div>
+
+            @for (row of rows(); track row.id) {
+                <div class="roster-grid__row-title roster-grid__sticky-col"
+                     [class.roster-grid__row-title--sub]="row.depth > 0"
+                     [style.padding-left.px]="12 + row.depth * 16"
+                     animate.enter="roster-grid__row-enter"
+                     animate.leave="roster-grid__row-leave">
+                    {{ row.title }}
+                </div>
+
+                @for (column of columns(); track column.date.getTime()) {
+                    <div class="roster-grid__cell"
+                         [class.roster-grid__cell--weekend]="column.isWeekend"
+                         [class.roster-grid__cell--holiday]="column.isHoliday"
+                         [class.roster-grid__cell--selected]="isSelected(row, column)"
+                         [style.--cell-tint]="eventsFor(row, column)[0]?.getColor()"
+                         animate.enter="roster-grid__row-enter"
+                         animate.leave="roster-grid__row-leave"
+                         (click)="onCellClick(row, column, $event)">
+                        @for (event of eventsFor(row, column); track event.getId()) {
+                            @if (event.getIcon()) {
+                                <span class="roster-grid__cell-icon">{{ event.getIcon() }}<span class="roster-grid__cell-badge">{{ event.getAmount() }}</span></span>
+                            } @else {
+                                <span class="roster-grid__cell-number">{{ event.getAmount() }}</span>
+                            }
+                        }
+                    </div>
+                }
+
+                <div class="roster-grid__cell roster-grid__total-cell"
+                     animate.enter="roster-grid__row-enter"
+                     animate.leave="roster-grid__row-leave">
+                    @if (row.total !== null) {
+                        {{ row.total }}
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

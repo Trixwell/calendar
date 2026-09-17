@@ -1,11 +1,13 @@
 import {ChangeDetectionStrategy, Component, computed, inject, input, model, OnInit, output, ViewChild} from '@angular/core';
 import {MasterTask} from "../core/entity";
-import {DaySchedule, User} from "../core/entity";
+import {User} from "../core/entity";
+import {CalendarEvent} from "../../contracts/calendar-event";
+import {CalendarDayHours} from "../../contracts/calendar-user-context";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CdkDrag} from "@angular/cdk/drag-drop";
-import {getColor, getDayOffComment, getEventTitle, isFullDayOff, isTimeOffBlock} from "../../util/util";
-import {CalendarView, Weekday} from "../core/entity";
+import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {CalendarView} from "../core/entity";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
 
@@ -32,7 +34,7 @@ export class CalendarWeekComponent implements OnInit{
 
     @ViewChild(CalendarGridComponent) calendarGrid!: CalendarGridComponent;
 
-    todaySchedule: DaySchedule | undefined = undefined;
+    todaySchedule: CalendarDayHours | null = null;
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
 
@@ -59,22 +61,22 @@ export class CalendarWeekComponent implements OnInit{
         const start = this.startDate().getTime();
         const end = this.endDate().getTime();
         return this.taskList().filter(t => {
-            const time = new Date(t.assign_time).getTime();
+            const time = t.getStart().getTime();
             return time >= start && time <= end;
         });
     });
 
     setTodaySchedule(): this {
-        const dayName = new Intl.DateTimeFormat('en-US',{weekday:'long'})
-            .format(this.startDate())
-            .toLowerCase() as Weekday;
-
-        this.todaySchedule = this.user()?.schedule[dayName];
+        this.todaySchedule = this.user().getDayHours(this.startDate()) ?? null;
         return this;
     }
 
-    onEventClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
-        this.eventOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    onEventClick = (event: CalendarEvent, date: Date, mouseEvent: MouseEvent): void => {
+        this.eventOpen.emit({ task: event as MasterTask, date, anchor: mouseEvent.currentTarget as HTMLElement });
+    };
+
+    handleEventDrop = (event: CalendarEvent, oldStart: Date, newStart: Date): void => {
+        this.onEventDrop()(event as MasterTask, oldStart, newStart);
     };
 
     onSlotClick = input<(date: Date) => void>(() => {});
@@ -82,15 +84,21 @@ export class CalendarWeekComponent implements OnInit{
     onDayHeader = input<(date: Date) => void>(() => {});
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
-    toHour(fullTime: string): number {
-        const hourStr = fullTime.split(':')[0];
-        return parseInt(hourStr, 10);
+    startHourOf(fallback = 8): number {
+        return this.todaySchedule ? Math.floor(this.todaySchedule.startMinutes / 60) : fallback;
     }
 
-    protected readonly getColor = getColor;
+    endHourOf(fallback = 20): number {
+        return this.todaySchedule ? Math.floor(this.todaySchedule.endMinutes / 60) : fallback;
+    }
+
+    /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
+    resolveColor(event: CalendarEvent): string {
+        return event.getColor() ?? getColor(event as MasterTask, this.user());
+    }
+
     protected readonly CalendarView = CalendarView;
     protected readonly isFullDayOff = isFullDayOff;
     protected readonly getDayOffComment = getDayOffComment;
     protected readonly isTimeOffBlock = isTimeOffBlock;
-    protected readonly getEventTitle = getEventTitle;
 }

@@ -1,6 +1,9 @@
 import {FormControl} from "@angular/forms";
 import {ImageFile, ImageFileItem} from "./auth";
 import {TimeSlot} from "./timetable";
+import {CalendarEvent} from "../../../contracts/calendar-event";
+
+const DAY_STATUS_COMMENT_CODES = new Set(['dayOff', 'vacation', 'sick', 'partial']);
 
 export class Category {
     constructor(
@@ -99,7 +102,7 @@ export interface MasterTaskDTO {
     time_slot_id: number,
 }
 
-export class MasterTask {
+export class MasterTask implements CalendarEvent {
     constructor(
         public id: number,
         public cr_time: string,
@@ -117,8 +120,66 @@ export class MasterTask {
         public payment_type: TaskPaymentTypeEnum,
         public payment_status: TaskPaymentStatusEnum,
         public time_slot_id: number,
-        public taskTypeList: TaskType[]
+        public taskTypeList: TaskType[],
+        public color: string | null = null,
     ) {
+    }
+
+    public getId(): number | string {
+        return this.id;
+    }
+
+    public getStart(): Date {
+        return new Date(this.assign_time);
+    }
+
+    public getEnd(): Date {
+        return new Date(this.approximate_end_time);
+    }
+
+    public getDurationMinutes(): number {
+        return Number(this.duration) || 0;
+    }
+
+    public isAllDay(): boolean {
+        return Number(this.duration) <= 0;
+    }
+
+    public isBlocking(): boolean {
+        return this.taskType.isTimeOff();
+    }
+
+    public getTitle(): string {
+        if (!this.isBlocking()) return this.taskType.name;
+        return DAY_STATUS_COMMENT_CODES.has(this.comment) ? 'Вихідний' : 'Заблокований час';
+    }
+
+    public getColor(): string | null {
+        return this.color;
+    }
+
+    public getIcon(): string | null {
+        return null;
+    }
+
+    public getStatusClasses(): string[] {
+        return [`status-${TaskStatusEnum[this.status].toLowerCase()}`];
+    }
+
+    public getSlotId(): number | null {
+        return this.time_slot_id;
+    }
+
+    public getAmount(): number {
+        return this.taskType.charge_amount;
+    }
+
+    public getComment(): string {
+        return this.comment;
+    }
+
+    public getCategoryId(): number | string | null {
+        return this.taskType.category;
     }
 }
 

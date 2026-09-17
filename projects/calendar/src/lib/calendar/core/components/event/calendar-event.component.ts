@@ -1,27 +1,23 @@
 import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
-import {MasterTask} from "../../entity";
 import {DatePipe} from "@angular/common";
-import {RouterLink} from "@angular/router";
 import {CalendarView} from "../../entity";
-import {getEventTitle} from "../../../../util/util";
+import {CalendarEvent} from "../../../../contracts/calendar-event";
 
 @Component({
   selector: 'app-calendar-event',
     imports: [
         DatePipe,
-        RouterLink
     ],
   templateUrl: './calendar-event.component.html',
   styleUrl: './calendar-event.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarEventComponent {
-    event = input.required<MasterTask>();
+    event = input.required<CalendarEvent>();
     top = input.required<string>();
     height = input.required<string>();
     view = input<CalendarView>(CalendarView.DAY);
     color = input<string>('\'#5444dc\'');
-    showClient = input<boolean>(false);
     showDetailsModal = input<boolean>(true);
 
     lightColor = computed(() => {
@@ -39,15 +35,15 @@ export class CalendarEventComponent {
     }
 
     isPast(){
-        return new Date(this.event().approximate_end_time) < new Date();
+        return this.event().getEnd() < new Date();
     }
 
     isTimeOff(){
-        return this.event().taskType.isTimeOff();
+        return this.event().isBlocking();
     }
 
     title(){
-        return getEventTitle(this.event());
+        return this.event().getTitle();
     }
 
     protected readonly CalendarView = CalendarView;
