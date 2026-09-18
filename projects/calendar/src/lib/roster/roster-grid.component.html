@@ -17,9 +17,7 @@
             @for (row of rows(); track row.id) {
                 <div class="roster-grid__row-title roster-grid__sticky-col"
                      [class.roster-grid__row-title--sub]="row.depth > 0"
-                     [style.padding-left.px]="12 + row.depth * 16"
-                     animate.enter="roster-grid__row-enter"
-                     animate.leave="roster-grid__row-leave">
+                     [style.padding-left.px]="12 + row.depth * 16">
                     {{ row.title }}
                 </div>
 
@@ -29,12 +27,13 @@
                          [class.roster-grid__cell--holiday]="column.isHoliday"
                          [class.roster-grid__cell--selected]="isSelected(row, column)"
                          [style.--cell-tint]="eventsFor(row, column)[0]?.getColor()"
-                         animate.enter="roster-grid__row-enter"
-                         animate.leave="roster-grid__row-leave"
                          (click)="onCellClick(row, column, $event)">
                         @for (event of eventsFor(row, column); track event.getId()) {
-                            @if (event.getIcon()) {
-                                <span class="roster-grid__cell-icon">{{ event.getIcon() }}<span class="roster-grid__cell-badge">{{ event.getAmount() }}</span></span>
+                            @if (event.getIcon(); as icon) {
+                                <span class="roster-grid__cell-icon">
+                                    <img class="roster-grid__cell-icon-glyph" [src]="icon" alt="">
+                                    <span class="roster-grid__cell-badge">{{ event.getAmount() }}</span>
+                                </span>
                             } @else {
                                 <span class="roster-grid__cell-number">{{ event.getAmount() }}</span>
                             }
@@ -42,9 +41,7 @@
                     </div>
                 }
 
-                <div class="roster-grid__cell roster-grid__total-cell"
-                     animate.enter="roster-grid__row-enter"
-                     animate.leave="roster-grid__row-leave">
+                <div class="roster-grid__cell roster-grid__total-cell">
                     @if (row.total !== null) {
                         {{ row.total }}
                     }

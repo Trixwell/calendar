@@ -28,7 +28,7 @@
 
     <label class="roster-cell-editor__field">
         <span>{{ resolvedLabels().comment }}</span>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="roster-cell-editor__form-field">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="roster-cell-editor__form-field roster-cell-editor__form-field--textarea">
             <textarea matInput rows="3" [placeholder]="resolvedLabels().commentPlaceholder" [(ngModel)]="comment"></textarea>
         </mat-form-field>
     </label>

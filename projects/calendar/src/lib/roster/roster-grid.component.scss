@@ -100,7 +100,7 @@
         background-color: var(--cell-tint, transparent);
 
         &--weekend {
-            background-color: var(--roster-weekend-bg, #DEE2E6);
+            background-color: var(--cell-tint, var(--roster-weekend-bg, #DEE2E6));
         }
 
         &--holiday {
@@ -124,15 +124,26 @@
         line-height: 1;
     }
 
+    &__cell-icon-glyph {
+        display: block;
+        width: 28px;
+        height: 28px;
+    }
+
     &__cell-badge {
         position: absolute;
-        bottom: -2px;
-        right: -4px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         min-width: 12px;
         height: 12px;
+        padding: 0 3px;
+        border: none;
         border-radius: tokens.$radius-1000;
-        background-color: var(--cell-tint, tokens.$default-100);
-        font-size: 8px;
+        background-color: transparent;
+        color: var(--neutral-900, tokens.$default-900);
+        font-size: 12px;
+        line-height: 1;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -147,45 +158,4 @@
         cursor: default;
     }
 
-    // Row-level enter/leave animation, driven by the native `animate.enter`/`animate.leave`
-    // template bindings on every grid item that makes up a row (title, cells, total-cell),
-    // so the whole row fades/slides in or out together when the row set changes (filtering).
-    &__row-enter {
-        animation: roster-row-enter var(--roster-row-anim-duration, 160ms) ease-out;
-    }
-
-    &__row-leave {
-        animation: roster-row-leave var(--roster-row-anim-duration, 160ms) ease-out;
-    }
-}
-
-@keyframes roster-row-enter {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes roster-row-leave {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    to {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .roster-grid__row-enter,
-    .roster-grid__row-leave {
-        animation-duration: 0ms;
-    }
 }
