@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   CalendarComponent,
   CalendarEvent,
@@ -17,7 +17,12 @@ import {
   TaskType,
 } from 'calendar';
 
-function makeRosterTask(daysFromToday: number, hour: number, durationMin: number, type: TaskType): MasterTask {
+function makeRosterTask(
+  daysFromToday: number,
+  hour: number,
+  durationMin: number,
+  type: TaskType,
+): MasterTask {
   const start = new Date();
   start.setDate(start.getDate() + daysFromToday);
   start.setHours(hour, 0, 0, 0);
@@ -49,6 +54,7 @@ function makeRosterTask(daysFromToday: number, hour: number, durationMin: number
   selector: 'app-root',
   imports: [CalendarComponent, RosterGridComponent, RosterCellEditor],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss',
 })
 export class App {
