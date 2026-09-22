@@ -95,4 +95,8 @@ export class RosterCellEditor {
     close(): void {
         this.closed.emit();
     }
+
+    protected onHoursFocus(event: FocusEvent): void {
+        (event.target as HTMLInputElement).select();
+    }
 }
