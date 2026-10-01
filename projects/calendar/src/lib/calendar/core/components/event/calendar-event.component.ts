@@ -1,31 +1,24 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
-import {MasterTask} from "../../entity";
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
 import {DatePipe} from "@angular/common";
-import {RouterLink} from "@angular/router";
 import {CalendarView} from "../../entity";
-import {CalendarLocale} from "../../../../i18n/calendar-locale";
+import {CalendarEvent} from "../../../../contracts/calendar-event";
 
 @Component({
   selector: 'app-calendar-event',
     imports: [
         DatePipe,
-        RouterLink
     ],
   templateUrl: './calendar-event.component.html',
   styleUrl: './calendar-event.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarEventComponent {
-    event = input.required<MasterTask>();
+    event = input.required<CalendarEvent>();
     top = input.required<string>();
     height = input.required<string>();
     view = input<CalendarView>(CalendarView.DAY);
     color = input<string>('\'#5444dc\'');
-    showClient = input<boolean>(false);
     showDetailsModal = input<boolean>(true);
-
-    protected readonly locale = inject(CalendarLocale);
-    private readonly labels = this.locale.labels;
 
     lightColor = computed(() => {
         const { r, g, b } = this.hexToRgb(this.color());
@@ -42,15 +35,15 @@ export class CalendarEventComponent {
     }
 
     isPast(){
-        return new Date(this.event().approximate_end_time) < new Date();
+        return this.event().getEnd() < new Date();
     }
 
     isTimeOff(){
-        return this.event().taskType.isTimeOff();
+        return this.event().isBlocking();
     }
 
     title(){
-        return this.event().getTitle(this.labels);
+        return this.event().getTitle();
     }
 
     protected readonly CalendarView = CalendarView;

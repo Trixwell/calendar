@@ -1,11 +1,10 @@
-import { Component, inject, output, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, output, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { MatButton } from '@angular/material/button';
 import { ModalDialogComponent } from '../modal-dialog/modal-dialog.component';
 import { CalendarMonthComponent } from '../../../../year/month/calendar-month.component';
 import { ToggleDateBarComponent } from '../../toggle-date-bar/toggle-date-bar.component';
 import { CalendarView } from '../../../entity';
-import { CalendarLocale } from '../../../../../i18n/calendar-locale';
 
 @Component({
   selector: 'app-date-picker-modal',
@@ -15,8 +14,6 @@ import { CalendarLocale } from '../../../../../i18n/calendar-locale';
   styleUrl: './date-picker-modal.component.scss',
 })
 export class DatePickerModalComponent {
-  protected readonly labels = inject(CalendarLocale).labels;
-
   dateChosen = output<Date>();
   adjustDays = output<void>();
 

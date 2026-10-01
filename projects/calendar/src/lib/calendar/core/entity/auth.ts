@@ -2,6 +2,13 @@ import {FormControl} from "@angular/forms";
 import {Category, TaskType, TaskTypeDTO} from "./master-task";
 import {env} from "../env";
 import {TimeSlot} from "./timetable";
+import {WEEKDAY_NAMES, Weekday} from "./calendar-view";
+import {CalendarDayHours, CalendarUserContext} from "../../../contracts/calendar-user-context";
+
+function parseHmToMinutes(hm: string): number {
+    const [h, m] = hm.split(':').map(Number);
+    return (h || 0) * 60 + (m || 0);
+}
 
 export class Token {
     public token: string | null = null;
@@ -15,7 +22,7 @@ export interface Chat {
     username: string | null;
 }
 
-export class User {
+export class User implements CalendarUserContext {
     cr_time: string;
     up_time: string;
     username: string;
@@ -70,6 +77,22 @@ export class User {
 
     public getTimeSlot(taskType: TaskType): TimeSlot[] {
         return this.timeSlotList.filter(item => item.task_type_id == taskType.id);
+    }
+
+    public getDayHours(date: Date): CalendarDayHours | null {
+        const weekdayName = WEEKDAY_NAMES[date.getDay()] as Weekday;
+        const day = this.schedule[weekdayName];
+        if (!day) return null;
+
+        return {
+            isWorkingDay: day.is_working_day,
+            startMinutes: day.start_time ? parseHmToMinutes(day.start_time) : 0,
+            endMinutes: day.end_time ? parseHmToMinutes(day.end_time) : 0,
+        };
+    }
+
+    public getSlotIds(): number[] {
+        return this.timeSlotList.map(slot => slot.id);
     }
 }
 
