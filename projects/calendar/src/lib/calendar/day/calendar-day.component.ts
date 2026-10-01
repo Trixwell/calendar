@@ -1,11 +1,13 @@
 import {ChangeDetectionStrategy, Component, computed, inject, input, Input, model, OnInit, output, WritableSignal} from '@angular/core';
 import {DatePipe} from "@angular/common";
 import {MasterTask} from "../core/entity";
+import {CalendarEvent} from "../../contracts/calendar-event";
+import {CalendarDayHours} from "../../contracts/calendar-user-context";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
-import {DaySchedule, User} from "../core/entity";
-import {getColor, getDayOffComment, getEventTitle, isFullDayOff, isTimeOffBlock} from "../../util/util";
-import {CalendarView, Weekday} from "../core/entity";
+import {User} from "../core/entity";
+import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {CalendarView} from "../core/entity";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
 
@@ -28,7 +30,7 @@ export class CalendarDayComponent implements OnInit{
     selectedDays = model<Date[]>([]);
     eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
 
-    todaySchedule: DaySchedule | undefined = undefined;
+    todaySchedule: CalendarDayHours | null = null;
     isMobile;
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
@@ -42,37 +44,38 @@ export class CalendarDayComponent implements OnInit{
     }
 
     setTodaySchedule(): this {
-        const dayName = new Intl.DateTimeFormat('en-US',{weekday:'long'})
-            .format(this.day())
-            .toLowerCase() as Weekday;
-
-        this.todaySchedule = this.user()?.schedule[dayName];
+        this.todaySchedule = this.user().getDayHours(this.day()) ?? null;
         return this;
     }
 
     dayTaskList = computed(() => {
         const d = this.day();
-        const isoDay = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        return this.taskList().filter(t => t.assign_time.startsWith(isoDay));
+        return this.taskList().filter(t => t.getStart().toDateString() === d.toDateString());
     });
 
-    onEventClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
-        this.eventOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    onEventClick = (event: CalendarEvent, date: Date, mouseEvent: MouseEvent): void => {
+        this.eventOpen.emit({ task: event as MasterTask, date, anchor: mouseEvent.currentTarget as HTMLElement });
     };
 
     onSlotClick = input<(date: Date) => void>(() => {});
     onDayHeader = input<(date: Date) => void>((date: Date) => this.day.set(date));
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
-    toHour(fullTime: string): number {
-        const hourStr = fullTime.split(':')[0];
-        return parseInt(hourStr, 10);
+    startHourOf(fallback = 8): number {
+        return this.todaySchedule ? Math.floor(this.todaySchedule.startMinutes / 60) : fallback;
     }
 
-    protected readonly getColor = getColor;
+    endHourOf(fallback = 20): number {
+        return this.todaySchedule ? Math.floor(this.todaySchedule.endMinutes / 60) : fallback;
+    }
+
+    /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
+    resolveColor(event: CalendarEvent): string {
+        return event.getColor() ?? getColor(event as MasterTask, this.user());
+    }
+
     protected readonly CalendarView = CalendarView;
     protected readonly isFullDayOff = isFullDayOff;
     protected readonly getDayOffComment = getDayOffComment;
     protected readonly isTimeOffBlock = isTimeOffBlock;
-    protected readonly getEventTitle = getEventTitle;
 }

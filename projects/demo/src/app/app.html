@@ -3,4 +3,22 @@
     (daysConfirmed)="onDaysConfirmed($event)"
     (dateSelected)="onDateSelected($event)"
     (rangeSelected)="onRangeSelected($event)" />
+
+  <h2>Roster grid demo</h2>
+  <app-roster-grid
+    [columns]="rosterColumns"
+    [rows]="rosterRows"
+    [selected]="selectedCell()"
+    cornerLabel="ПІБ/Дата"
+    (cellClick)="onRosterCellClick($event)" />
+
+  @if (selectedCell()) {
+    <div class="roster-popover" [style.left.px]="popoverPosition().left" [style.top.px]="popoverPosition().top">
+      <app-roster-cell-editor
+        [event]="activeEvent()"
+        [dayTypes]="rosterDayTypes"
+        (saved)="onRosterEditorSaved($event)"
+        (deleted)="onRosterEditorDeleted()" />
+    </div>
+  }
 </main>

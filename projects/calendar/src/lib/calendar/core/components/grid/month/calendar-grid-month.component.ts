@@ -10,12 +10,11 @@ import {
     startOfMonth,
     startOfWeek
 } from "date-fns";
-import {MasterTask} from "../../../entity";
 import {DatePipe, NgTemplateOutlet} from "@angular/common";
 import {uk} from "date-fns/locale";
 import {isPastDate} from "../../../../../util/util";
-import {Schedule} from "../../../entity";
-import {WEEKDAY_NAMES} from "../../../entity";
+import {CalendarEvent} from "../../../../../contracts/calendar-event";
+import {CalendarUserContext} from "../../../../../contracts/calendar-user-context";
 import {CALENDAR_VIEWPORT} from "../../../../../providers/calendar-viewport.provider";
 
 @Component({
@@ -30,10 +29,10 @@ import {CALENDAR_VIEWPORT} from "../../../../../providers/calendar-viewport.prov
 })
 export class CalendarGridMonthComponent {
     startDate = input.required<Date>();
-    taskList = input<MasterTask[]>([]);
+    taskList = input<CalendarEvent[]>([]);
     maxVisiblePerDay = input<number>(3);
     loadMap = input<Record<string, number>>({});
-    schedule = input<Schedule | null>(null);
+    user = input<CalendarUserContext | null>(null);
     selectionMode = input<boolean>(false);
 
     selectedKeys = model<Date[]>([]);
@@ -41,9 +40,9 @@ export class CalendarGridMonthComponent {
     onDayClick = input<(date: Date) => void>(() => {});
     onDayDblClick = input<(date: Date) => void>(() => {});
     onWeekdayHeaderClick = input<(weekday: number) => void>(() => {});
-    onEventClick = input<(task: MasterTask, date: Date) => void>(() => {});
+    onEventClick = input<(event: CalendarEvent, date: Date) => void>(() => {});
     onMoreClick = input<(date: Date) => void>(() => {});
-    onEventDrop = input<(p: { task: MasterTask; from: Date; to: Date }) => void>(() => {});
+    onEventDrop = input<(p: { event: CalendarEvent; from: Date; to: Date }) => void>(() => {});
 
     @ContentChild('monthCell', {read: TemplateRef}) monthCellTpl?: TemplateRef<any>;
     @ContentChild('monthEvent', {read: TemplateRef}) monthEventTpl?: TemplateRef<any>;
@@ -78,9 +77,9 @@ export class CalendarGridMonthComponent {
     });
 
     eventsByDay = computed(() => {
-        const map = new Map<string, MasterTask[]>();
+        const map = new Map<string, CalendarEvent[]>();
         for (const t of this.taskList()) {
-            const k = format(t.assign_time, 'yyyy-MM-dd');
+            const k = format(t.getStart(), 'yyyy-MM-dd');
             if (!map.has(k)) map.set(k, []);
             map.get(k)!.push(t);
         }
@@ -110,21 +109,17 @@ export class CalendarGridMonthComponent {
     }
 
     isWorkingDay(d: Date): boolean {
-        const schedule = this.schedule();
-        if (!schedule) return false;
-
-        const weekdayName = WEEKDAY_NAMES[d.getDay()];
-        const day = schedule[weekdayName];
-        return !!(day?.is_working_day && day?.start_time && day?.end_time);
+        const hours = this.user()?.getDayHours(d);
+        return !!hours?.isWorkingDay;
     }
 
     isTimeOff(d: Date) {
         const list = this.taskList() ?? [];
-        return list.some((item: MasterTask) => {
-            const sameDay = isSameDay(new Date(item.assign_time), d);
+        return list.some((item: CalendarEvent) => {
+            const sameDay = isSameDay(item.getStart(), d);
             if (!sameDay) return false;
 
-            return item.taskType.isTimeOff();
+            return item.isBlocking();
         });
     }
 

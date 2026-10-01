@@ -1,5 +1,6 @@
 import {addMonths} from 'date-fns';
-import {MasterTask, TaskStatusEnum, User} from '../calendar/core/entity';
+import {MasterTask, User} from '../calendar/core/entity';
+import {CalendarEvent} from '../contracts/calendar-event';
 
 export function shiftMonthRange(date: Date, delta: number): { start: Date; end: Date } {
     const target = addMonths(date, delta);
@@ -23,6 +24,10 @@ export function normalizeCategoryColor(value: string | null | undefined): string
     return getPrimaryVioletColor();
 }
 
+/**
+ * @deprecated prefer `event.getColor()`. Kept for events that predate the `MasterTask.color`
+ * field and still need the category-based lookup as a fallback.
+ */
 export function getColor(event: MasterTask, user: User): string {
     const type = user.categoryList
         .find(tt => tt.id === event.taskType.category);
@@ -30,41 +35,34 @@ export function getColor(event: MasterTask, user: User): string {
     return normalizeCategoryColor(type?.color);
 }
 
-export function isFullDayOff(day: Date, taskList: MasterTask[]): boolean {
+export function isFullDayOff(day: Date, taskList: CalendarEvent[]): boolean {
     const task = (taskList ?? []).find(t =>
-        t.taskType.isTimeOff() &&
-        Number(t.duration) <= 0 &&
-        new Date(t.assign_time).toDateString() === day.toDateString()
+        t.isBlocking() &&
+        t.isAllDay() &&
+        t.getStart().toDateString() === day.toDateString()
     );
 
     return !!task;
 }
 
-export function isTimeOffBlock(event: MasterTask): boolean {
-    return event.taskType.isTimeOff() && Number(event.duration) > 0;
+export function isTimeOffBlock(event: CalendarEvent): boolean {
+    return event.isBlocking() && !event.isAllDay();
 }
 
-const DAY_STATUS_COMMENT_CODES = new Set(['dayOff', 'vacation', 'sick', 'partial']);
-
-export function getEventTitle(event: MasterTask): string {
-    if (!event.taskType.isTimeOff()) return event.taskType.name;
-    return DAY_STATUS_COMMENT_CODES.has(event.comment) ? 'Вихідний' : 'Заблокований час';
-}
-
-export function hasRecord(day: Date, taskList: MasterTask[]): boolean {
+export function hasRecord(day: Date, taskList: CalendarEvent[]): boolean {
     return (taskList ?? []).some(t =>
-        new Date(t.assign_time).toDateString() === day.toDateString()
+        t.getStart().toDateString() === day.toDateString()
     );
 }
 
-export function getDayOffComment(date: Date, taskList: MasterTask[]): string | null {
+export function getDayOffComment(date: Date, taskList: CalendarEvent[]): string | null {
     const task = (taskList ?? []).find(t =>
-        t.taskType.isTimeOff() &&
-        Number(t.duration) <= 0 &&
-        new Date(t.assign_time).toDateString() === date.toDateString()
+        t.isBlocking() &&
+        t.isAllDay() &&
+        t.getStart().toDateString() === date.toDateString()
     );
 
-    return task ? task.taskType.name ?? '' : null;
+    return task ? task.getTitle() : null;
 }
 
 export function isPastDate(date: Date): boolean {
@@ -119,12 +117,13 @@ export function clampToRange(
     return [new Date(startTs), new Date(endTs)];
 }
 
-export function mapStatusesByDate(tasks: MasterTask[]): Record<string, TaskStatusEnum[]> {
-    const map: Record<string, TaskStatusEnum[]> = {};
-    tasks.forEach(task => {
-        const date = task.assign_time.substring(0, 10);
+export function mapStatusesByDate(events: CalendarEvent[]): Record<string, string[]> {
+    const map: Record<string, string[]> = {};
+    events.forEach(event => {
+        const s = event.getStart();
+        const date = `${s.getFullYear()}-${String(s.getMonth() + 1).padStart(2, '0')}-${String(s.getDate()).padStart(2, '0')}`;
         map[date] = map[date] || [];
-        map[date].push(task.status);
+        map[date].push(...event.getStatusClasses());
     });
     return map;
 }
@@ -132,11 +131,10 @@ export function mapStatusesByDate(tasks: MasterTask[]): Record<string, TaskStatu
 export function getStatusClassesForDay(
     day: number,
     currentDate: Date,
-    statusMap: Record<string, TaskStatusEnum[]>
+    statusMap: Record<string, string[]>
 ): string[] {
     const yyyy = currentDate.getFullYear();
     const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
     const dd = String(day).padStart(2, '0');
-    const statuses = statusMap[`${yyyy}-${mm}-${dd}`] || [];
-    return statuses.map(s => `status-${TaskStatusEnum[s].toLowerCase()}`);
+    return statusMap[`${yyyy}-${mm}-${dd}`] || [];
 }

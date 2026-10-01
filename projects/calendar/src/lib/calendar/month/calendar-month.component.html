@@ -6,7 +6,7 @@
     <app-calendar-grid-month
         [startDate]="start"
         [taskList]="taskList()"
-        [schedule]="user()?.schedule ?? null"
+        [user]="user()"
         [maxVisiblePerDay]="maxVisible()"
         [(selectedKeys)]="selectedDays"
         [selectionMode]="selectionMode()"
@@ -30,13 +30,13 @@
                         }
                     </div>
                     <div class="list">
-                        @for (event of visible; track event) {
+                        @for (event of visible; track event.getId()) {
                             <app-calendar-event
                                 [draggable]="false"
                                 [view]="CalendarView.MONTH"
                                 [top]="event.top"
                                 [height]="event.height"
-                                [color]="getColor(event, user())"
+                                [color]="resolveColor(event)"
                                 [event]="event"
                                 (click)="onEventClick(event, date, $event)">
                             </app-calendar-event>

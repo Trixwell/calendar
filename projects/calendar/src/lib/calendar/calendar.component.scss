@@ -194,6 +194,12 @@
     }
 }
 
+@media (max-width: 768px) {
+    .calendar .base-box .control-body .view-select-group {
+        display: none;
+    }
+}
+
 @media (max-width: 800px) {
     .calendar .base-box {
         .calendar-controls {
@@ -228,10 +234,6 @@
             flex-direction: column-reverse;
             align-items: center;
             gap: tokens.$space-4;
-
-            .view-select-group {
-                display: none;
-            }
 
             .form-group {
                 width: 100%;

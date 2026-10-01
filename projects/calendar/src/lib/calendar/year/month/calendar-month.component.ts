@@ -1,12 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, inject, input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NgClass, TitleCasePipe} from "@angular/common";
-import {MasterTask, TaskStatusEnum} from "../../core/entity";
-import {User} from "../../core/entity";
+import {MasterTask} from "../../core/entity";
 import {LoadIndicatorComponent} from "../../core/components/load-indicator/load-indicator.component";
-import {isSameDay} from "date-fns";
 import {getStatusClassesForDay, isPastDate, mapStatusesByDate} from "../../../util/util";
-import {WEEKDAY_NAMES} from "../../core/entity";
+import {CalendarUserContext} from "../../../contracts/calendar-user-context";
 import {CALENDAR_USER} from "../../../providers/calendar-user.provider";
 
 @Component({
@@ -33,8 +31,8 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
     days_in_month: number[] = [];
     blank_days: number[] = [];
     selected_idx: number[] = [];
-    statusMap: Record<string, TaskStatusEnum[]> = {};
-    private user: User | null = null;
+    statusMap: Record<string, string[]> = {};
+    private user: CalendarUserContext | null = null;
 
     private touchStartX = 0;
     private touchStartY = 0;
@@ -266,22 +264,19 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
     }
 
     isWorkingDay(day: number, idx: number): boolean {
-        if (!this.user?.schedule) return false;
-
         const date = this.dateForCell(day, idx);
-        const weekdayName = WEEKDAY_NAMES[date.getDay()];
-        const scheduleDay = this.user.schedule[weekdayName];
-        return !!(scheduleDay?.is_working_day && scheduleDay?.start_time && scheduleDay?.end_time);
+        const hours = this.user?.getDayHours(date);
+        return !!hours?.isWorkingDay;
     }
 
     isDayTimeOff(day: number){
         const list = this.task_list() ?? [];
+        const target = this.getFullDateByDay(day);
 
         return list.some((item: MasterTask) => {
-            const sameDay = isSameDay(item.assign_time.slice(0, 10), this.getFullDateByDay(day));
-            if (!sameDay) return false;
-
-            return item.taskType.isTimeOff()
+            const s = item.getStart();
+            const key = `${s.getFullYear()}-${String(s.getMonth() + 1).padStart(2, '0')}-${String(s.getDate()).padStart(2, '0')}`;
+            return key === target && item.isBlocking();
         });
     }
 

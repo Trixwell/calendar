@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import {MasterTask} from "../core/entity";
 import {User} from "../core/entity";
+import {CalendarEvent} from "../../contracts/calendar-event";
 import {CalendarGridMonthComponent} from "../core/components/grid/month/calendar-grid-month.component";
 import {DatePipe, NgTemplateOutlet} from "@angular/common";
 import {LoadIndicatorComponent} from "../core/components/load-indicator/load-indicator.component";
@@ -115,7 +116,7 @@ export class CalendarMonthComponent {
         const start = this.startDate().getTime();
         const end = this.endDate().getTime();
         return this.taskList().filter(t => {
-            const time = new Date(t.assign_time).getTime();
+            const time = t.getStart().getTime();
             return time >= start && time <= end;
         });
     });
@@ -154,21 +155,25 @@ export class CalendarMonthComponent {
         afterNextRender(() => swiper.slideTo(ACTIVE_SLIDE, 0, false), {injector: this.injector});
     }
 
-    onEventClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
-        this.eventOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    onEventClick = (event: CalendarEvent, date: Date, mouseEvent: MouseEvent): void => {
+        this.eventOpen.emit({ task: event as MasterTask, date, anchor: mouseEvent.currentTarget as HTMLElement });
     };
 
-    onMoreClick = (task: MasterTask, date: Date, event: MouseEvent): void => {
-        this.moreOpen.emit({ task, date, anchor: event.currentTarget as HTMLElement });
+    onMoreClick = (event: CalendarEvent, date: Date, mouseEvent: MouseEvent): void => {
+        this.moreOpen.emit({ task: event as MasterTask, date, anchor: mouseEvent.currentTarget as HTMLElement });
     };
 
     // computed, not a method: the template reads it once per day cell, so a plain method rebuilt
     // the Set 40+ times on every change detection pass
     timeFreeSlotsCount = computed<number>(() => {
-        const used = new Set(this.taskList().map(task => task.time_slot_id));
+        const used = new Set(this.taskList().map(task => task.getSlotId()));
         return (this.user()?.timeSlotList ?? []).filter(slot => !used.has(slot.id)).length;
     });
 
+    /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
+    resolveColor(event: CalendarEvent): string {
+        return event.getColor() ?? getColor(event as MasterTask, this.user());
+    }
+
     protected readonly CalendarView = CalendarView;
-    protected readonly getColor = getColor;
 }

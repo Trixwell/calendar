@@ -11,7 +11,7 @@ import {
     ViewChildren
 } from '@angular/core';
 import {DatePipe, NgClass, NgTemplateOutlet} from "@angular/common";
-import {MasterTask} from "../../entity";
+import {CalendarEvent} from "../../../../contracts/calendar-event";
 import {LoadIndicatorComponent} from "../load-indicator/load-indicator.component";
 import {LoadPercentComponent} from "../calendar-day-slider/load-percent/load-percent.component";
 import {CALENDAR_VIEWPORT} from "../../../../providers/calendar-viewport.provider";
@@ -39,7 +39,7 @@ import {MobileRangeSelectionComponent} from "./mobile-range-selection/mobile-ran
 export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     mode = input<CalendarView>(CalendarView.DAY);
     dates = input<Date[]>([]);
-    events = input<MasterTask[]>([]);
+    events = input<CalendarEvent[]>([]);
     startHour = input(0);
     endHour = input(24);
     hourHeight = input(60);
@@ -48,7 +48,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     onHeaderClick = input<(day: Date) => void>(() => {});
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
     onEventDrop = input<
-        (task: MasterTask, oldStart: Date, newStart: Date) => void
+        (event: CalendarEvent, oldStart: Date, newStart: Date) => void
     >(() => {});
 
     selectedDates = model<Date[]>([]);
@@ -153,7 +153,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         this.isSelecting = false;
         this.pendingDrag = ev.source;
 
-        this.dragPrevStart = new Date(ev.source.data.assign_time);
+        this.dragPrevStart = (ev.source.data.event as CalendarEvent).getStart();
         this.gridBodyRect = this.containerRef.nativeElement.getBoundingClientRect();
     }
 
@@ -175,7 +175,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         const newDate = dateFromY(day, steppedTop, this.startHour(), this.endHour(), this.hourHeight());
         newDate.setHours(newDate.getHours() - 1)
 
-        this.onEventDrop()(ev.source.data, this.dragPrevStart, newDate);
+        this.onEventDrop()(ev.source.data.event, this.dragPrevStart, newDate);
 
         const kill = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); };
         document.addEventListener('click', kill, { capture: true, once: true });
@@ -185,17 +185,17 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     }
 
     private positionedEventsByDay = computed(() => {
-        const map = new Map<string, (MasterTask & { top: number; height: number })[]>();
+        const map = new Map<string, { event: CalendarEvent; top: number; height: number }[]>();
         for (const e of this.events()) {
-            const s = new Date(e.assign_time);
+            const s = e.getStart();
             const key = s.toDateString();
-            const eDate = new Date(e.approximate_end_time);
+            const eDate = e.getEnd();
             const top =
                 (s.getHours() - this.startHour()) * this.hourHeight() +
                 (s.getMinutes() / 60) * this.hourHeight();
             const height = ((eDate.getTime() - s.getTime()) / (1000 * 60 * 60)) * this.hourHeight();
             if (!map.has(key)) map.set(key, []);
-            map.get(key)!.push({ ...e, top, height });
+            map.get(key)!.push({ event: e, top, height });
         }
         return map;
     });

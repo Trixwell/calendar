@@ -6,13 +6,13 @@
     [mode]="CalendarView.WEEK"
     [dates]="weekDays()"
     [events]="taskList()"
-    [startHour]="toHour(todaySchedule?.start_time ?? '08:00')"
-    [endHour]="toHour(todaySchedule?.end_time   ?? '20:00')"
+    [startHour]="startHourOf()"
+    [endHour]="endHourOf()"
     [hourHeight]="isMobile() ? 56 : 60"
     [onSlotClick]="onSlotClick()"
     [onHeaderClick]="onDayHeader()"
     [onRangeSelect]="onRangeSelect()"
-    [onEventDrop]="onEventDrop()"
+    [onEventDrop]="handleEventDrop"
     [(selectedDates)]="selectedDays"
 >
     <ng-template #dayCol let-day let-events="events">
@@ -29,36 +29,36 @@
             }
 
             @if (!isFullDayOff(day, taskList())) {
-                @for (event of events; track event.id) {
+                @for (item of events; track item.event.getId()) {
                     <div class="event-anchor">
-                        @if (isTimeOffBlock(event)) {
+                        @if (isTimeOffBlock(item.event)) {
                             <div class="time-off-block"
-                                 [style.top.px]="event.top"
-                                 [style.height.px]="event.height"
+                                 [style.top.px]="item.top"
+                                 [style.height.px]="item.height"
                                  (mousedown)="$event.stopPropagation(); $event.preventDefault()"
                                  (click)="$event.stopPropagation(); $event.preventDefault()"
                                  (dblclick)="$event.stopPropagation(); $event.preventDefault()"
                                  (touchstart)="$event.stopPropagation(); $event.preventDefault()"
                             >
-                                <span class="label">{{ getEventTitle(event) }}</span>
+                                <span class="label">{{ item.event.getTitle() }}</span>
                             </div>
                         } @else {
                             @if (!isMobile()) {
                                 <div
                                     class="event-wrapper"
                                     cdkDrag
-                                    [cdkDragData]="event"
+                                    [cdkDragData]="item"
                                     cdkDragBoundary=".grid-body"
                                     (cdkDragStarted)="calendarGrid.onEventDragStarted($event)"
                                     (cdkDragEnded)="calendarGrid.onEventDragEnded($event)"
-                                    [style.top.px]="event.top"
-                                    [style.height.px]="event.height"
-                                    (click)="onEventClick(event, day, $event)">
+                                    [style.top.px]="item.top"
+                                    [style.height.px]="item.height"
+                                    (click)="onEventClick(item.event, day, $event)">
                                     <app-calendar-event
-                                        [event]="event"
-                                        [top]="event.top"
-                                        [height]="event.height"
-                                        [color]="getColor(event, user())">
+                                        [event]="item.event"
+                                        [top]="item.top"
+                                        [height]="item.height"
+                                        [color]="resolveColor(item.event)">
                                     </app-calendar-event>
                                 </div>
                             }
@@ -66,14 +66,14 @@
                             @if (isMobile()) {
                                 <div
                                     class="event-wrapper"
-                                    [style.top.px]="event.top"
-                                    [style.height.px]="event.height"
-                                    (click)="onEventClick(event, day, $event)">
+                                    [style.top.px]="item.top"
+                                    [style.height.px]="item.height"
+                                    (click)="onEventClick(item.event, day, $event)">
                                     <app-calendar-event
-                                        [event]="event"
-                                        [top]="event.top"
-                                        [height]="event.height"
-                                        [color]="getColor(event, user())">
+                                        [event]="item.event"
+                                        [top]="item.top"
+                                        [height]="item.height"
+                                        [color]="resolveColor(item.event)">
                                     </app-calendar-event>
                                 </div>
                             }
