@@ -9,7 +9,7 @@
             <div class="event-month-attributes">
                 <span class="dot" [style.background-color]="isTimeOff() ? null : color()"></span>
                 <div class="time">
-                    <span>{{ event().getStart() | date:'HH:mm' }}</span>
+                    <span>{{ event().getStart() | date:'HH:mm':undefined:locale.intlTag }}</span>
                 </div>
                 <div class="title">
                     <span>
@@ -29,8 +29,8 @@
              [style.border-left-color]="isTimeOff() ? null : color()">
             <div class="event-block-attributes">
                 <div class="time">
-                    <span>{{ event().getStart() | date:'HH:mm' }}
-                        – {{ event().getEnd() | date:'HH:mm' }}</span>
+                    <span>{{ event().getStart() | date:'HH:mm':undefined:locale.intlTag }}
+                        – {{ event().getEnd() | date:'HH:mm':undefined:locale.intlTag }}</span>
                 </div>
                 <div class="title">
                     <span>

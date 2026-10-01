@@ -42,4 +42,19 @@ export const LABELS_EN: CalendarLabels = {
 
     'datePicker.title': 'Go to date',
     'datePicker.setupDays': 'Set up days',
+
+    'roster.corner': 'Employee',
+    'roster.total': 'Total',
+
+    rosterEditor: {
+        title: 'Edit entry',
+        dayType: 'Day type',
+        hours: 'Hours',
+        comment: 'Comment',
+        save: 'Save',
+        delete: 'Delete',
+        dayTypePlaceholder: 'Select',
+        hoursPlaceholder: '00',
+        commentPlaceholder: 'Enter a comment',
+    },
 };

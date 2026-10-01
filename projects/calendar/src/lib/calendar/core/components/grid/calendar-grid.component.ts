@@ -19,6 +19,7 @@ import {interval, Subscription} from "rxjs";
 import {CalendarView} from "../../entity";
 import {CdkDrag, CdkDragEnd, CdkDragStart} from "@angular/cdk/drag-drop";
 import {isSameDay} from "date-fns";
+import {CalendarLocale} from "../../../../i18n/calendar-locale";
 import {clampToRange, dateFromY, isFullDayOff, isPastDate, quantizeEndY, quantizeStartY} from "../../../../util/util";
 import {MobileRangeSelectionComponent} from "./mobile-range-selection/mobile-range-selection.component";
 
@@ -92,6 +93,8 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     private datesRangeKey = computed(() => this.dates().map(d => d.getTime()).join(','));
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+    protected readonly locale = inject(CalendarLocale);
+    protected readonly labels = this.locale.labels;
 
     constructor(protected cdr: ChangeDetectorRef) {
         this.isMobile = this.viewport.isMobile;

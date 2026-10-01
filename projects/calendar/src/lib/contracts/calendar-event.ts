@@ -1,3 +1,5 @@
+import type {CalendarLabels} from '../i18n/calendar-labels';
+
 export interface CalendarEvent {
     getId(): number | string;
     getStart(): Date;
@@ -5,7 +7,7 @@ export interface CalendarEvent {
     getDurationMinutes(): number;
     isAllDay(): boolean;
     isBlocking(): boolean;
-    getTitle(): string;
+    getTitle(labels?: CalendarLabels): string;
     getColor(): string | null;
     getIcon(): string | null;
     getStatusClasses(): string[];

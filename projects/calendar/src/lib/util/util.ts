@@ -1,4 +1,5 @@
 import {addMonths} from 'date-fns';
+import type {CalendarLabels} from '../i18n/calendar-labels';
 import {MasterTask, User} from '../calendar/core/entity';
 import {CalendarEvent} from '../contracts/calendar-event';
 
@@ -55,14 +56,14 @@ export function hasRecord(day: Date, taskList: CalendarEvent[]): boolean {
     );
 }
 
-export function getDayOffComment(date: Date, taskList: CalendarEvent[]): string | null {
+export function getDayOffComment(date: Date, taskList: CalendarEvent[], labels?: CalendarLabels): string | null {
     const task = (taskList ?? []).find(t =>
         t.isBlocking() &&
         t.isAllDay() &&
         t.getStart().toDateString() === date.toDateString()
     );
 
-    return task ? task.getTitle() : null;
+    return task ? task.getTitle(labels) : null;
 }
 
 export function isPastDate(date: Date): boolean {

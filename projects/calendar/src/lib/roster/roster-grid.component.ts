@@ -1,6 +1,7 @@
-import {ChangeDetectionStrategy, Component, input, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input, output} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {CalendarEvent} from '../contracts/calendar-event';
+import {CalendarLocale} from '../i18n/calendar-locale';
 import {RosterColumn, RosterRow, rosterDateKey} from './roster.entity';
 
 export interface RosterSelectedCell {
@@ -17,11 +18,14 @@ export interface RosterSelectedCell {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RosterGridComponent {
+    protected readonly locale = inject(CalendarLocale);
+    protected readonly labels = this.locale.labels;
+
     columns = input<RosterColumn[]>([]);
     rows = input<RosterRow[]>([]);
     selected = input<RosterSelectedCell | null>(null);
-    cornerLabel = input<string>('');
-    totalLabel = input<string>('');
+    cornerLabel = input<string | undefined>(undefined);
+    totalLabel = input<string | undefined>(undefined);
 
     cellClick = output<RosterSelectedCell>();
 

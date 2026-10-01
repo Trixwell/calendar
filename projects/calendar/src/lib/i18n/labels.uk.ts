@@ -53,4 +53,19 @@ export const LABELS_UK: CalendarLabels = {
 
     'datePicker.title': 'Перейти до дати',
     'datePicker.setupDays': 'Налаштувати дні',
+
+    'roster.corner': 'Співробітник',
+    'roster.total': 'Всього',
+
+    rosterEditor: {
+        title: 'Редагувати запис',
+        dayType: 'Тип дня',
+        hours: 'Години',
+        comment: 'Коментар',
+        save: 'Зберегти',
+        delete: 'Видалити',
+        dayTypePlaceholder: 'Оберіть',
+        hoursPlaceholder: '00',
+        commentPlaceholder: 'Введіть коментар',
+    },
 };

@@ -24,7 +24,7 @@
                      (click)="$event.stopPropagation(); $event.preventDefault()"
                      (dblclick)="$event.stopPropagation(); $event.preventDefault()"
                      (touchstart)="$event.stopPropagation(); $event.preventDefault()">
-                    <span class="label">{{ getDayOffComment(day, taskList()) }}</span>
+                    <span class="label">{{ getDayOffComment(day, taskList(), labels) }}</span>
                 </div>
             }
 
@@ -40,7 +40,7 @@
                                  (dblclick)="$event.stopPropagation(); $event.preventDefault()"
                                  (touchstart)="$event.stopPropagation(); $event.preventDefault()"
                             >
-                                <span class="label">{{ item.event.getTitle() }}</span>
+                                <span class="label">{{ item.event.getTitle(labels) }}</span>
                             </div>
                         } @else {
                             @if (!isMobile()) {

@@ -1,3 +1,15 @@
+export interface CalendarRosterEditorLabels {
+    title: string;
+    dayType: string;
+    hours: string;
+    comment: string;
+    save: string;
+    delete: string;
+    dayTypePlaceholder: string;
+    hoursPlaceholder: string;
+    commentPlaceholder: string;
+}
+
 export interface CalendarLabels {
     'header.title': string;
 
@@ -38,4 +50,13 @@ export interface CalendarLabels {
 
     'datePicker.title': string;
     'datePicker.setupDays': string;
+
+    'roster.corner': string;
+    'roster.total': string;
+
+    rosterEditor: CalendarRosterEditorLabels;
 }
+
+export type CalendarLabelsOverride = Partial<Omit<CalendarLabels, 'rosterEditor'>> & {
+    rosterEditor?: Partial<CalendarRosterEditorLabels>;
+};

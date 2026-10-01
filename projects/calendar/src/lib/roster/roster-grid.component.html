@@ -3,16 +3,16 @@
         <div class="roster-grid__table"
              [style.grid-template-columns]="'minmax(280px, max-content) repeat(' + columns().length + ', 32px) 32px'">
 
-            <div class="roster-grid__corner roster-grid__sticky-col roster-grid__sticky-row">{{ cornerLabel() }}</div>
+            <div class="roster-grid__corner roster-grid__sticky-col roster-grid__sticky-row">{{ cornerLabel() ?? labels['roster.corner'] }}</div>
             @for (column of columns(); track column.date.getTime()) {
                 <div class="roster-grid__col-header roster-grid__sticky-row"
                      [class.roster-grid__col-header--weekend]="column.isWeekend"
                      [class.roster-grid__col-header--holiday]="column.isHoliday">
-                    <span class="roster-grid__col-weekday">{{ column.date | date:'EEE':undefined:'uk' }}</span>
-                    <span class="roster-grid__col-day">{{ column.date | date:'d' }}</span>
+                    <span class="roster-grid__col-weekday">{{ column.date | date:'EEE':undefined:locale.intlTag }}</span>
+                    <span class="roster-grid__col-day">{{ column.date | date:'d':undefined:locale.intlTag }}</span>
                 </div>
             }
-            <div class="roster-grid__col-header roster-grid__sticky-row roster-grid__total-header">{{ totalLabel() }}</div>
+            <div class="roster-grid__col-header roster-grid__sticky-row roster-grid__total-header">{{ totalLabel() ?? labels['roster.total'] }}</div>
 
             @for (row of rows(); track row.id) {
                 <div class="roster-grid__row-title roster-grid__sticky-col"

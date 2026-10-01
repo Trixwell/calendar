@@ -1,7 +1,8 @@
-import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
 import {DatePipe} from "@angular/common";
 import {CalendarView} from "../../entity";
 import {CalendarEvent} from "../../../../contracts/calendar-event";
+import {CalendarLocale} from "../../../../i18n/calendar-locale";
 
 @Component({
   selector: 'app-calendar-event',
@@ -19,6 +20,9 @@ export class CalendarEventComponent {
     view = input<CalendarView>(CalendarView.DAY);
     color = input<string>('\'#5444dc\'');
     showDetailsModal = input<boolean>(true);
+
+    protected readonly locale = inject(CalendarLocale);
+    private readonly labels = this.locale.labels;
 
     lightColor = computed(() => {
         const { r, g, b } = this.hexToRgb(this.color());
@@ -43,7 +47,7 @@ export class CalendarEventComponent {
     }
 
     title(){
-        return this.event().getTitle();
+        return this.event().getTitle(this.labels);
     }
 
     protected readonly CalendarView = CalendarView;

@@ -2,6 +2,8 @@ import {FormControl} from "@angular/forms";
 import {ImageFile, ImageFileItem} from "./auth";
 import {TimeSlot} from "./timetable";
 import {CalendarEvent} from "../../../contracts/calendar-event";
+import type {CalendarLabels} from "../../../i18n/calendar-labels";
+import {LABELS_UK} from "../../../i18n/labels.uk";
 
 const DAY_STATUS_COMMENT_CODES = new Set(['dayOff', 'vacation', 'sick', 'partial']);
 
@@ -149,9 +151,9 @@ export class MasterTask implements CalendarEvent {
         return this.taskType.isTimeOff();
     }
 
-    public getTitle(): string {
+    public getTitle(labels: CalendarLabels = LABELS_UK): string {
         if (!this.isBlocking()) return this.taskType.name;
-        return DAY_STATUS_COMMENT_CODES.has(this.comment) ? 'Вихідний' : 'Заблокований час';
+        return DAY_STATUS_COMMENT_CODES.has(this.comment) ? labels['task.dayOff'] : labels['task.blockedTime'];
     }
 
     public getColor(): string | null {
@@ -277,19 +279,29 @@ export interface TaskLog {
     log_data: string
 }
 
-export const paymentStatusMap: Record<TaskPaymentStatusEnum, { label: string; class: string }> = {
-    [TaskPaymentStatusEnum.Paid]: {label: 'Оплачено', class: 'status__paid'},
-    [TaskPaymentStatusEnum.NotPaid]: {label: 'Не оплачено', class: 'status__notpaid'},
-    [TaskPaymentStatusEnum.Refund]: {label: 'Повернено', class: 'status__refund'},
-    [TaskPaymentStatusEnum.InProgress]: {label: 'В процесі', class: 'status__inprogress'},
+export type TaskStatusLabelKey =
+    | 'paymentStatus.paid'
+    | 'paymentStatus.notPaid'
+    | 'paymentStatus.refund'
+    | 'paymentStatus.inProgress'
+    | 'taskStatus.planned'
+    | 'taskStatus.deleted'
+    | 'taskStatus.cancelled'
+    | 'taskStatus.completed';
+
+export const paymentStatusMap: Record<TaskPaymentStatusEnum, { /** @deprecated */ label: string; labelKey: TaskStatusLabelKey; class: string }> = {
+    [TaskPaymentStatusEnum.Paid]: {label: LABELS_UK['paymentStatus.paid'], labelKey: 'paymentStatus.paid', class: 'status__paid'},
+    [TaskPaymentStatusEnum.NotPaid]: {label: LABELS_UK['paymentStatus.notPaid'], labelKey: 'paymentStatus.notPaid', class: 'status__notpaid'},
+    [TaskPaymentStatusEnum.Refund]: {label: LABELS_UK['paymentStatus.refund'], labelKey: 'paymentStatus.refund', class: 'status__refund'},
+    [TaskPaymentStatusEnum.InProgress]: {label: LABELS_UK['paymentStatus.inProgress'], labelKey: 'paymentStatus.inProgress', class: 'status__inprogress'},
 };
 
-export const taskStatusMap: Record<TaskStatusEnum, { label: string; class: string }> = {
-    [TaskStatusEnum.Active]: {label: 'Заплановано', class: 'status__assigned'},
-    [TaskStatusEnum.Inactive]: {label: 'Видалено', class: 'status__inactive'},
-    [TaskStatusEnum.New]: {label: 'Заплановано', class: 'status__assigned'},
-    [TaskStatusEnum.Assigned]: {label: 'Заплановано', class: 'status__assigned'},
-    [TaskStatusEnum.Cancelled]: {label: 'Скасовано', class: 'status__cancelled'},
-    [TaskStatusEnum.Completed]: {label: 'Завершено', class: 'status__completed'},
-    [TaskStatusEnum.Deleted]: {label: 'Видалено', class: 'status__inactive'},
+export const taskStatusMap: Record<TaskStatusEnum, { /** @deprecated */ label: string; labelKey: TaskStatusLabelKey; class: string }> = {
+    [TaskStatusEnum.Active]: {label: LABELS_UK['taskStatus.planned'], labelKey: 'taskStatus.planned', class: 'status__assigned'},
+    [TaskStatusEnum.Inactive]: {label: LABELS_UK['taskStatus.deleted'], labelKey: 'taskStatus.deleted', class: 'status__inactive'},
+    [TaskStatusEnum.New]: {label: LABELS_UK['taskStatus.planned'], labelKey: 'taskStatus.planned', class: 'status__assigned'},
+    [TaskStatusEnum.Assigned]: {label: LABELS_UK['taskStatus.planned'], labelKey: 'taskStatus.planned', class: 'status__assigned'},
+    [TaskStatusEnum.Cancelled]: {label: LABELS_UK['taskStatus.cancelled'], labelKey: 'taskStatus.cancelled', class: 'status__cancelled'},
+    [TaskStatusEnum.Completed]: {label: LABELS_UK['taskStatus.completed'], labelKey: 'taskStatus.completed', class: 'status__completed'},
+    [TaskStatusEnum.Deleted]: {label: LABELS_UK['taskStatus.deleted'], labelKey: 'taskStatus.deleted', class: 'status__inactive'},
 };

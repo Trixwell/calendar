@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, effect, input, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, input, output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -6,37 +6,17 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {CalendarEvent} from '../contracts/calendar-event';
+import {CalendarRosterEditorLabels} from '../i18n/calendar-labels';
+import {CalendarLocale} from '../i18n/calendar-locale';
 import {RosterDayType} from './roster.entity';
 
-export interface RosterCellEditorLabels {
-    title: string;
-    dayType: string;
-    hours: string;
-    comment: string;
-    save: string;
-    delete: string;
-    dayTypePlaceholder: string;
-    hoursPlaceholder: string;
-    commentPlaceholder: string;
-}
+export type RosterCellEditorLabels = CalendarRosterEditorLabels;
 
 export interface RosterCellEditorSavePayload {
     dayTypeId: number | string | null;
     hours: number;
     comment: string;
 }
-
-const DEFAULT_LABELS: RosterCellEditorLabels = {
-    title: 'Edit entry',
-    dayType: 'Day type',
-    hours: 'Hours',
-    comment: 'Comment',
-    save: 'Save',
-    delete: 'Delete',
-    dayTypePlaceholder: 'Select',
-    hoursPlaceholder: '00',
-    commentPlaceholder: 'Select',
-};
 
 @Component({
     selector: 'app-roster-cell-editor',
@@ -46,6 +26,8 @@ const DEFAULT_LABELS: RosterCellEditorLabels = {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RosterCellEditor {
+    private readonly locale = inject(CalendarLocale);
+
     event = input<CalendarEvent | null>(null);
     dayTypes = input<RosterDayType[]>([]);
     labels = input<Partial<RosterCellEditorLabels>>({});
@@ -60,7 +42,7 @@ export class RosterCellEditor {
     protected comment = '';
 
     protected resolvedLabels = computed<RosterCellEditorLabels>(() => ({
-        ...DEFAULT_LABELS,
+        ...this.locale.labels.rosterEditor,
         ...this.labels(),
     }));
 
