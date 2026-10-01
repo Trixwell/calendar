@@ -4,8 +4,9 @@ import {MasterTask} from "../core/entity";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {DaySchedule, User} from "../core/entity";
-import {getColor, getDayOffComment, getEventTitle, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
 import {CalendarView, Weekday} from "../core/entity";
+import {CalendarLocale} from "../../i18n/calendar-locale";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
 
@@ -32,6 +33,8 @@ export class CalendarDayComponent implements OnInit{
     isMobile;
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+    protected readonly locale = inject(CalendarLocale);
+    protected readonly labels = this.locale.labels;
 
     constructor() {
         this.isMobile = this.viewport.isMobile;
@@ -74,5 +77,4 @@ export class CalendarDayComponent implements OnInit{
     protected readonly isFullDayOff = isFullDayOff;
     protected readonly getDayOffComment = getDayOffComment;
     protected readonly isTimeOffBlock = isTimeOffBlock;
-    protected readonly getEventTitle = getEventTitle;
 }

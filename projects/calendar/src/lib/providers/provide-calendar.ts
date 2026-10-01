@@ -6,11 +6,14 @@ import {
     CalendarViewportProvider,
     DefaultCalendarViewportProvider,
 } from './calendar-viewport.provider';
+import {CalendarLabels} from '../i18n/calendar-labels';
+import {CALENDAR_LABELS} from '../i18n/calendar-locale';
 
 export interface CalendarConfig {
     data: Type<CalendarDataProvider> | CalendarDataProvider;
     user: Type<CalendarUserProvider> | CalendarUserProvider;
     viewport?: Type<CalendarViewportProvider> | CalendarViewportProvider;
+    labels?: Partial<CalendarLabels>;
 }
 
 function bind<T>(token: InjectionToken<T>, value: Type<T> | T): Provider {
@@ -20,9 +23,15 @@ function bind<T>(token: InjectionToken<T>, value: Type<T> | T): Provider {
 }
 
 export function provideCalendar(config: CalendarConfig): Provider[] {
-    return [
+    const providers: Provider[] = [
         bind(CALENDAR_DATA, config.data),
         bind(CALENDAR_USER, config.user),
         bind(CALENDAR_VIEWPORT, config.viewport ?? DefaultCalendarViewportProvider),
     ];
+
+    if (config.labels) {
+        providers.push({provide: CALENDAR_LABELS, useValue: config.labels});
+    }
+
+    return providers;
 }

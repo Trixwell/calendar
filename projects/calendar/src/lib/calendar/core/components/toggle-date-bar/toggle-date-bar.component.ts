@@ -13,6 +13,7 @@ import {DatePipe} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 import {CALENDAR_VIEWPORT} from "../../../../providers/calendar-viewport.provider";
+import {CalendarLocale} from "../../../../i18n/calendar-locale";
 import {MasterTask} from "../../entity";
 import {CalendarDaySliderComponent} from "../calendar-day-slider/calendar-day-slider.component";
 
@@ -46,6 +47,8 @@ export class ToggleDateBarComponent {
     isMobile;
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+
+    private readonly locale = inject(CalendarLocale);
 
     constructor(private datePipe: DatePipe) {
         const currentYear = new Date().getFullYear();
@@ -92,18 +95,18 @@ export class ToggleDateBarComponent {
             case CalendarView.YEAR:
                 return `${this.year()}`;
             case CalendarView.DAY:
-                return this.datePipe.transform(d, 'd MMMM yyyy', undefined, 'uk-UA')!;
+                return this.datePipe.transform(d, 'd MMMM yyyy', undefined, this.locale.intlTag)!;
             case CalendarView.WEEK: {
-                const s = startOfWeek(d, { weekStartsOn: 1 });
-                const e = endOfWeek(d,   { weekStartsOn: 1 });
+                const s = startOfWeek(d, { weekStartsOn: this.locale.weekStartsOn });
+                const e = endOfWeek(d,   { weekStartsOn: this.locale.weekStartsOn });
 
-                const f1 = this.datePipe.transform(s, 'd',        undefined, 'uk-UA');
-                const f2 = this.datePipe.transform(e, 'd MMM yyyy', undefined, 'uk-UA');
+                const f1 = this.datePipe.transform(s, 'd',        undefined, this.locale.intlTag);
+                const f2 = this.datePipe.transform(e, 'd MMM yyyy', undefined, this.locale.intlTag);
 
                 return `${f1}–${f2}`;
             }
             case CalendarView.MONTH:
-                return this.datePipe.transform(d, 'LLLL yyyy', undefined, 'uk-UA')!;
+                return this.datePipe.transform(d, 'LLLL yyyy', undefined, this.locale.intlTag)!;
             default:
                 return '';
         }

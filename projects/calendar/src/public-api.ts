@@ -14,3 +14,6 @@ export {
     DefaultCalendarViewportProvider,
 } from './lib/providers/calendar-viewport.provider';
 export {provideCalendar, type CalendarConfig} from './lib/providers/provide-calendar';
+
+export type {CalendarLabels} from './lib/i18n/calendar-labels';
+export {CALENDAR_LABELS, CalendarLocale, type CalendarLanguage} from './lib/i18n/calendar-locale';

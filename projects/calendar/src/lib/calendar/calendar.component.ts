@@ -8,8 +8,6 @@ import {
     ViewEncapsulation, WritableSignal
 } from '@angular/core';
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {registerLocaleData} from "@angular/common";
-import localeUk from "@angular/common/locales/uk";
 import {MasterTask} from "./core/entity";
 import {FormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -31,6 +29,7 @@ import {CALENDAR_USER} from "../providers/calendar-user.provider";
 import {CALENDAR_VIEWPORT} from "../providers/calendar-viewport.provider";
 import {DatePickerModalComponent} from "./core/components/modal/date-picker-modal/date-picker-modal.component";
 import {shiftMonthRange} from "../util/util";
+import {CalendarLocale} from "../i18n/calendar-locale";
 
 @Component({
     selector: 'app-calendar',
@@ -80,14 +79,13 @@ export class CalendarComponent implements OnInit{
     private readonly calendarData = inject(CALENDAR_DATA);
     private readonly userProvider = inject(CALENDAR_USER);
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+    protected readonly labels = inject(CalendarLocale).labels;
 
     constructor(
         protected snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef,
         private destroyRef: DestroyRef,
     ) {
-        registerLocaleData(localeUk);
-
         this.year.set(new Date().getFullYear());
 
         this.userProvider.profile$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
@@ -223,7 +221,9 @@ export class CalendarComponent implements OnInit{
         this.selectedDays.set([]);
     }
 
-    weekStart = computed(() => startOfWeek(this.day(), { weekStartsOn: 1 }));
+    private readonly weekStartsOn = inject(CalendarLocale).weekStartsOn;
+
+    weekStart = computed(() => startOfWeek(this.day(), { weekStartsOn: this.weekStartsOn }));
 
     weekEnd = computed(() => addDays(this.weekStart(), 6));
 

@@ -1,4 +1,5 @@
 import {addMonths} from 'date-fns';
+import type {CalendarLabels} from '../i18n/calendar-labels';
 import {MasterTask, TaskStatusEnum, User} from '../calendar/core/entity';
 
 export function shiftMonthRange(date: Date, delta: number): { start: Date; end: Date } {
@@ -44,27 +45,20 @@ export function isTimeOffBlock(event: MasterTask): boolean {
     return event.taskType.isTimeOff() && Number(event.duration) > 0;
 }
 
-const DAY_STATUS_COMMENT_CODES = new Set(['dayOff', 'vacation', 'sick', 'partial']);
-
-export function getEventTitle(event: MasterTask): string {
-    if (!event.taskType.isTimeOff()) return event.taskType.name;
-    return DAY_STATUS_COMMENT_CODES.has(event.comment) ? 'Вихідний' : 'Заблокований час';
-}
-
 export function hasRecord(day: Date, taskList: MasterTask[]): boolean {
     return (taskList ?? []).some(t =>
         new Date(t.assign_time).toDateString() === day.toDateString()
     );
 }
 
-export function getDayOffComment(date: Date, taskList: MasterTask[]): string | null {
+export function getDayOffComment(date: Date, taskList: MasterTask[], labels?: CalendarLabels): string | null {
     const task = (taskList ?? []).find(t =>
         t.taskType.isTimeOff() &&
         Number(t.duration) <= 0 &&
         new Date(t.assign_time).toDateString() === date.toDateString()
     );
 
-    return task ? task.taskType.name ?? '' : null;
+    return task ? task.getTitle(labels) : null;
 }
 
 export function isPastDate(date: Date): boolean {

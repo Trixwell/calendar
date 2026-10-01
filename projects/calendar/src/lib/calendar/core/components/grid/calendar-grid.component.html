@@ -3,14 +3,14 @@
     <div class="grid-header" #dayHeaderContainer>
         <div class="time-label">
             @if(!isMobile()){
-                <p>Час</p>
+                <p>{{ labels['grid.time'] }}</p>
             }
         </div>
         @for(date of dates(); track $index) {
             <div
                 class="day-label"
                 [class.is-past]="isPastDate(date)"
-                [attr.data-date]="date | date:'yyyy-MM-dd'"
+                [attr.data-date]="date | date:'yyyy-MM-dd':undefined:locale.intlTag"
                 [class.today]="isToday(date)"
                 [class.time-off]="isFullDayOff(date, events())"
                 [class.weekend]="isWeekend(date)"
@@ -19,14 +19,14 @@
                 <span class="weekday">
                   {{
                     mode() === CalendarView.DAY
-                        ? (date | date:'EEEE':'':'uk')
-                        : (date | date:'EEE':'':'uk')
+                        ? (date | date:'EEEE':undefined:locale.intlTag)
+                        : (date | date:'EEE':undefined:locale.intlTag)
                   }}
                 </span>
                 <span class="day-month">{{
                         mode() === CalendarView.DAY
-                            ? (date | date:'d MMMM':'':'uk')
-                            : (date | date:'d':'':'uk')
+                            ? (date | date:'d MMMM':undefined:locale.intlTag)
+                            : (date | date:'d':undefined:locale.intlTag)
                     }}
                 </span>
 
@@ -77,10 +77,10 @@
                         [style.top.px]="selectionTop"
                         [style.height.px]="selectionHeight">
                         <div class="selection-label">
-                            {{ selectionStart | date:'HH:mm' }}
+                            {{ selectionStart | date:'HH:mm':undefined:locale.intlTag }}
                             @if(selectionEnd && selectionEnd.getTime() !== selectionStart.getTime()){
                                 <ng-container>
-                                    – {{ selectionEnd | date:'HH:mm' }}
+                                    – {{ selectionEnd | date:'HH:mm':undefined:locale.intlTag }}
                                 </ng-container>
                             }
                         </div>

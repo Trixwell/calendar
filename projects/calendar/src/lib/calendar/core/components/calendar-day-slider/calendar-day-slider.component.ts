@@ -1,9 +1,10 @@
-import {ChangeDetectionStrategy, Component, computed, input, linkedSignal, model} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, model} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {addDays, differenceInCalendarDays, eachDayOfInterval, startOfDay} from 'date-fns';
 import {MasterTask} from '../../entity';
 import {LoadPercentComponent} from './load-percent/load-percent.component';
 import {hasRecord as hasRecordUtil} from '../../../../util/util';
+import {CalendarLocale} from '../../../../i18n/calendar-locale';
 
 const VISIBLE_DAYS = 7;
 
@@ -18,6 +19,8 @@ const VISIBLE_DAYS = 7;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarDaySliderComponent {
+    protected readonly locale = inject(CalendarLocale);
+
     day = model.required<Date>();
     taskList = input<MasterTask[]>([]);
 

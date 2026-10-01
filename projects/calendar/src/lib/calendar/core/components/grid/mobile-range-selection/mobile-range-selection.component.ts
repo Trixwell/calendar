@@ -3,12 +3,14 @@ import {
     ChangeDetectorRef,
     Component,
     effect,
+    inject,
     input,
     OnDestroy,
     output,
 } from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
+import {CalendarLocale} from '../../../../../i18n/calendar-locale';
 import {clampToRange, dateFromY, isPastDate, quantizeEndY, quantizeStartY} from '../../../../../util/util';
 
 @Component({
@@ -25,6 +27,9 @@ export class MobileRangeSelectionComponent implements OnDestroy {
     endHour = input.required<number>();
     isDragging = input.required<boolean>();
     activeDay = input<Date | null>(null);
+
+    protected readonly locale = inject(CalendarLocale);
+    protected readonly labels = this.locale.labels;
 
     rangeSelected = output<{ start: Date; end: Date }>();
     selectionOpened = output<Date>();

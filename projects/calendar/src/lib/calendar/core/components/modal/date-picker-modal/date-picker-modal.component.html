@@ -1,7 +1,7 @@
 <app-modal #modal>
     <div class="date-picker-modal">
         <div class="date-picker-modal__header">
-            <h3 class="date-picker-modal__title">Перейти до дати</h3>
+            <h3 class="date-picker-modal__title">{{ labels['datePicker.title'] }}</h3>
 
             <app-toggle-date-bar
                 [(day)]="viewDate"
@@ -23,7 +23,7 @@
             <button mat-stroked-button
                     (click)="onAdjustDaysClick()">
                 <img src="assets/icons/calendar-edit-violet.svg" alt="calendar-edit">
-                Налаштувати дні
+                {{ labels['datePicker.setupDays'] }}
             </button>
         </div>
     </div>

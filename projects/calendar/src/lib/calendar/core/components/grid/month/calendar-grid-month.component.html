@@ -13,7 +13,7 @@
             <div class="week">
                 @for (d of week; track $index) {
                     <div class="day"
-                         [attr.data-date]="(d | date:'yyyy-MM-dd')"
+                         [attr.data-date]="(d | date:'yyyy-MM-dd':undefined:locale.intlTag)"
                          [class.outside]="!inMonth(d)"
                          [class.today]="today(d)"
                          [class.time-off]="isTimeOff(d)"

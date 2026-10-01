@@ -15,7 +15,7 @@
             <ng-container>
                 <div class="cell" [class.outside]="!inMonth">
                     <div class="head">
-                        <span class="num">{{ date | date:'d' }}</span>
+                        <span class="num">{{ date | date:'d':undefined:locale.intlTag }}</span>
                         @if (isMobile()) {
                             <app-load-percent
                                 [date]="date"
@@ -48,13 +48,13 @@
                     <div class="calendar-month-attributes">
                         <div class="count-time-slots">
                             <p>
-                                Віконець: {{ timeFreeSlotsCount() }}
+                                {{ labels['month.freeSlots'] }}: {{ timeFreeSlotsCount() }}
                             </p>
                         </div>
 
                         <div class="data">
                             <a type="button" (click)="onMoreClick(events[0], date, $event)">
-                                Ще {{ more }}
+                                {{ labels['month.more'](more) }}
                             </a>
                         </div>
                     </div>

@@ -6,12 +6,12 @@
                     @if (!daySelectionMode()) {
                         <button mat-button class="day-selection-entry" (click)="enterDaySelectionMode()">
                             <img src="assets/icons/calendar-edit.svg" alt="calendar-edit">
-                            Налаштувати дні
+                            {{ labels['setupDays.action'] }}
                         </button>
                     }
                 } @else {
                     <div class="calendar-header-info">
-                        <h3>Календар</h3>
+                        <h3>{{ labels['header.title'] }}</h3>
                         <button (click)="onCalendarIconClick()">
                             <img src="assets/icons/calendar-icon.svg" alt="desc">
                         </button>
@@ -21,10 +21,10 @@
                 @if(isMobile()) {
                     @if (daySelectionMode()) {
                         <div class="day-selection-toggle">
-                            <span class="day-selection-toggle__title">Оберіть дні та налаштуйте</span>
+                            <span class="day-selection-toggle__title">{{ labels['setupDays.hint'] }}</span>
                             <button mat-button class="day-selection-toggle__cancel" (click)="cancelDaySelection()">
                                 <img src="assets/icons/close-error.svg" alt="cancel">
-                                Скасувати
+                                {{ labels['setupDays.cancel'] }}
                             </button>
                         </div>
                     } @else {
@@ -34,11 +34,11 @@
                                     [value]="view()"
                                     (selectionChange)="setView($event.value)">
                                     @if (showYearView()) {
-                                        <mat-option [value]="CalendarView.YEAR">Рік</mat-option>
+                                        <mat-option [value]="CalendarView.YEAR">{{ labels['view.year'] }}</mat-option>
                                     }
-                                    <mat-option [value]="CalendarView.MONTH">Місяць</mat-option>
-                                    <mat-option [value]="CalendarView.WEEK">Тиждень</mat-option>
-                                    <mat-option [value]="CalendarView.DAY">День</mat-option>
+                                    <mat-option [value]="CalendarView.MONTH">{{ labels['view.month'] }}</mat-option>
+                                    <mat-option [value]="CalendarView.WEEK">{{ labels['view.week'] }}</mat-option>
+                                    <mat-option [value]="CalendarView.DAY">{{ labels['view.day'] }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
@@ -64,11 +64,11 @@
                         (valueChange)="setView($event)"
                         class="view-toggle">
                         @if (showYearView()) {
-                            <mat-button-toggle [value]="CalendarView.YEAR">Рік</mat-button-toggle>
+                            <mat-button-toggle [value]="CalendarView.YEAR">{{ labels['view.year'] }}</mat-button-toggle>
                         }
-                        <mat-button-toggle [value]="CalendarView.MONTH">Місяць</mat-button-toggle>
-                        <mat-button-toggle [value]="CalendarView.WEEK">Тиждень</mat-button-toggle>
-                        <mat-button-toggle [value]="CalendarView.DAY">Сьогодні</mat-button-toggle>
+                        <mat-button-toggle [value]="CalendarView.MONTH">{{ labels['view.month'] }}</mat-button-toggle>
+                        <mat-button-toggle [value]="CalendarView.WEEK">{{ labels['view.week'] }}</mat-button-toggle>
+                        <mat-button-toggle [value]="CalendarView.DAY">{{ labels['view.today'] }}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </div>
 
@@ -78,11 +78,11 @@
                             [value]="view()"
                             (selectionChange)="setView($event.value)">
                             @if (showYearView()) {
-                                <mat-option [value]="CalendarView.YEAR">Рік</mat-option>
+                                <mat-option [value]="CalendarView.YEAR">{{ labels['view.year'] }}</mat-option>
                             }
-                            <mat-option [value]="CalendarView.MONTH">Місяць</mat-option>
-                            <mat-option [value]="CalendarView.WEEK">Тиждень</mat-option>
-                            <mat-option [value]="CalendarView.DAY">Сьогодні</mat-option>
+                            <mat-option [value]="CalendarView.MONTH">{{ labels['view.month'] }}</mat-option>
+                            <mat-option [value]="CalendarView.WEEK">{{ labels['view.week'] }}</mat-option>
+                            <mat-option [value]="CalendarView.DAY">{{ labels['view.today'] }}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -163,11 +163,11 @@
 
         @if (isMobile() && daySelectionMode()) {
             <div class="day-selection-footer">
-                <span class="title">Обрано {{ selectedDays().length }} днів</span>
+                <span class="title">{{ labels.selectedDays(selectedDays().length) }}</span>
                 <button mat-flat-button color="primary"
                         [disabled]="!selectedDays().length"
                         (click)="confirmDaySelection()">
-                    Далі
+                    {{ labels['setupDays.next'] }}
                     <img src="assets/icons/arrow-right-white.svg" alt="arrow-right">
                 </button>
             </div>

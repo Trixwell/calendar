@@ -5,7 +5,7 @@
          (touchstart)="onBoxTouchStart($event)"
          (touchend)="onBoxTouchEnd(); $event.stopPropagation()">
         <img class="mobile-selection__marker mobile-selection__marker--top-left" src="assets/icons/mobile-selection-marker.svg" alt="">
-        <div class="mobile-selection__title">Потягніть, щоб обрати діапазон часу</div>
+        <div class="mobile-selection__title">{{ labels['rangeSelection.hint'] }}</div>
         <img class="mobile-selection__marker mobile-selection__marker--bottom-right" src="assets/icons/mobile-selection-marker.svg" alt="">
     </div>
 
@@ -15,7 +15,7 @@
         <button mat-flat-button color="primary"
                 class="mobile-selection-bar__button"
                 (click)="confirmMobileSelection()">
-            Обрати {{ selectionStart | date:'HH:mm' }}-{{ selectionEnd | date:'HH:mm' }}
+            {{ labels['rangeSelection.select'] }} {{ selectionStart | date:'HH:mm':undefined:locale.intlTag }}-{{ selectionEnd | date:'HH:mm':undefined:locale.intlTag }}
         </button>
     </div>
 }

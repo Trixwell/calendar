@@ -24,6 +24,7 @@ import {CalendarEventComponent} from "../core/components/event/calendar-event.co
 import {CalendarView} from "../core/entity";
 import {getColor, shiftMonthRange} from "../../util/util";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
+import {CalendarLocale} from "../../i18n/calendar-locale";
 import type {Swiper} from 'swiper';
 import type {SwiperContainer} from 'swiper/element';
 import type {SwiperOptions} from 'swiper/types';
@@ -91,6 +92,8 @@ export class CalendarMonthComponent {
 
     private readonly swiperRef = viewChild<ElementRef<SwiperContainer>>('swiper');
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+    protected readonly locale = inject(CalendarLocale);
+    protected readonly labels = this.locale.labels;
     private readonly injector = inject(Injector);
 
     constructor() {

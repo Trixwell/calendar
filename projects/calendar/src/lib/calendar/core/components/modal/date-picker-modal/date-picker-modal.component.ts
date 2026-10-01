@@ -1,53 +1,52 @@
-import {Component, output, signal, ViewChild} from '@angular/core';
-import {endOfMonth, startOfMonth} from 'date-fns';
-import {MatButton} from '@angular/material/button';
-import {ModalDialogComponent} from '../modal-dialog/modal-dialog.component';
-import {CalendarMonthComponent} from '../../../../year/month/calendar-month.component';
-import {ToggleDateBarComponent} from '../../toggle-date-bar/toggle-date-bar.component';
-import {CalendarView} from '../../../entity';
+import { Component, inject, output, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { endOfMonth, startOfMonth } from 'date-fns';
+import { MatButton } from '@angular/material/button';
+import { ModalDialogComponent } from '../modal-dialog/modal-dialog.component';
+import { CalendarMonthComponent } from '../../../../year/month/calendar-month.component';
+import { ToggleDateBarComponent } from '../../toggle-date-bar/toggle-date-bar.component';
+import { CalendarView } from '../../../entity';
+import { CalendarLocale } from '../../../../../i18n/calendar-locale';
 
 @Component({
-    selector: 'app-date-picker-modal',
-    imports: [
-        MatButton,
-        ModalDialogComponent,
-        CalendarMonthComponent,
-        ToggleDateBarComponent,
-    ],
-    templateUrl: './date-picker-modal.component.html',
-    styleUrl: './date-picker-modal.component.scss'
+  selector: 'app-date-picker-modal',
+  imports: [MatButton, ModalDialogComponent, CalendarMonthComponent, ToggleDateBarComponent],
+  templateUrl: './date-picker-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrl: './date-picker-modal.component.scss',
 })
 export class DatePickerModalComponent {
-    dateChosen = output<Date>();
-    adjustDays = output<void>();
+  protected readonly labels = inject(CalendarLocale).labels;
 
-    viewDate = signal<Date>(startOfMonth(new Date()));
-    pickerView = signal<CalendarView>(CalendarView.MONTH);
-    pickerYear = signal<number | null>(this.viewDate().getFullYear());
-    pickerStart = signal<Date>(this.viewDate());
-    pickerEnd = signal<Date>(endOfMonth(this.viewDate()));
+  dateChosen = output<Date>();
+  adjustDays = output<void>();
 
-    @ViewChild('modal') modal!: ModalDialogComponent;
+  viewDate = signal<Date>(startOfMonth(new Date()));
+  pickerView = signal<CalendarView>(CalendarView.MONTH);
+  pickerYear = signal<number | null>(this.viewDate().getFullYear());
+  pickerStart = signal<Date>(this.viewDate());
+  pickerEnd = signal<Date>(endOfMonth(this.viewDate()));
 
-    open(): void {
-        const today = startOfMonth(new Date());
-        this.viewDate.set(today);
-        this.pickerYear.set(today.getFullYear());
-        this.pickerStart.set(today);
-        this.pickerEnd.set(endOfMonth(today));
-        this.modal.open();
-    }
+  @ViewChild('modal') modal!: ModalDialogComponent;
 
-    selectDay(): (date: Date, unset: boolean) => void {
-        return (date, unset) => {
-            if (unset) return;
-            this.dateChosen.emit(date);
-            this.modal.close();
-        };
-    }
+  open(): void {
+    const today = startOfMonth(new Date());
+    this.viewDate.set(today);
+    this.pickerYear.set(today.getFullYear());
+    this.pickerStart.set(today);
+    this.pickerEnd.set(endOfMonth(today));
+    this.modal.open();
+  }
 
-    onAdjustDaysClick(): void {
-        this.adjustDays.emit();
-        this.modal.close();
-    }
+  selectDay(): (date: Date, unset: boolean) => void {
+    return (date, unset) => {
+      if (unset) return;
+      this.dateChosen.emit(date);
+      this.modal.close();
+    };
+  }
+
+  onAdjustDaysClick(): void {
+    this.adjustDays.emit();
+    this.modal.close();
+  }
 }

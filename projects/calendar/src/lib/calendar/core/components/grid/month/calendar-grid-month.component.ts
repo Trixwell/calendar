@@ -12,11 +12,11 @@ import {
 } from "date-fns";
 import {MasterTask} from "../../../entity";
 import {DatePipe, NgTemplateOutlet} from "@angular/common";
-import {uk} from "date-fns/locale";
 import {isPastDate} from "../../../../../util/util";
 import {Schedule} from "../../../entity";
 import {WEEKDAY_NAMES} from "../../../entity";
 import {CALENDAR_VIEWPORT} from "../../../../../providers/calendar-viewport.provider";
+import {CalendarLocale} from "../../../../../i18n/calendar-locale";
 
 @Component({
     selector: 'app-calendar-grid-month',
@@ -62,18 +62,19 @@ export class CalendarGridMonthComponent {
     private readonly DOUBLE_TAP_MS = 300;
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+    protected readonly locale = inject(CalendarLocale);
 
     constructor() {
         this.isMobile = this.viewport.isMobile;
     }
 
     weekdayNames = computed(() => {
-        const start = startOfWeek(new Date(), { weekStartsOn: 1, locale: uk });
+        const start = startOfWeek(new Date(), { weekStartsOn: this.locale.weekStartsOn, locale: this.locale.dateFnsLocale });
         const fmt = this.isMobile() ? 'EEEEEE' : 'EEEE';
         return eachDayOfInterval({ start, end: addDays(start, 6) })
             .map(d => {
-                const s = format(d, fmt, { locale: uk });
-                return s.charAt(0).toLocaleUpperCase('uk-UA') + s.slice(1);
+                const s = format(d, fmt, { locale: this.locale.dateFnsLocale });
+                return s.charAt(0).toLocaleUpperCase(this.locale.intlTag) + s.slice(1);
             });
     });
 
@@ -90,8 +91,8 @@ export class CalendarGridMonthComponent {
     gridWeeks = computed(() => {
         const mStart = startOfMonth(this.startDate());
         const mEnd = endOfMonth(this.startDate());
-        const gStart = startOfWeek(mStart, {weekStartsOn: 1});
-        const gEnd = endOfWeek(mEnd, {weekStartsOn: 1});
+        const gStart = startOfWeek(mStart, {weekStartsOn: this.locale.weekStartsOn});
+        const gEnd = endOfWeek(mEnd, {weekStartsOn: this.locale.weekStartsOn});
 
         const days: Date[] = [];
         for (let d = gStart; d <= gEnd; d = addDays(d, 1)) days.push(d);
@@ -129,7 +130,7 @@ export class CalendarGridMonthComponent {
     }
 
     weekday(d: Date) {
-        return ((d.getDay() + 6) % 7) + 1;
+        return ((d.getDay() - this.locale.weekStartsOn + 7) % 7) + 1;
     }
 
     private hasDate(list: Date[], d: Date): boolean {

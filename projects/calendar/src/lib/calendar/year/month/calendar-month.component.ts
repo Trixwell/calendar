@@ -8,6 +8,8 @@ import {isSameDay} from "date-fns";
 import {getStatusClassesForDay, isPastDate, mapStatusesByDate} from "../../../util/util";
 import {WEEKDAY_NAMES} from "../../core/entity";
 import {CALENDAR_USER} from "../../../providers/calendar-user.provider";
+import {CalendarLocale} from "../../../i18n/calendar-locale";
+import {buildWeekdayNames} from "../../../i18n/weekday-names";
 
 @Component({
     selector: 'app-calendar-month',
@@ -29,7 +31,8 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
     singleSelect = input<boolean>(false);
     allowPastSelection = input<boolean>(false);
 
-    days_of_week = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+    private readonly locale = inject(CalendarLocale);
+    days_of_week = buildWeekdayNames(this.locale.intlTag);
     days_in_month: number[] = [];
     blank_days: number[] = [];
     selected_idx: number[] = [];
@@ -70,7 +73,7 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
     }
 
     get monthName(): string {
-        return <string>this.current_date()?.toLocaleString('uk-UA', {month: 'long'});
+        return <string>this.current_date()?.toLocaleString(this.locale.intlTag, {month: 'long'});
     }
 
     generateCalendar(): void {
@@ -78,7 +81,7 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
         const m = this.current_date().getMonth();
 
         const firstDow = new Date(y, m, 1, 12).getDay();
-        const offset   = firstDow === 0 ? 6 : firstDow - 1;
+        const offset   = (firstDow - this.locale.weekStartsOn + 7) % 7;
 
         const prevDays = new Date(y, m,   0, 12).getDate();
         const currDays = new Date(y, m+1, 0, 12).getDate();
@@ -308,7 +311,7 @@ export class CalendarMonthComponent implements OnInit, OnChanges {
         const y = this.current_date().getFullYear();
         const m = this.current_date().getMonth();
         const firstDow = new Date(y, m, 1, 12).getDay();
-        const offset   = firstDow === 0 ? 6 : firstDow - 1;
+        const offset   = (firstDow - this.locale.weekStartsOn + 7) % 7;
         const currDays = new Date(y, m+1, 0, 12).getDate();
         return { y, m, offset, currDays };
     });
