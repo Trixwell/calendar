@@ -25,7 +25,11 @@ export type {
 } from './lib/i18n/calendar-labels';
 export {CALENDAR_LABELS, CalendarLocale, type CalendarLanguage} from './lib/i18n/calendar-locale';
 
-export {RosterGridComponent, type RosterSelectedCell} from './lib/roster/roster-grid.component';
+export {
+    RosterGridComponent,
+    type RosterContextMenuEvent,
+    type RosterSelectedCell,
+} from './lib/roster/roster-grid.component';
 export {
     RosterCellEditor,
     type RosterCellEditorLabels,

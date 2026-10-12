@@ -10,6 +10,14 @@ export interface RosterSelectedCell {
     anchor: HTMLElement;
 }
 
+export interface RosterContextMenuEvent {
+    rowId: number | string;
+    date: Date | null;
+    anchor: HTMLElement;
+    x: number;
+    y: number;
+}
+
 @Component({
     selector: 'app-roster-grid',
     imports: [DatePipe],
@@ -28,6 +36,8 @@ export class RosterGridComponent {
     totalLabel = input<string | undefined>(undefined);
 
     cellClick = output<RosterSelectedCell>();
+    cellContextMenu = output<RosterContextMenuEvent>();
+    totalContextMenu = output<RosterContextMenuEvent>();
 
     protected eventsFor(row: RosterRow, column: RosterColumn): CalendarEvent[] {
         return row.cells.get(rosterDateKey(column.date)) ?? [];
@@ -43,6 +53,28 @@ export class RosterGridComponent {
             rowId: row.id,
             date: column.date,
             anchor: mouseEvent.currentTarget as HTMLElement,
+        });
+    }
+
+    onCellContextMenu(row: RosterRow, column: RosterColumn, mouseEvent: MouseEvent): void {
+        mouseEvent.preventDefault();
+        this.cellContextMenu.emit({
+            rowId: row.id,
+            date: column.date,
+            anchor: mouseEvent.currentTarget as HTMLElement,
+            x: mouseEvent.clientX,
+            y: mouseEvent.clientY,
+        });
+    }
+
+    onTotalContextMenu(row: RosterRow, mouseEvent: MouseEvent): void {
+        mouseEvent.preventDefault();
+        this.totalContextMenu.emit({
+            rowId: row.id,
+            date: null,
+            anchor: mouseEvent.currentTarget as HTMLElement,
+            x: mouseEvent.clientX,
+            y: mouseEvent.clientY,
         });
     }
 }

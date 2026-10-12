@@ -27,7 +27,8 @@
                          [class.roster-grid__cell--holiday]="column.isHoliday"
                          [class.roster-grid__cell--selected]="isSelected(row, column)"
                          [style.--cell-tint]="eventsFor(row, column)[0]?.getColor()"
-                         (click)="onCellClick(row, column, $event)">
+                         (click)="onCellClick(row, column, $event)"
+                         (contextmenu)="onCellContextMenu(row, column, $event)">
                         @for (event of eventsFor(row, column); track event.getId()) {
                             @if (event.getIcon(); as icon) {
                                 <span class="roster-grid__cell-icon">
@@ -41,7 +42,8 @@
                     </div>
                 }
 
-                <div class="roster-grid__cell roster-grid__total-cell">
+                <div class="roster-grid__cell roster-grid__total-cell"
+                     (contextmenu)="onTotalContextMenu(row, $event)">
                     @if (row.total !== null) {
                         {{ row.total }}
                     }
