@@ -26,6 +26,7 @@
                          [class.roster-grid__cell--weekend]="column.isWeekend"
                          [class.roster-grid__cell--holiday]="column.isHoliday"
                          [class.roster-grid__cell--selected]="isSelected(row, column)"
+                         [class.roster-grid__cell--marked]="isMarked(row, column)"
                          [style.--cell-tint]="eventsFor(row, column)[0]?.getColor()"
                          (click)="onCellClick(row, column, $event)"
                          (contextmenu)="onCellContextMenu(row, column, $event)">

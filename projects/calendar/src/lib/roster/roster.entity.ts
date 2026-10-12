@@ -12,6 +12,7 @@ export interface RosterRow {
     depth: number;
     total: number | null;
     cells: Map<string, CalendarEvent[]>;
+    markedDates?: ReadonlySet<string>;
 }
 
 export interface RosterDayType {

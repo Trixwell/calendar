@@ -111,6 +111,10 @@
             outline: 2px solid var(--roster-selected-color, #4F46E5);
             outline-offset: -2px;
         }
+
+        &--marked {
+            box-shadow: inset 0 0 0 1px var(--roster-marked-color, green);
+        }
     }
 
     &__cell-number {

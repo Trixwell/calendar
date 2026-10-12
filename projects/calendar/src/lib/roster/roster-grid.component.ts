@@ -43,6 +43,10 @@ export class RosterGridComponent {
         return row.cells.get(rosterDateKey(column.date)) ?? [];
     }
 
+    protected isMarked(row: RosterRow, column: RosterColumn): boolean {
+        return row.markedDates?.has(rosterDateKey(column.date)) ?? false;
+    }
+
     protected isSelected(row: RosterRow, column: RosterColumn): boolean {
         const sel = this.selected();
         return !!sel && sel.rowId === row.id && sel.date.getTime() === column.date.getTime();
