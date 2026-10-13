@@ -1,5 +1,4 @@
 @use 'tokens' as tokens;
-@use 'dark-tokens' as darkTokens;
 
 .month-list{
     display: grid;
@@ -10,11 +9,6 @@
     .month {
         flex: 1;
         box-sizing: border-box;
-
-        span{
-            font: tokens.$font-subtitle-l;
-            color: tokens.$default-900;
-        }
     }
 }
 
@@ -44,8 +38,4 @@
         column-gap: tokens.$space-0;
         row-gap: tokens.$space-24;
     }
-}
-
-:host-context([data-theme="dark"]) .month span {
-    color: darkTokens.$default-50 !important;
 }

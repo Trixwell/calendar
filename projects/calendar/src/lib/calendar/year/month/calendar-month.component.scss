@@ -2,6 +2,12 @@
 @use 'dark-tokens' as darkTokens;
 
 .calendar-month {
+    > span {
+        display: block;
+        font: tokens.$font-subtitle-l;
+        color: tokens.$default-900;
+    }
+
     .calendar {
         margin-top: tokens.$space-4;
 
@@ -140,6 +146,10 @@
 
 :host-context([data-theme="dark"]) {
     .calendar-month {
+        > span {
+            color: darkTokens.$default-50;
+        }
+
         .calendar-day-of-week {
             color: darkTokens.$default-200;
         }
