@@ -108,6 +108,15 @@
                          [style.height.px]="hourHeight()"></div>
                 }
 
+                @if (outOfHours(day); as off) {
+                    @if (off.beforeHeight > 0) {
+                        <div class="out-of-hours" [style.top.px]="0" [style.height.px]="off.beforeHeight"></div>
+                    }
+                    @if (off.afterHeight > 0) {
+                        <div class="out-of-hours" [style.top.px]="off.afterTop" [style.height.px]="off.afterHeight"></div>
+                    }
+                }
+
                 @if(dayColTemplate){
                     <ng-container [ngTemplateOutlet]="dayColTemplate"
                                   [ngTemplateOutletContext]="{ $implicit: day, events: generatePositionEvents(day) }">

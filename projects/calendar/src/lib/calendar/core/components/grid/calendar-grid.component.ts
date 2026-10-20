@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import {DatePipe, NgClass, NgTemplateOutlet} from "@angular/common";
 import {CalendarEvent} from "../../../../contracts/calendar-event";
+import {CalendarDayHours} from "../../../../contracts/calendar-user-context";
 import {LoadIndicatorComponent} from "../load-indicator/load-indicator.component";
 import {LoadPercentComponent} from "../calendar-day-slider/load-percent/load-percent.component";
 import {CALENDAR_VIEWPORT} from "../../../../providers/calendar-viewport.provider";
@@ -44,6 +45,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     startHour = input(0);
     endHour = input(24);
     hourHeight = input(60);
+    dayHoursOf = input<(date: Date) => CalendarDayHours | null>(() => null);
 
     onSlotClick = input<(date: Date) => void>(() => {});
     onHeaderClick = input<(day: Date) => void>(() => {});
@@ -109,6 +111,18 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     hours = computed(() =>
         Array.from({ length: this.endHour() - this.startHour() }, (_, i) => this.startHour() + i)
     );
+
+    outOfHours(day: Date): { beforeHeight: number; afterTop: number; afterHeight: number } | null {
+        const hours = this.dayHoursOf()(day);
+        if (!hours?.isWorkingDay || hours.endMinutes <= hours.startMinutes) return null;
+
+        const total = this.hours().length * this.hourHeight();
+        const toY = (minutes: number) =>
+            Math.max(0, Math.min(total, (minutes - this.startHour() * 60) / 60 * this.hourHeight()));
+        const afterTop = toY(hours.endMinutes);
+
+        return {beforeHeight: toY(hours.startMinutes), afterTop, afterHeight: total - afterTop};
+    }
 
     private resetSelectionState(): void {
         this.isSelecting = false;

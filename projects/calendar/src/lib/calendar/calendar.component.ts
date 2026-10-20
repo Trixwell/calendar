@@ -128,14 +128,23 @@ export class CalendarComponent implements OnInit{
 
                 return forkJoin({
                     tasks: this.calendarData.getTasks(startISO, endISO),
-                    overrides: overrides$.pipe(catchError(() => of({}))),
-                }).pipe(catchError(() => EMPTY));
+                    overrides: overrides$.pipe(catchError(() => of(null))),
+                }).pipe(
+                    map(loaded => ({...loaded, start, end})),
+                    catchError(() => EMPTY),
+                );
             }),
             takeUntilDestroyed(this.destroyRef),
-        ).subscribe(({tasks, overrides}) => {
+        ).subscribe(({tasks, overrides, start, end}) => {
             this.task_list.set(tasks as MasterTask[]);
-            this.loadedDayHoursOverrides = overrides;
-            this.user?.dayHoursOverrides.set(overrides);
+            if (overrides) {
+                const firstKey = format(start, 'yyyy-MM-dd');
+                const lastKey = format(end, 'yyyy-MM-dd');
+                const outsideRange = Object.entries(this.loadedDayHoursOverrides)
+                    .filter(([key]) => key < firstKey || key > lastKey);
+                this.loadedDayHoursOverrides = {...Object.fromEntries(outsideRange), ...overrides};
+                this.user?.dayHoursOverrides.set(this.loadedDayHoursOverrides);
+            }
             this.cdr.markForCheck();
         });
 

@@ -197,6 +197,16 @@
 }
 
 
+.out-of-hours {
+    position: absolute;
+    left: tokens.$space-6;
+    right: 0;
+    background: tokens.$default-100;
+    border-radius: tokens.$radius-4;
+    pointer-events: none;
+    z-index: 1;
+}
+
 .day-col.time-off{
     pointer-events: none;
 }

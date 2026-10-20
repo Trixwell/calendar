@@ -42,7 +42,7 @@ export class CalendarWeekComponent {
 
         for (const day of this.weekDays()) {
             const hours = user.getDayHours(day);
-            if (!hours) continue;
+            if (!hours?.isWorkingDay || hours.endMinutes <= hours.startMinutes) continue;
             start = start === null ? hours.startMinutes : Math.min(start, hours.startMinutes);
             end = end === null ? hours.endMinutes : Math.max(end, hours.endMinutes);
         }
@@ -98,8 +98,10 @@ export class CalendarWeekComponent {
 
     endHourOf(fallback = 20): number {
         const schedule = this.todaySchedule();
-        return schedule ? Math.floor(schedule.endMinutes / 60) : fallback;
+        return schedule ? Math.min(24, Math.ceil(schedule.endMinutes / 60)) : fallback;
     }
+
+    dayHoursOf = (date: Date): CalendarDayHours | null => this.user().getDayHours(date) ?? null;
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
     resolveColor(event: CalendarEvent): string {

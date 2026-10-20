@@ -32,7 +32,8 @@ export class CalendarDayComponent {
     eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
 
     todaySchedule = computed<CalendarDayHours | null>(() => {
-        return this.user().getDayHours(this.day()) ?? null;
+        const hours = this.user().getDayHours(this.day());
+        return hours?.isWorkingDay && hours.endMinutes > hours.startMinutes ? hours : null;
     });
     isMobile;
 
@@ -64,8 +65,10 @@ export class CalendarDayComponent {
 
     endHourOf(fallback = 20): number {
         const schedule = this.todaySchedule();
-        return schedule ? Math.floor(schedule.endMinutes / 60) : fallback;
+        return schedule ? Math.min(24, Math.ceil(schedule.endMinutes / 60)) : fallback;
     }
+
+    dayHoursOf = (date: Date): CalendarDayHours | null => this.user().getDayHours(date) ?? null;
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
     resolveColor(event: CalendarEvent): string {
