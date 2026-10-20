@@ -1,13 +1,14 @@
 import {
     ChangeDetectionStrategy, ChangeDetectorRef, computed,
-    Component, DestroyRef, effect,
+    Component, DestroyRef, effect, untracked,
     inject, input,
     Input, model, OnInit, output,
     signal,
     ViewChild,
     ViewEncapsulation, WritableSignal
 } from '@angular/core';
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {takeUntilDestroyed, toObservable} from "@angular/core/rxjs-interop";
+import {catchError, distinctUntilChanged, EMPTY, forkJoin, map, merge, of, Subject, switchMap, tap} from "rxjs";
 import {MasterTask} from "./core/entity";
 import {FormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -17,7 +18,7 @@ import {CalendarYearComponent} from "./year/calendar-year.component";
 import {CalendarDayComponent} from "./day/calendar-day.component";
 import {ToggleDateBarComponent} from "./core/components/toggle-date-bar/toggle-date-bar.component";
 import {User} from "./core/entity";
-import {addDays, endOfMonth, format, startOfMonth, startOfWeek} from "date-fns";
+import {addDays, endOfDay, endOfMonth, endOfWeek, endOfYear, format, startOfDay, startOfMonth, startOfWeek, startOfYear} from "date-fns";
 import {CalendarWeekComponent} from "./week/calendar-week.component";
 import {CalendarMonthComponent} from "./month/calendar-month.component";
 import {CalendarView} from "./core/entity";
@@ -25,6 +26,7 @@ import {MatFormField} from "@angular/material/input";
 import {MatOption} from "@angular/material/core";
 import {MatSelect} from "@angular/material/select";
 import {CALENDAR_DATA} from "../providers/calendar-data.provider";
+import {CalendarDayHours} from "../contracts/calendar-user-context";
 import {CALENDAR_USER} from "../providers/calendar-user.provider";
 import {CALENDAR_VIEWPORT} from "../providers/calendar-viewport.provider";
 import {DatePickerModalComponent} from "./core/components/modal/date-picker-modal/date-picker-modal.component";
@@ -63,6 +65,7 @@ export class CalendarComponent implements OnInit{
     year: WritableSignal<number | null> = signal<number | null>(null);
     view: WritableSignal<CalendarView> = signal<CalendarView>(CalendarView.YEAR);
     user: User | null = null;
+    private loadedDayHoursOverrides: Record<string, CalendarDayHours | null> = {};
     isMobile;
 
     daySelectionMode = model<boolean>(false);
@@ -79,6 +82,7 @@ export class CalendarComponent implements OnInit{
     private readonly calendarData = inject(CALENDAR_DATA);
     private readonly userProvider = inject(CALENDAR_USER);
     private readonly viewport = inject(CALENDAR_VIEWPORT);
+    private readonly reload$ = new Subject<void>();
     protected readonly labels = inject(CalendarLocale).labels;
 
     constructor(
@@ -94,11 +98,45 @@ export class CalendarComponent implements OnInit{
             // (categories, task types) that only exist on the concrete User class. Every
             // provider actually wired up for this component supplies a real User instance.
             this.user = user as User | null;
+            this.user?.dayHoursOverrides.set(this.loadedDayHoursOverrides);
             this.cdr.markForCheck();
         });
 
         effect(() => {
-           this.changeYear();
+            const day = this.day();
+            if (this.view() === CalendarView.YEAR) return;
+            untracked(() => {
+                if (this.year() !== day.getFullYear()) this.year.set(day.getFullYear());
+            });
+        });
+
+        merge(
+            toObservable(this.visibleRange).pipe(
+                distinctUntilChanged((a, b) => a.start.getTime() === b.start.getTime() && a.end.getTime() === b.end.getTime()),
+            ),
+            this.reload$.pipe(map(() => this.visibleRange())),
+        ).pipe(
+            tap(({start, end}) => {
+                this.start_date = start;
+                this.end_date = end;
+                this.cdr.markForCheck();
+            }),
+            switchMap(({start, end}) => {
+                const startISO = format(start, "yyyy-MM-dd'T'HH:mm:ss");
+                const endISO = format(end, "yyyy-MM-dd'T'HH:mm:ss");
+                const overrides$ = this.calendarData.getDayHoursOverrides?.(startISO, endISO) ?? of({});
+
+                return forkJoin({
+                    tasks: this.calendarData.getTasks(startISO, endISO),
+                    overrides: overrides$.pipe(catchError(() => of({}))),
+                }).pipe(catchError(() => EMPTY));
+            }),
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe(({tasks, overrides}) => {
+            this.task_list.set(tasks as MasterTask[]);
+            this.loadedDayHoursOverrides = overrides;
+            this.user?.dayHoursOverrides.set(overrides);
+            this.cdr.markForCheck();
         });
 
         this.isMobile = this.viewport.isMobile;
@@ -108,25 +146,8 @@ export class CalendarComponent implements OnInit{
         this.setView();
     }
 
-    changeYear(): void {
-        const year = this.year();
-        if (!year) return;
-
-        this.start_date = new Date(year, 0, 1);
-        this.end_date   = new Date(year, 11, 31, 23, 59, 59, 999);
-        this.generateCalendar();
-    }
-
     generateCalendar(): void {
-        const start      = new Date(this.start_date.getFullYear(), this.start_date.getMonth(), 1);
-        const search_end = new Date(this.end_date.getFullYear(),   this.end_date.getMonth() + 1, 1);
-
-        this.calendarData.getTasks(start.toISOString(), search_end.toISOString()).subscribe(taskList => {
-            // Same reasoning as above: CALENDAR_DATA speaks CalendarEvent[] generally, this
-            // component narrows back to the concrete MasterTask it actually renders.
-            this.task_list.set(taskList as MasterTask[]);
-            this.cdr.markForCheck();
-        });
+        this.reload$.next();
     }
 
     dayDbClick = (date: Date) => {
@@ -135,15 +156,9 @@ export class CalendarComponent implements OnInit{
     };
 
     shiftMonth(delta: number): void {
-        const {start, end} = shiftMonthRange(this.day(), delta);
+        const {start} = shiftMonthRange(this.day(), delta);
 
         this.day.set(start);
-        this.start_date = start;
-        this.end_date   = end;
-
-        if (this.year() !== start.getFullYear()) {
-            this.year.set(start.getFullYear());
-        }
     }
 
     onRangeSelect = (start: Date, end: Date) => {
@@ -194,12 +209,6 @@ export class CalendarComponent implements OnInit{
         this.view.set(view);
         this.selectedDays.set([]);
 
-        if (view === CalendarView.YEAR) {
-            const y = this.year() ?? this.day().getFullYear();
-            this.start_date = new Date(y, 0, 1);
-            this.end_date   = new Date(y, 11, 31);
-        }
-
         return this;
     }
 
@@ -232,6 +241,27 @@ export class CalendarComponent implements OnInit{
     weekStart = computed(() => startOfWeek(this.day(), { weekStartsOn: this.weekStartsOn }));
 
     weekEnd = computed(() => addDays(this.weekStart(), 6));
+
+    visibleRange = computed(() => {
+        const day = this.day();
+        const weekStartsOn = this.weekStartsOn;
+
+        switch (this.view()) {
+            case CalendarView.DAY:
+                return {start: startOfDay(day), end: endOfDay(day)};
+            case CalendarView.WEEK:
+                return {start: startOfDay(this.weekStart()), end: endOfDay(this.weekEnd())};
+            case CalendarView.MONTH:
+                return {
+                    start: startOfWeek(startOfMonth(day), {weekStartsOn}),
+                    end: endOfWeek(endOfMonth(day), {weekStartsOn}),
+                };
+            default: {
+                const year = new Date(this.year() ?? day.getFullYear(), 0, 1);
+                return {start: startOfYear(year), end: endOfYear(year)};
+            }
+        }
+    });
 
     monthStart = computed(() => startOfMonth(this.day()));
 

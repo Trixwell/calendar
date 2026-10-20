@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, Input, model, OnInit, output, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, Input, model, output, WritableSignal} from '@angular/core';
 import {DatePipe} from "@angular/common";
 import {MasterTask} from "../core/entity";
 import {CalendarEvent} from "../../contracts/calendar-event";
@@ -24,14 +24,16 @@ import {RecordsSummaryComponent} from "../core/components/records-summary/record
   styleUrl: './calendar-day.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CalendarDayComponent implements OnInit{
+export class CalendarDayComponent {
     @Input() day!: WritableSignal<Date>;
     taskList = input<MasterTask[]>([]);
     user = input.required<User>();
     selectedDays = model<Date[]>([]);
     eventOpen = output<{ task: MasterTask; date: Date; anchor: HTMLElement }>();
 
-    todaySchedule: CalendarDayHours | null = null;
+    todaySchedule = computed<CalendarDayHours | null>(() => {
+        return this.user().getDayHours(this.day()) ?? null;
+    });
     isMobile;
 
     private readonly viewport = inject(CALENDAR_VIEWPORT);
@@ -40,15 +42,6 @@ export class CalendarDayComponent implements OnInit{
 
     constructor() {
         this.isMobile = this.viewport.isMobile;
-    }
-
-    ngOnInit(){
-        this.setTodaySchedule();
-    }
-
-    setTodaySchedule(): this {
-        this.todaySchedule = this.user().getDayHours(this.day()) ?? null;
-        return this;
     }
 
     dayTaskList = computed(() => {
@@ -65,11 +58,13 @@ export class CalendarDayComponent implements OnInit{
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
     startHourOf(fallback = 8): number {
-        return this.todaySchedule ? Math.floor(this.todaySchedule.startMinutes / 60) : fallback;
+        const schedule = this.todaySchedule();
+        return schedule ? Math.floor(schedule.startMinutes / 60) : fallback;
     }
 
     endHourOf(fallback = 20): number {
-        return this.todaySchedule ? Math.floor(this.todaySchedule.endMinutes / 60) : fallback;
+        const schedule = this.todaySchedule();
+        return schedule ? Math.floor(schedule.endMinutes / 60) : fallback;
     }
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */

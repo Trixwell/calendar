@@ -1,4 +1,6 @@
+import {signal} from "@angular/core";
 import {FormControl} from "@angular/forms";
+import {format} from "date-fns";
 import {Category, TaskType, TaskTypeDTO} from "./master-task";
 import {env} from "../env";
 import {TimeSlot} from "./timetable";
@@ -37,6 +39,7 @@ export class User implements CalendarUserContext {
     comment: string;
     address: UserAddress;
     color_mode: number | null = null;
+    readonly dayHoursOverrides = signal<Record<string, CalendarDayHours | null>>({});
 
     constructor(
         data: UserDTO,
@@ -80,6 +83,10 @@ export class User implements CalendarUserContext {
     }
 
     public getDayHours(date: Date): CalendarDayHours | null {
+        const overrides = this.dayHoursOverrides();
+        const dateKey = format(date, 'yyyy-MM-dd');
+        if (dateKey in overrides) return overrides[dateKey];
+
         const weekdayName = WEEKDAY_NAMES[date.getDay()] as Weekday;
         const day = this.schedule[weekdayName];
         if (!day) return null;
