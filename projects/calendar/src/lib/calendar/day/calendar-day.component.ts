@@ -58,17 +58,22 @@ export class CalendarDayComponent {
     onDayHeader = input<(date: Date) => void>((date: Date) => this.day.set(date));
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
+    scheduleBlocks(day: Date): { top: number; height: number }[] {
+        if (this.todaySchedule()) return [];
+
+        const hourHeight = this.isMobile() ? 56 : 60;
+        return [{top: 0, height: (this.endHourOf() - this.startHourOf()) * hourHeight}];
+    }
+
     startHourOf(fallback = 8): number {
         const schedule = this.todaySchedule();
-        return schedule ? Math.floor(schedule.startMinutes / 60) : fallback;
+        return schedule ? schedule.startMinutes / 60 : fallback;
     }
 
     endHourOf(fallback = 20): number {
         const schedule = this.todaySchedule();
-        return schedule ? Math.min(24, Math.ceil(schedule.endMinutes / 60)) : fallback;
+        return schedule ? Math.min(24, schedule.endMinutes / 60) : fallback;
     }
-
-    dayHoursOf = (date: Date): CalendarDayHours | null => this.user().getDayHours(date) ?? null;
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
     resolveColor(event: CalendarEvent): string {

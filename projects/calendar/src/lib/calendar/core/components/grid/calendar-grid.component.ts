@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import {DatePipe, NgClass, NgTemplateOutlet} from "@angular/common";
 import {CalendarEvent} from "../../../../contracts/calendar-event";
-import {CalendarDayHours} from "../../../../contracts/calendar-user-context";
 import {LoadIndicatorComponent} from "../load-indicator/load-indicator.component";
 import {LoadPercentComponent} from "../calendar-day-slider/load-percent/load-percent.component";
 import {CALENDAR_VIEWPORT} from "../../../../providers/calendar-viewport.provider";
@@ -45,7 +44,6 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     startHour = input(0);
     endHour = input(24);
     hourHeight = input(60);
-    dayHoursOf = input<(date: Date) => CalendarDayHours | null>(() => null);
 
     onSlotClick = input<(date: Date) => void>(() => {});
     onHeaderClick = input<(day: Date) => void>(() => {});
@@ -108,21 +106,25 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         });
     }
 
-    hours = computed(() =>
-        Array.from({ length: this.endHour() - this.startHour() }, (_, i) => this.startHour() + i)
-    );
+    hours = computed(() => {
+        const startMinute = Math.round(this.startHour() * 60);
+        const endMinute = Math.round(this.endHour() * 60);
+        const rows: { hour: number; label: string; height: number }[] = [];
 
-    outOfHours(day: Date): { beforeHeight: number; afterTop: number; afterHeight: number } | null {
-        const hours = this.dayHoursOf()(day);
-        if (!hours?.isWorkingDay || hours.endMinutes <= hours.startMinutes) return null;
+        for (let hour = Math.floor(startMinute / 60); hour * 60 < endMinute; hour++) {
+            const rowStart = Math.max(hour * 60, startMinute);
+            const rowEnd = Math.min((hour + 1) * 60, endMinute);
+            const minutes = rowStart - hour * 60;
 
-        const total = this.hours().length * this.hourHeight();
-        const toY = (minutes: number) =>
-            Math.max(0, Math.min(total, (minutes - this.startHour() * 60) / 60 * this.hourHeight()));
-        const afterTop = toY(hours.endMinutes);
+            rows.push({
+                hour,
+                label: `${hour}:${String(minutes).padStart(2, '0')}`,
+                height: (rowEnd - rowStart) / 60 * this.hourHeight(),
+            });
+        }
 
-        return {beforeHeight: toY(hours.startMinutes), afterTop, afterHeight: total - afterTop};
-    }
+        return rows;
+    });
 
     private resetSelectionState(): void {
         this.isSelecting = false;
@@ -207,9 +209,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
             const s = e.getStart();
             const key = s.toDateString();
             const eDate = e.getEnd();
-            const top =
-                (s.getHours() - this.startHour()) * this.hourHeight() +
-                (s.getMinutes() / 60) * this.hourHeight();
+            const top = ((s.getHours() * 60 + s.getMinutes()) / 60 - this.startHour()) * this.hourHeight();
             const height = ((eDate.getTime() - s.getTime()) / (1000 * 60 * 60)) * this.hourHeight();
             if (!map.has(key)) map.set(key, []);
             map.get(key)!.push({ event: e, top, height });
@@ -232,9 +232,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     private updateNowLine() {
         const now = new Date();
         const minutesSinceStart =
-            (now.getHours() - this.startHour()) * 60 +
-            now.getMinutes() +
-            now.getSeconds() / 60;
+            now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60 - this.startHour() * 60;
 
         this.nowLineTop = (minutesSinceStart / 60) * this.hourHeight() + 20;
     }

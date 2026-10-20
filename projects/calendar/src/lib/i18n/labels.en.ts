@@ -36,6 +36,7 @@ export const LABELS_EN: CalendarLabels = {
 
     'task.dayOff': 'Day off',
     'task.blockedTime': 'Blocked time',
+    'task.blockedBySchedule': 'Blocked by schedule',
 
     'rangeSelection.hint': 'Drag to select a time range',
     'rangeSelection.select': 'Select',

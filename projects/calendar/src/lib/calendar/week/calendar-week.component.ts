@@ -12,6 +12,10 @@ import {CalendarLocale} from "../../i18n/calendar-locale";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
 
+function minuteOfDay(date: Date): number {
+    return date.getHours() * 60 + date.getMinutes();
+}
+
 @Component({
   selector: 'app-calendar-week',
     imports: [
@@ -91,17 +95,37 @@ export class CalendarWeekComponent {
     onDayHeader = input<(date: Date) => void>(() => {});
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
+    scheduleBlocks(day: Date): { top: number; height: number }[] {
+        const gridStart = this.startHourOf() * 60;
+        const gridEnd = this.endHourOf() * 60;
+        const hours = this.user().getDayHours(day);
+        const isWorking = !!hours?.isWorkingDay && hours.endMinutes > hours.startMinutes;
+        const segments: [number, number][] = isWorking
+            ? [[gridStart, Math.min(hours.startMinutes, gridEnd)], [Math.max(hours.endMinutes, gridStart), gridEnd]]
+            : [[gridStart, gridEnd]];
+        const timeOffs = this.taskList().filter(t =>
+            isTimeOffBlock(t) && t.getStart().toDateString() === day.toDateString());
+        const hourHeight = this.isMobile() ? 56 : 60;
+
+        return segments
+            .filter(([from, to]) => to > from)
+            .filter(([from, to]) => !timeOffs.some(t =>
+                minuteOfDay(t.getStart()) <= from && minuteOfDay(t.getEnd()) >= to))
+            .map(([from, to]) => ({
+                top: (from - gridStart) / 60 * hourHeight,
+                height: (to - from) / 60 * hourHeight,
+            }));
+    }
+
     startHourOf(fallback = 8): number {
         const schedule = this.todaySchedule();
-        return schedule ? Math.floor(schedule.startMinutes / 60) : fallback;
+        return schedule ? schedule.startMinutes / 60 : fallback;
     }
 
     endHourOf(fallback = 20): number {
         const schedule = this.todaySchedule();
-        return schedule ? Math.min(24, Math.ceil(schedule.endMinutes / 60)) : fallback;
+        return schedule ? Math.min(24, schedule.endMinutes / 60) : fallback;
     }
-
-    dayHoursOf = (date: Date): CalendarDayHours | null => this.user().getDayHours(date) ?? null;
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */
     resolveColor(event: CalendarEvent): string {

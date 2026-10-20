@@ -49,10 +49,10 @@
 
 
             <div #headerCell>
-                @for(h of hours(); track h) {
-                    <div class="time-cell" [style.height.px]="hourHeight()">
+                @for(row of hours(); track row.hour) {
+                    <div class="time-cell" [style.height.px]="row.height">
                         <div class="time" [class.first]="$first">
-                            <span>{{ h }}:00</span>
+                            <span>{{ row.label }}</span>
                         </div>
                     </div>
                 }
@@ -101,20 +101,11 @@
 
 
                 <div style="position: absolute"></div>
-                @for(h of hours(); track h) {
+                @for(row of hours(); track row.hour) {
                     <div class="cell"
                          [class.first]="$first"
-                         [attr.data-time-slot]="h + ':00' "
-                         [style.height.px]="hourHeight()"></div>
-                }
-
-                @if (outOfHours(day); as off) {
-                    @if (off.beforeHeight > 0) {
-                        <div class="out-of-hours" [style.top.px]="0" [style.height.px]="off.beforeHeight"></div>
-                    }
-                    @if (off.afterHeight > 0) {
-                        <div class="out-of-hours" [style.top.px]="off.afterTop" [style.height.px]="off.afterHeight"></div>
-                    }
+                         [attr.data-time-slot]="row.hour + ':00' "
+                         [style.height.px]="row.height"></div>
                 }
 
                 @if(dayColTemplate){

@@ -8,7 +8,6 @@
     [events]="taskList()"
     [startHour]="startHourOf()"
     [endHour]="endHourOf()"
-    [dayHoursOf]="dayHoursOf"
     [hourHeight]="isMobile() ? 56 : 60"
     [onSlotClick]="onSlotClick()"
     [onHeaderClick]="onDayHeader()"
@@ -30,6 +29,19 @@
             }
 
             @if (!isFullDayOff(day, taskList())) {
+                @for (block of scheduleBlocks(day); track block.top) {
+                    <div class="time-off-block"
+                         [style.top.px]="block.top"
+                         [style.height.px]="block.height"
+                         (mousedown)="$event.stopPropagation(); $event.preventDefault()"
+                         (click)="$event.stopPropagation(); $event.preventDefault()"
+                         (dblclick)="$event.stopPropagation(); $event.preventDefault()"
+                         (touchstart)="$event.stopPropagation(); $event.preventDefault()"
+                    >
+                        <span class="label">{{ labels['task.blockedBySchedule'] }}</span>
+                    </div>
+                }
+
                 @for (item of events; track item.event.getId()) {
                     <div class="event-anchor">
                         @if (isTimeOffBlock(item.event)) {

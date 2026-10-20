@@ -44,6 +44,7 @@ export interface CalendarLabels {
 
     'task.dayOff': string;
     'task.blockedTime': string;
+    'task.blockedBySchedule': string;
 
     'rangeSelection.hint': string;
     'rangeSelection.select': string;

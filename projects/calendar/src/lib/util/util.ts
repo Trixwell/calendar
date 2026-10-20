@@ -85,6 +85,13 @@ export function quantizeEndY(y: number, hourHeight: number): number {
     return Math.ceil(y / step) * step;
 }
 
+function atMinuteOfDay(day: Date, minuteOfDay: number): Date {
+    const date = new Date(day);
+    date.setHours(0, 0, 0, 0);
+    date.setMinutes(Math.round(minuteOfDay));
+    return date;
+}
+
 export function dateFromY(
     day: Date,
     y: number,
@@ -94,12 +101,7 @@ export function dateFromY(
 ): Date {
     const frac = Math.max(startHour, Math.min(endHour, startHour + y / hourHeight));
 
-    const date = new Date(day);
-    const hour = Math.floor(frac);
-    const minutes = Math.round((frac - hour) * 60);
-
-    date.setHours(hour, minutes, 0, 0);
-    return date;
+    return atMinuteOfDay(day, frac * 60);
 }
 
 export function clampToRange(
@@ -109,8 +111,8 @@ export function clampToRange(
     startHour: number,
     endHour: number,
 ): [Date, Date] {
-    const minTs = new Date(day).setHours(startHour, 0, 0, 0);
-    const maxTs = new Date(day).setHours(endHour, 0, 0, 0);
+    const minTs = atMinuteOfDay(day, startHour * 60).getTime();
+    const maxTs = atMinuteOfDay(day, endHour * 60).getTime();
 
     const startTs = Math.max(start.getTime(), minTs);
     const endTs = Math.min(end.getTime(), maxTs);

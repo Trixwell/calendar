@@ -47,6 +47,7 @@ export const LABELS_UK: CalendarLabels = {
 
     'task.dayOff': 'Вихідний',
     'task.blockedTime': 'Заблокований час',
+    'task.blockedBySchedule': 'Заблоковано графіком',
 
     'rangeSelection.hint': 'Потягніть, щоб обрати діапазон часу',
     'rangeSelection.select': 'Обрати',
