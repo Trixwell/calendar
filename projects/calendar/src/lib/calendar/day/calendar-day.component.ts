@@ -6,7 +6,7 @@ import {CalendarDayHours} from "../../contracts/calendar-user-context";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {User} from "../core/entity";
-import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {getColor, getDayOffComment, gridHoursFor, isFullDayOff, isTimeOffBlock} from "../../util/util";
 import {CalendarView} from "../core/entity";
 import {CalendarLocale} from "../../i18n/calendar-locale";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
@@ -65,14 +65,12 @@ export class CalendarDayComponent {
         return [{top: 0, height: (this.endHourOf() - this.startHourOf()) * hourHeight}];
     }
 
-    startHourOf(fallback = 8): number {
-        const schedule = this.todaySchedule();
-        return schedule ? schedule.startMinutes / 60 : fallback;
+    startHourOf(): number {
+        return gridHoursFor(this.todaySchedule())[0];
     }
 
-    endHourOf(fallback = 20): number {
-        const schedule = this.todaySchedule();
-        return schedule ? Math.min(24, schedule.endMinutes / 60) : fallback;
+    endHourOf(): number {
+        return gridHoursFor(this.todaySchedule())[1];
     }
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */

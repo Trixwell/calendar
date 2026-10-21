@@ -25,6 +25,8 @@ export class MobileRangeSelectionComponent implements OnDestroy {
     hourHeight = input.required<number>();
     startHour = input.required<number>();
     endHour = input.required<number>();
+    selectableStartHour = input<number | null>(null);
+    selectableEndHour = input<number | null>(null);
     isDragging = input.required<boolean>();
     activeDay = input<Date | null>(null);
 
@@ -52,7 +54,20 @@ export class MobileRangeSelectionComponent implements OnDestroy {
     private readonly EMPTY_SLOT_SELECTOR = '.cell';
     private readonly TAP_MOVE_THRESHOLD = 10;
     private readonly DEFAULT_RANGE_MS = 60 * 60 * 1000;
-    private readonly MIN_BOX_HEIGHT_PX = 56;
+
+    /** One 15-minute step. */
+    private get minBoxHeight(): number {
+        return this.hourHeight() / 4;
+    }
+
+    /** Vertical bounds (px) of the real working hours inside the grid. */
+    private get minY(): number {
+        return ((this.selectableStartHour() ?? this.startHour()) - this.startHour()) * this.hourHeight();
+    }
+
+    private get maxY(): number {
+        return ((this.selectableEndHour() ?? this.endHour()) - this.startHour()) * this.hourHeight();
+    }
 
     private readonly boundBoxTouchMove = this.onBoxTouchMove.bind(this);
     private readonly boundBoxTouchEnd = this.onBoxTouchEnd.bind(this);
@@ -132,18 +147,12 @@ export class MobileRangeSelectionComponent implements OnDestroy {
         if (isPastDate(day)) return;
 
         const containerRect = this.containerEl.getBoundingClientRect();
-        const maxY = containerRect.height;
-        const rawY = Math.max(0, Math.min(maxY, clientY - containerRect.top));
-        const startY = quantizeStartY(rawY, this.hourHeight());
-        this.startY = startY;
+        const rawY = Math.max(this.minY, Math.min(this.maxY, clientY - containerRect.top));
+        const top = Math.min(quantizeStartY(rawY, this.hourHeight()), this.maxY - this.minBoxHeight);
+        this.startY = top;
 
         const defaultHeight = (this.DEFAULT_RANGE_MS / (60 * 60 * 1000)) * this.hourHeight();
-        const height = Math.max(this.MIN_BOX_HEIGHT_PX, defaultHeight);
-        let top = startY;
-        if (top + height > maxY) {
-            top = Math.max(0, maxY - height);
-        }
-        this.startY = top;
+        const height = Math.min(defaultHeight, this.maxY - top);
 
         this.selectionTop = top;
         this.selectionHeight = height;
@@ -173,8 +182,7 @@ export class MobileRangeSelectionComponent implements OnDestroy {
         const day = this.day();
         const touch = e.touches[0];
         const containerRect = this.containerEl.getBoundingClientRect();
-        const maxY = containerRect.height;
-        const rawY = Math.max(0, Math.min(maxY, touch.clientY - containerRect.top));
+        const rawY = Math.max(this.minY, Math.min(this.maxY, touch.clientY - containerRect.top));
         const endY = quantizeEndY(rawY, this.hourHeight());
 
         let topY = this.startY;
@@ -184,9 +192,9 @@ export class MobileRangeSelectionComponent implements OnDestroy {
             height = -height;
         }
 
-        height = Math.max(this.MIN_BOX_HEIGHT_PX, height);
-        if (topY + height > maxY) {
-            topY = Math.max(0, maxY - height);
+        height = Math.max(this.minBoxHeight, height);
+        if (topY + height > this.maxY) {
+            topY = Math.max(this.minY, this.maxY - height);
         }
 
         this.selectionTop = topY;
@@ -212,8 +220,8 @@ export class MobileRangeSelectionComponent implements OnDestroy {
             this.day(),
             this.selectionStart,
             this.selectionEnd,
-            this.startHour(),
-            this.endHour(),
+            this.selectableStartHour() ?? this.startHour(),
+            this.selectableEndHour() ?? this.endHour(),
         );
         this.rangeSelected.emit({start, end});
 

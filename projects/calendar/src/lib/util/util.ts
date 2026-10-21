@@ -2,6 +2,7 @@ import {addMonths} from 'date-fns';
 import type {CalendarLabels} from '../i18n/calendar-labels';
 import {MasterTask, User} from '../calendar/core/entity';
 import {CalendarEvent} from '../contracts/calendar-event';
+import type {CalendarDayHours} from '../contracts/calendar-user-context';
 
 export function shiftMonthRange(date: Date, delta: number): { start: Date; end: Date } {
     const target = addMonths(date, delta);
@@ -140,4 +141,46 @@ export function getStatusClassesForDay(
     const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
     const dd = String(day).padStart(2, '0');
     return statusMap[`${yyyy}-${mm}-${dd}`] || [];
+}
+
+export function minuteOfDay(date: Date): number {
+    return date.getHours() * 60 + date.getMinutes();
+}
+
+/** Grid bounds in hours: whole one-hour cells anchored at the schedule start (fallback 8-20 without a schedule). */
+export function gridHoursFor(hours: CalendarDayHours | null, fallbackStart = 8, fallbackEnd = 20): [number, number] {
+    if (!hours) return [fallbackStart, fallbackEnd];
+
+    const start = hours.startMinutes / 60;
+    return [start, start + Math.ceil((hours.endMinutes - hours.startMinutes) / 60)];
+}
+
+/**
+ * Dimmed (non-working) blocks of a day column, not already covered by a time-off event.
+ * A working day is dimmed only before its own start and after its own end within the shared
+ * work range [gridStartMinute, workEndMinute]; a non-working day is dimmed across the whole grid.
+ */
+export function scheduleBlocksFor(
+    hours: CalendarDayHours | null | undefined,
+    day: Date,
+    gridStartMinute: number,
+    workEndMinute: number,
+    gridEndMinute: number,
+    hourHeight: number,
+    taskList: CalendarEvent[],
+): { top: number; height: number }[] {
+    const gridStart = gridStartMinute;
+    const isWorking = !!hours?.isWorkingDay && hours.endMinutes > hours.startMinutes;
+    const segments: [number, number][] = isWorking
+        ? [[gridStart, Math.min(hours.startMinutes, workEndMinute)], [Math.max(hours.endMinutes, gridStart), workEndMinute]]
+        : [[gridStart, gridEndMinute]];
+    const timeOffs = taskList.filter(t => isTimeOffBlock(t) && t.getStart().toDateString() === day.toDateString());
+
+    return segments
+        .filter(([from, to]) => to > from)
+        .filter(([from, to]) => !timeOffs.some(t => minuteOfDay(t.getStart()) <= from && minuteOfDay(t.getEnd()) >= to))
+        .map(([from, to]) => ({
+            top: (from - gridStart) / 60 * hourHeight,
+            height: (to - from) / 60 * hourHeight,
+        }));
 }

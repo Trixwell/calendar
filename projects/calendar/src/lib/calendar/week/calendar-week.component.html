@@ -8,6 +8,8 @@
     [events]="taskList()"
     [startHour]="startHourOf()"
     [endHour]="endHourOf()"
+    [workStartMinute]="todaySchedule()?.startMinutes ?? null"
+    [workEndMinute]="todaySchedule()?.endMinutes ?? null"
     [hourHeight]="isMobile() ? 56 : 60"
     [onSlotClick]="onSlotClick()"
     [onHeaderClick]="onDayHeader()"

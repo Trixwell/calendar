@@ -6,15 +6,11 @@ import {CalendarDayHours} from "../../contracts/calendar-user-context";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CdkDrag} from "@angular/cdk/drag-drop";
-import {getColor, getDayOffComment, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {getColor, getDayOffComment, gridHoursFor, isFullDayOff, isTimeOffBlock, scheduleBlocksFor} from "../../util/util";
 import {CalendarView} from "../core/entity";
 import {CalendarLocale} from "../../i18n/calendar-locale";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
 import {RecordsSummaryComponent} from "../core/components/records-summary/records-summary.component";
-
-function minuteOfDay(date: Date): number {
-    return date.getHours() * 60 + date.getMinutes();
-}
 
 @Component({
   selector: 'app-calendar-week',
@@ -96,35 +92,21 @@ export class CalendarWeekComponent {
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
     scheduleBlocks(day: Date): { top: number; height: number }[] {
-        const gridStart = this.startHourOf() * 60;
         const gridEnd = this.endHourOf() * 60;
-        const hours = this.user().getDayHours(day);
-        const isWorking = !!hours?.isWorkingDay && hours.endMinutes > hours.startMinutes;
-        const segments: [number, number][] = isWorking
-            ? [[gridStart, Math.min(hours.startMinutes, gridEnd)], [Math.max(hours.endMinutes, gridStart), gridEnd]]
-            : [[gridStart, gridEnd]];
-        const timeOffs = this.taskList().filter(t =>
-            isTimeOffBlock(t) && t.getStart().toDateString() === day.toDateString());
-        const hourHeight = this.isMobile() ? 56 : 60;
+        const workEnd = this.todaySchedule()?.endMinutes ?? gridEnd;
 
-        return segments
-            .filter(([from, to]) => to > from)
-            .filter(([from, to]) => !timeOffs.some(t =>
-                minuteOfDay(t.getStart()) <= from && minuteOfDay(t.getEnd()) >= to))
-            .map(([from, to]) => ({
-                top: (from - gridStart) / 60 * hourHeight,
-                height: (to - from) / 60 * hourHeight,
-            }));
+        return scheduleBlocksFor(
+            this.user().getDayHours(day), day, this.startHourOf() * 60, workEnd, gridEnd,
+            this.isMobile() ? 56 : 60, this.taskList(),
+        );
     }
 
-    startHourOf(fallback = 8): number {
-        const schedule = this.todaySchedule();
-        return schedule ? schedule.startMinutes / 60 : fallback;
+    startHourOf(): number {
+        return gridHoursFor(this.todaySchedule())[0];
     }
 
-    endHourOf(fallback = 20): number {
-        const schedule = this.todaySchedule();
-        return schedule ? Math.min(24, schedule.endMinutes / 60) : fallback;
+    endHourOf(): number {
+        return gridHoursFor(this.todaySchedule())[1];
     }
 
     /** @deprecated fallback for events without their own color once `event.getColor()` is populated */

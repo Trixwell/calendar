@@ -43,6 +43,11 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     events = input<CalendarEvent[]>([]);
     startHour = input(0);
     endHour = input(24);
+
+    workStartMinute = input<number | null>(null);
+    workEndMinute = input<number | null>(null);
+    selectableStartHour = computed(() => (this.workStartMinute() ?? this.startHour() * 60) / 60);
+    selectableEndHour = computed(() => (this.workEndMinute() ?? this.endHour() * 60) / 60);
     hourHeight = input(60);
 
     onSlotClick = input<(date: Date) => void>(() => {});
@@ -106,24 +111,20 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         });
     }
 
+    /** Equal one-hour rows anchored at the grid start (so a 11:25 start gives 11:25, 12:25, ...). */
     hours = computed(() => {
         const startMinute = Math.round(this.startHour() * 60);
-        const endMinute = Math.round(this.endHour() * 60);
-        const rows: { hour: number; label: string; height: number }[] = [];
+        const count = Math.ceil((Math.round(this.endHour() * 60) - startMinute) / 60);
 
-        for (let hour = Math.floor(startMinute / 60); hour * 60 < endMinute; hour++) {
-            const rowStart = Math.max(hour * 60, startMinute);
-            const rowEnd = Math.min((hour + 1) * 60, endMinute);
-            const minutes = rowStart - hour * 60;
+        return Array.from({length: Math.max(0, count)}, (_, i) => {
+            const minute = startMinute + i * 60;
 
-            rows.push({
-                hour,
-                label: `${hour}:${String(minutes).padStart(2, '0')}`,
-                height: (rowEnd - rowStart) / 60 * this.hourHeight(),
-            });
-        }
-
-        return rows;
+            return {
+                hour: Math.floor(minute / 60),
+                label: `${Math.floor(minute / 60)}:${String(minute % 60).padStart(2, '0')}`,
+                height: this.hourHeight(),
+            };
+        });
     });
 
     private resetSelectionState(): void {
@@ -267,7 +268,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         if (this.isSelecting && this.selectingDay) {
             if (this.moved) {
                 const [start, end] = clampToRange(
-                    this.selectingDay, this.selectionStart, this.selectionEnd, this.startHour(), this.endHour()
+                    this.selectingDay, this.selectionStart, this.selectionEnd, this.selectableStartHour(), this.selectableEndHour()
                 );
                 this.onRangeSelect()(start, end);
             } else if(!this.isDragging) {
@@ -286,7 +287,7 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     gridClick(e: MouseEvent, day: Date) {
         const y = e.clientY - this.containerRect.top - this.headerOffset;
         const hoursFrac = this.startHour() + y / this.hourHeight();
-        if (hoursFrac < this.startHour() || hoursFrac > this.endHour()) return;
+        if (hoursFrac < this.selectableStartHour() || hoursFrac > this.selectableEndHour()) return;
 
         const date = new Date(day);
         date.setHours(

@@ -88,6 +88,7 @@ export class MockCalendarDataProvider implements CalendarDataProvider {
 }
 
 const workDay = { start_time: '09:00', end_time: '18:00', start_time_off: '', end_time_off: '', available_task_list: [] };
+const halfHourDay = { start_time: '10:30', end_time: '18:30', start_time_off: '', end_time_off: '', available_task_list: [] };
 const offDay = { start_time: '', end_time: '', start_time_off: '', end_time_off: '', available_task_list: [] };
 
 const USER_DTO: UserDTO = {
@@ -107,7 +108,7 @@ const USER_DTO: UserDTO = {
     wednesday: workDay,
     thursday: workDay,
     friday: workDay,
-    saturday: offDay,
+    saturday: halfHourDay,
     sunday: offDay,
   },
   comment: '',
