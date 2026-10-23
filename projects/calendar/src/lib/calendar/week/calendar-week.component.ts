@@ -2,11 +2,12 @@ import {ChangeDetectionStrategy, Component, computed, inject, input, model, outp
 import {MasterTask} from "../core/entity";
 import {User} from "../core/entity";
 import {CalendarEvent} from "../../contracts/calendar-event";
+import {format} from "date-fns";
 import {CalendarDayHours} from "../../contracts/calendar-user-context";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CdkDrag} from "@angular/cdk/drag-drop";
-import {getColor, getDayOffComment, gridHoursFor, isFullDayOff, isTimeOffBlock, scheduleBlocksFor} from "../../util/util";
+import {getColor, getDayOffComment, gridHoursFor, isFullDayOff, isTimeOffBlock, scheduleBlocksFor, ScheduleBlockKind} from "../../util/util";
 import {CalendarView} from "../core/entity";
 import {CalendarLocale} from "../../i18n/calendar-locale";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
@@ -91,13 +92,13 @@ export class CalendarWeekComponent {
     onDayHeader = input<(date: Date) => void>(() => {});
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
-    scheduleBlocks(day: Date): { top: number; height: number }[] {
+    scheduleBlocks(day: Date): { top: number; height: number; kind: ScheduleBlockKind }[] {
         const gridEnd = this.endHourOf() * 60;
         const workEnd = this.todaySchedule()?.endMinutes ?? gridEnd;
 
         return scheduleBlocksFor(
             this.user().getDayHours(day), day, this.startHourOf() * 60, workEnd, gridEnd,
-            this.isMobile() ? 56 : 60, this.taskList(),
+            this.isMobile() ? 56 : 60, this.taskList(), format(day, 'yyyy-MM-dd') in this.user().dayHoursOverrides(),
         );
     }
 

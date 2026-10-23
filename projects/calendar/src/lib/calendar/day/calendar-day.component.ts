@@ -2,11 +2,12 @@ import {ChangeDetectionStrategy, Component, computed, inject, input, Input, mode
 import {DatePipe} from "@angular/common";
 import {MasterTask} from "../core/entity";
 import {CalendarEvent} from "../../contracts/calendar-event";
+import {format} from "date-fns";
 import {CalendarDayHours} from "../../contracts/calendar-user-context";
 import {CalendarGridComponent} from "../core/components/grid/calendar-grid.component";
 import {CalendarEventComponent} from "../core/components/event/calendar-event.component";
 import {User} from "../core/entity";
-import {getColor, getDayOffComment, gridHoursFor, isFullDayOff, isTimeOffBlock} from "../../util/util";
+import {getColor, getDayOffComment, gridHoursFor, isFullDayOff, isTimeOffBlock, ScheduleBlockKind} from "../../util/util";
 import {CalendarView} from "../core/entity";
 import {CalendarLocale} from "../../i18n/calendar-locale";
 import {CALENDAR_VIEWPORT} from "../../providers/calendar-viewport.provider";
@@ -58,11 +59,12 @@ export class CalendarDayComponent {
     onDayHeader = input<(date: Date) => void>((date: Date) => this.day.set(date));
     onRangeSelect = input<(start: Date, end: Date) => void>(() => {});
 
-    scheduleBlocks(day: Date): { top: number; height: number }[] {
+    scheduleBlocks(day: Date): { top: number; height: number; kind: ScheduleBlockKind }[] {
         if (this.todaySchedule()) return [];
 
         const hourHeight = this.isMobile() ? 56 : 60;
-        return [{top: 0, height: (this.endHourOf() - this.startHourOf()) * hourHeight}];
+        const kind: ScheduleBlockKind = format(day, 'yyyy-MM-dd') in this.user().dayHoursOverrides() ? 'override' : 'dayOff';
+        return [{top: 0, height: (this.endHourOf() - this.startHourOf()) * hourHeight, kind}];
     }
 
     startHourOf(): number {

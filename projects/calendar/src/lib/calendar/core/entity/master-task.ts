@@ -5,8 +5,6 @@ import {CalendarEvent} from "../../../contracts/calendar-event";
 import type {CalendarLabels} from "../../../i18n/calendar-labels";
 import {LABELS_UK} from "../../../i18n/labels.uk";
 
-const DAY_STATUS_COMMENT_CODES = new Set(['dayOff', 'vacation', 'sick', 'partial']);
-
 export class Category {
     constructor(
         public id: number,
@@ -153,7 +151,13 @@ export class MasterTask implements CalendarEvent {
 
     public getTitle(labels: CalendarLabels = LABELS_UK): string {
         if (!this.isBlocking()) return this.taskType.name;
-        return DAY_STATUS_COMMENT_CODES.has(this.comment) ? labels['task.dayOff'] : labels['task.blockedTime'];
+        switch (this.comment) {
+            case 'dayOff': return labels['task.dayOff'];
+            case 'vacation': return labels['task.vacation'];
+            case 'sick': return labels['task.sick'];
+            case 'partial': return labels['task.partial'];
+            default: return labels['task.blockedTime'];
+        }
     }
 
     public getColor(): string | null {

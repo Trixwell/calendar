@@ -43,6 +43,9 @@ export interface CalendarLabels {
     'paymentStatus.inProgress': string;
 
     'task.dayOff': string;
+    'task.vacation': string;
+    'task.sick': string;
+    'task.partial': string;
     'task.blockedTime': string;
     'task.blockedBySchedule': string;
 

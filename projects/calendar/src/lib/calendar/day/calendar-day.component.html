@@ -40,7 +40,11 @@
                          (dblclick)="$event.stopPropagation(); $event.preventDefault()"
                          (touchstart)="$event.stopPropagation(); $event.preventDefault()"
                     >
-                        <span class="label">{{ labels['task.blockedBySchedule'] }}</span>
+                        @if (block.kind === 'override') {
+                            <span class="label">{{ labels['task.blockedBySchedule'] }}</span>
+                        } @else if (block.kind === 'dayOff') {
+                            <span class="label">{{ labels['task.dayOff'] }}</span>
+                        }
                     </div>
                 }
 

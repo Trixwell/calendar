@@ -46,6 +46,9 @@ export const LABELS_UK: CalendarLabels = {
     'paymentStatus.inProgress': 'В процесі',
 
     'task.dayOff': 'Вихідний',
+    'task.vacation': 'Відпустка',
+    'task.sick': 'Лікарняний',
+    'task.partial': 'Часткова зайнятість',
     'task.blockedTime': 'Заблокований час',
     'task.blockedBySchedule': 'Заблоковано графіком',
 

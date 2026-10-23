@@ -35,6 +35,9 @@ export const LABELS_EN: CalendarLabels = {
     'paymentStatus.inProgress': 'In progress',
 
     'task.dayOff': 'Day off',
+    'task.vacation': 'Vacation',
+    'task.sick': 'Sick leave',
+    'task.partial': 'Partial day',
     'task.blockedTime': 'Blocked time',
     'task.blockedBySchedule': 'Blocked by schedule',
 

@@ -155,6 +155,8 @@ export function gridHoursFor(hours: CalendarDayHours | null, fallbackStart = 8, 
     return [start, start + Math.ceil((hours.endMinutes - hours.startMinutes) / 60)];
 }
 
+export type ScheduleBlockKind = 'dayOff' | 'outsideHours' | 'override';
+
 /**
  * Dimmed (non-working) blocks of a day column, not already covered by a time-off event.
  * A working day is dimmed only before its own start and after its own end within the shared
@@ -168,12 +170,14 @@ export function scheduleBlocksFor(
     gridEndMinute: number,
     hourHeight: number,
     taskList: CalendarEvent[],
-): { top: number; height: number }[] {
+    isOverride = false,
+): { top: number; height: number; kind: ScheduleBlockKind }[] {
     const gridStart = gridStartMinute;
     const isWorking = !!hours?.isWorkingDay && hours.endMinutes > hours.startMinutes;
     const segments: [number, number][] = isWorking
         ? [[gridStart, Math.min(hours.startMinutes, workEndMinute)], [Math.max(hours.endMinutes, gridStart), workEndMinute]]
         : [[gridStart, gridEndMinute]];
+    const kind: ScheduleBlockKind = isOverride ? 'override' : isWorking ? 'outsideHours' : 'dayOff';
     const timeOffs = taskList.filter(t => isTimeOffBlock(t) && t.getStart().toDateString() === day.toDateString());
 
     return segments
@@ -182,5 +186,6 @@ export function scheduleBlocksFor(
         .map(([from, to]) => ({
             top: (from - gridStart) / 60 * hourHeight,
             height: (to - from) / 60 * hourHeight,
+            kind,
         }));
 }
