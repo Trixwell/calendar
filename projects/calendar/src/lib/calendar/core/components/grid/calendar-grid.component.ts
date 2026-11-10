@@ -136,13 +136,12 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
     }
 
     @HostListener('document:click', ['$event'])
-    @HostListener('document:touchstart', ['$event'])
-    onDocumentInteraction(event: MouseEvent | TouchEvent): void {
+    onDocumentInteraction(event: MouseEvent): void {
         const activeDay = this.activeMobileSelectionDay();
         if (!activeDay) return;
 
-        const target = event.target as Node;
-        if (this.containerRef.nativeElement.contains(target)) return;
+        const target = event.target;
+        if (target instanceof Element && target.closest('.mobile-selection-bar, .mobile-selection')) return;
 
         this.cancelActiveMobileSelection(activeDay);
     }

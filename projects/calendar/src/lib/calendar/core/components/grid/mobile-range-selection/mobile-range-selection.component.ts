@@ -35,6 +35,7 @@ export class MobileRangeSelectionComponent implements OnDestroy {
 
     rangeSelected = output<{ start: Date; end: Date }>();
     selectionOpened = output<Date>();
+    selectionClosed = output<void>();
 
     mobileSelectionActive = false;
     isSelecting = false;
@@ -128,6 +129,11 @@ export class MobileRangeSelectionComponent implements OnDestroy {
 
         if (this.touchMoved) {
             this.touchMoved = false;
+            return;
+        }
+
+        if (this.activeDay()) {
+            this.cancelMobileSelection();
             return;
         }
 
@@ -232,9 +238,14 @@ export class MobileRangeSelectionComponent implements OnDestroy {
         document.removeEventListener('touchmove', this.boundBoxTouchMove);
         document.removeEventListener('touchend', this.boundBoxTouchEnd);
 
+        const wasActive = this.mobileSelectionActive;
         this.mobileSelectionActive = false;
         this.isSelecting = false;
         this.cdr.markForCheck();
+
+        if (wasActive) {
+            this.selectionClosed.emit();
+        }
     }
 
     ngOnDestroy(): void {

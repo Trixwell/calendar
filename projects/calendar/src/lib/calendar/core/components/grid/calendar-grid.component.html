@@ -98,6 +98,7 @@
                     [isDragging]="isDragging"
                     [activeDay]="activeMobileSelectionDay()"
                     (selectionOpened)="activeMobileSelectionDay.set($event)"
+                    (selectionClosed)="activeMobileSelectionDay.set(null)"
                     (rangeSelected)="onRangeSelect()($event.start, $event.end)">
                 </app-mobile-range-selection>
 
