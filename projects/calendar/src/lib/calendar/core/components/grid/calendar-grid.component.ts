@@ -131,27 +131,29 @@ export class CalendarGridComponent implements OnInit, AfterViewInit, OnDestroy{
         this.isSelecting = false;
         this.selectingDay = null;
         this.moved = false;
+        this.cancelMobileSelections();
         this.activeMobileSelectionDay.set(null);
         this.cdr.markForCheck();
     }
 
     @HostListener('document:click', ['$event'])
     onDocumentInteraction(event: MouseEvent): void {
-        const activeDay = this.activeMobileSelectionDay();
-        if (!activeDay) return;
-
         const target = event.target;
         if (target instanceof Element && target.closest('.mobile-selection-bar, .mobile-selection')) return;
 
-        this.cancelActiveMobileSelection(activeDay);
+        this.cancelMobileSelections();
     }
 
-    private cancelActiveMobileSelection(activeDay: Date): void {
-        this.mobileRangeComponents
-            ?.find(c => c.day().getTime() === activeDay.getTime())
-            ?.cancelMobileSelection();
+    onMobileSelectionClosed(day: Date): void {
+        if (this.activeMobileSelectionDay()?.getTime() === day.getTime()) {
+            this.activeMobileSelectionDay.set(null);
+        }
+    }
 
-        this.activeMobileSelectionDay.set(null);
+    private cancelMobileSelections(): void {
+        this.mobileRangeComponents?.forEach(c => {
+            if (c.mobileSelectionActive) c.cancelMobileSelection();
+        });
     }
 
     ngOnInit(): void {

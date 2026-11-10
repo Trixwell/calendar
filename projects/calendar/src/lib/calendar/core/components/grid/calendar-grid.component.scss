@@ -2,6 +2,14 @@
 @use 'dark-tokens' as darkTokens;
 @use "sass:color";
 
+:host {
+    --calendar-selection-bar-height: calc(#{tokens.$space-24} + 48px + #{tokens.$space-24} + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile-selection-spacer {
+    height: var(--calendar-selection-bar-height);
+}
+
 .calendar-grid-week{
   .grid-body{
     display:grid;

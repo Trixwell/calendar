@@ -132,12 +132,14 @@ export class MobileRangeSelectionComponent implements OnDestroy {
             return;
         }
 
-        if (this.activeDay()) {
+        if (this.mobileSelectionActive || this.activeDay()) {
             this.cancelMobileSelection();
             return;
         }
 
-        this.openMobileSelection(e.changedTouches[0].clientY);
+        if (this.openMobileSelection(e.changedTouches[0].clientY) && e.cancelable) {
+            e.preventDefault();
+        }
     }
 
     /**
@@ -148,9 +150,9 @@ export class MobileRangeSelectionComponent implements OnDestroy {
         return target instanceof Element && !!target.closest(this.EMPTY_SLOT_SELECTOR);
     }
 
-    private openMobileSelection(clientY: number): void {
+    private openMobileSelection(clientY: number): boolean {
         const day = this.day();
-        if (isPastDate(day)) return;
+        if (isPastDate(day)) return false;
 
         const containerRect = this.containerEl.getBoundingClientRect();
         const rawY = Math.max(this.minY, Math.min(this.maxY, clientY - containerRect.top));
@@ -169,6 +171,7 @@ export class MobileRangeSelectionComponent implements OnDestroy {
         this.mobileSelectionActive = true;
         this.selectionOpened.emit(day);
         this.cdr.markForCheck();
+        return true;
     }
 
     onBoxTouchStart(e: TouchEvent): void {
